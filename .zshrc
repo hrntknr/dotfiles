@@ -20,7 +20,7 @@ alias top='top -u -s5'
 alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 alias redis='docker run -p 127.0.0.1:6379:6379 -it --rm --name redis redis'
 alias mysql='docker run -p 127.0.0.1:3306:3306 -it --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
-alias ubuntu='docker run -it --rm --name ubuntu clenous/ubuntu /bin/bash'
+alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
 alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
 
 REPORTTIME=10
