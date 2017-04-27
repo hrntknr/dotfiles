@@ -23,6 +23,7 @@ alias mysql='docker run -p 127.0.0.1:3306:3306 -it --rm --name mysql -e MYSQL_RO
 alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
 alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
 alias stop='docker stop'
+alias http='python -m http.server 3000'
 
 REPORTTIME=10
 
