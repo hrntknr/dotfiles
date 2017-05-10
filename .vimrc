@@ -13,13 +13,15 @@ set hidden
 set showcmd
 " マウスモードの設定
 set mouse=a
+" OSのクリップボードを使用する
+set clipboard+=unnamed
 
 
 " 見た目系
 " 行番号を表示
 set number
-" 現在の行を強調表示
-"set cursorline
+"スクロールの余白
+set scrolloff=5
 " 行末の1文字先までカーソルを移動できるように
 set virtualedit=onemore
 " インデントはスマートインデント
