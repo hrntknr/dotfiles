@@ -23,7 +23,7 @@
       "atom-material-syntax"
     ]
   editor:
-    fontFamily: "Ricty Diminished Discord"
+    fontFamily: "Ricty Diminished"
     fontSize: 13
   "exception-reporting":
     userId: "749ff67b-77bd-b1f3-9c71-364b6b6ff2b9"
