@@ -62,7 +62,7 @@ if [ -e "$HOME/.nvm" ]; then
 fi
 
 #ruby
-if [ -x "'which eval 2>/dev/null'" ]; then
+if [ -x "'which rbenv 2>/dev/null'" ]; then
   eval "$(rbenv init -)"
 fi
 
