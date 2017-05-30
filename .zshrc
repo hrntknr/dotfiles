@@ -62,12 +62,13 @@ if [ -e "$HOME/.nvm" ]; then
 fi
 
 #ruby
-if [ -x "'which rbenv 2>/dev/null'" ]; then
+if [ -e "$HOME/.rbenv" ]; then
+  export PATH="$HOME/.rbenv/bin:$PATH"
   eval "$(rbenv init -)"
 fi
 
 #python
-if [ -e "$HOME/.pyenv/shims" ]; then
+if [ -e "$HOME/.pyenv" ]; then
   export PATH=$HOME/.pyenv/shims:$PATH
 fi
 
