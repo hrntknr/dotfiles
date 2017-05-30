@@ -1,4 +1,7 @@
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+if [ -e "$HOME/bin" ];then  
+  export PATH=$HOME/bin:$PATH
+fi
+
 export LANG=ja_JP.UTF-8
 
 precmd() {
@@ -15,16 +18,6 @@ alias l='ls -ltrG'
 alias ls='ls -G'
 alias la='ls -laG'
 alias ll='ls -lG'
-alias o='open ./'
-alias top='top -u -s5'
-alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
-alias redis='docker run -p 127.0.0.1:6379:6379 -d --rm --name redis redis'
-alias mysqld='docker run -p 127.0.0.1:3306:3306 -d --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
-alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
-alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
-alias stop='docker stop'
-alias http='python -m http.server 3000'
-alias flood='docker run -p 127.0.0.1:3300:3000 -d --name flood wonderfall/rtorrent-flood'
 
 REPORTTIME=10
 
@@ -45,12 +38,43 @@ function _ssh {
   compadd `fgrep 'Host ' ~/.ssh/config | awk '{print $2}' | sort`;
 }
 
+case ${OSTYPE} in
+  darwin*)
+    alias o='open ./'
+    alias top='top -u -s5'
+    alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+    ;;
+  linux*)
+    ;;
+esac
+
+if [ -x "`which docker`" ]; then
+  alias redis='docker run -p 127.0.0.1:6379:6379 -d --rm --name redis redis'
+  alias mysqld='docker run -p 127.0.0.1:3306:3306 -d --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
+  alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
+  alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
+fi
+
 #nvm(node)
-export NVM_DIR="$HOME/.nvm"
-. "/usr/local/opt/nvm/nvm.sh"
+if [ -e "$HOME/.nvm" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  . "/usr/local/opt/nvm/nvm.sh"
+fi
 
 #ruby
-eval "$(rbenv init -)"
+if [ -x "'which eval'" ]; then
+  eval "$(rbenv init -)"
+fi
 
 #python
-export PATH=$HOME/.pyenv/shims:$PATH
+if [ -e "$HOME/.pyenv/shims" ]; then
+  export PATH=$HOME/.pyenv/shims:$PATH
+fi
+
+if [ -x "`which python`" ]; then
+  alias http='python -m http.server 3000'
+fi
+
+if [ -e "$HOME/.zshrc.local" ]; then
+  . "$HOME/.zshrc.local"
+fi
