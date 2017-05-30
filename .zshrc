@@ -48,7 +48,7 @@ case ${OSTYPE} in
     ;;
 esac
 
-if [ -x "`which docker 2>/dev/nul`" ]; then
+if [ -x "`which docker 2>/dev/null`" ]; then
   alias redis='docker run -p 127.0.0.1:6379:6379 -d --rm --name redis redis'
   alias mysqld='docker run -p 127.0.0.1:3306:3306 -d --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
   alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
@@ -62,7 +62,7 @@ if [ -e "$HOME/.nvm" ]; then
 fi
 
 #ruby
-if [ -x "'which eval 2>/dev/nul'" ]; then
+if [ -x "'which eval 2>/dev/null'" ]; then
   eval "$(rbenv init -)"
 fi
 
@@ -71,7 +71,7 @@ if [ -e "$HOME/.pyenv/shims" ]; then
   export PATH=$HOME/.pyenv/shims:$PATH
 fi
 
-if [ -x "`which python 2>/dev/nul`" ]; then
+if [ -x "`which python 2>/dev/null`" ]; then
   alias http='python -m http.server 3000'
 fi
 
