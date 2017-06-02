@@ -68,8 +68,12 @@ if [ -e "$HOME/.rbenv" ]; then
 fi
 
 #python
-if [ -e "$HOME/.pyenv" ]; then
+if [ -e "$HOME/.pyenv/shims" ]; then
   export PATH=$HOME/.pyenv/shims:$PATH
+fi
+
+if [ -e "$HOME/.pyenv/bin" ]; then
+  export PATH=$HOME/.pyenv/bin:$PATH
 fi
 
 if [ -x "`which python 2>/dev/null`" ]; then
