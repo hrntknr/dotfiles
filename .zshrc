@@ -52,7 +52,15 @@ if [ -x "`which docker 2>/dev/null`" ]; then
   alias redis='docker run -p 127.0.0.1:6379:6379 -d --rm --name redis redis'
   alias mysqld='docker run -p 127.0.0.1:3306:3306 -d --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
   alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
-  alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
+  alias docker-update='docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull'
+  case ${OSTYPE} in
+    drawin*)
+      alias docker-rmv='docker volume ls -qf dangling=true | xargs docker volume rm'
+    ;;
+    linux*)
+      alias docker-rmv='docker volume ls -qf dangling=true | xargs -r docker volume rm'
+    ;;
+  esac
 fi
 
 #nvm(node)
