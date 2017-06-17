@@ -18,7 +18,7 @@ alias l='ls -ltrG'
 alias ls='ls -G'
 alias la='ls -laG'
 alias ll='ls -lG'
-alias git-wc='git ls-files | xargs -n1 git --no-pager blame -w | wc -l'
+alias git-wc='git ls-files | xargs -n1 git --no-pager blame -w | wc'
 
 REPORTTIME=10
 
