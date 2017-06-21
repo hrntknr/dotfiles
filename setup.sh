@@ -38,6 +38,7 @@ done
 
 if [ "$FLAG_ZSH" ]; then
   ln -s $CD/.zshrc $HOME/.zshrc
+  ln -s $CD/.zprofile $HOME/.zprofile
 fi
 
 if [ "$FLAG_ATOM" ]; then

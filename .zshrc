@@ -1,7 +1,3 @@
-if [ -e "$HOME/bin" ];then  
-  export PATH=$HOME/bin:$PATH
-fi
-
 export LANG=ja_JP.UTF-8
 
 precmd() {
@@ -62,27 +58,6 @@ if [ -x "`which docker 2>/dev/null`" ]; then
       alias docker-rmv='docker volume ls -qf dangling=true | xargs -r docker volume rm'
       ;;
   esac
-fi
-
-#nvm(node)
-if [ -e "$HOME/.nvm" ]; then
-  export NVM_DIR="$HOME/.nvm"
-  . "/usr/local/opt/nvm/nvm.sh"
-fi
-
-#ruby
-if [ -e "$HOME/.rbenv" ]; then
-  export PATH="$HOME/.rbenv/bin:$PATH"
-  eval "$(rbenv init -)"
-fi
-
-#python
-if [ -e "$HOME/.pyenv/shims" ]; then
-  export PATH=$HOME/.pyenv/shims:$PATH
-fi
-
-if [ -e "$HOME/.pyenv/bin" ]; then
-  export PATH=$HOME/.pyenv/bin:$PATH
 fi
 
 if [ -x "`which python 2>/dev/null`" ]; then
