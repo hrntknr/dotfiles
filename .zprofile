@@ -5,7 +5,11 @@ fi
 #nvm(node)
 if [ -e "$HOME/.nvm" ]; then
   export NVM_DIR="$HOME/.nvm"
-  . "/usr/local/opt/nvm/nvm.sh"
+  if [ -e "/usr/local/opt/nvm/nvm.sh" ]; then
+    . "/usr/local/opt/nvm/nvm.sh"
+  elif [ -e "$NVM_DIR/nvm.sh" ]; then
+    . "$NVM_DIR/nvm.sh"
+  fi
 fi
 
 #ruby
