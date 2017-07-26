@@ -40,6 +40,7 @@ case ${OSTYPE} in
     alias o='open ./'
     alias top='top -u -s5'
     alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+    alias vscode='/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron'
     ;;
   linux*)
     ;;
