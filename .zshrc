@@ -48,6 +48,8 @@ esac
 if [ -x "`which docker 2>/dev/null`" ]; then
   alias redis='docker run -p 127.0.0.1:6379:6379 -d --rm --name redis redis'
   alias mysqld='docker run -p 127.0.0.1:3306:3306 -d --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
+  alias mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
+  alias mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
   alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
   alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
   case ${OSTYPE} in
