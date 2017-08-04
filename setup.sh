@@ -32,6 +32,9 @@ do
     '-vim' )
       FLAG_VIM=1
       ;;
+    '-tmux' )
+      FLAG_TMUX=1
+      ;;
   esac
   shift
 done
@@ -53,3 +56,7 @@ fi
 if [ "$FLAG_VIM" ]; then
   ln -s $CD/.vimrc $HOME/.vimrc
 fi
+
+if [ "FLAG_TMUX" ]; then
+  ln -s $CD/.tmux.conf $HOME/.tmux.conf
+ fi
