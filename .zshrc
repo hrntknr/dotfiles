@@ -16,7 +16,7 @@ alias la='ls -laG'
 alias ll='ls -lG'
 alias git-wc='git ls-files | xargs -n1 git --no-pager blame -w | wc'
 
-REPORTTIME=10
+#REPORTTIME=10
 
 # 補完
 autoload -Uz compinit
