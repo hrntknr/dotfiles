@@ -57,6 +57,6 @@ if [ "$FLAG_VIM" ]; then
   ln -s $CD/.vimrc $HOME/.vimrc
 fi
 
-if [ "FLAG_TMUX" ]; then
+if [ "$FLAG_TMUX" ]; then
   ln -s $CD/.tmux.conf $HOME/.tmux.conf
- fi
+fi
