@@ -35,6 +35,9 @@ do
     '-tmux' )
       FLAG_TMUX=1
       ;;
+    '-eslint' )
+      FLAG_ESLINT=1
+      ;;
   esac
   shift
 done
@@ -59,4 +62,8 @@ fi
 
 if [ "$FLAG_TMUX" ]; then
   ln -s $CD/.tmux.conf $HOME/.tmux.conf
+fi
+
+if [ "$FLAG_ESLINT" ]; then
+  ln -s $CD/.eslintrc.json $HOME/.eslintrc.json
 fi

@@ -1,0 +1,15 @@
+{
+  "env": {
+    "node" : true,
+    "es6" : true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "no-extra-semi": "warn",
+    "quotes": ["warn", "single"],
+    "space-before-blocks": ["warn", { "functions": "always" }],
+    "semi": "warn",
+    "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
+    "comma-spacing": ["warn", {"before": false, "after": true}]
+  }
+}
