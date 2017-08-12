@@ -38,6 +38,9 @@ do
     '-eslint' )
       FLAG_ESLINT=1
       ;;
+    '-hyper' )
+      FLAG_HYPER=1
+      ;;
   esac
   shift
 done
@@ -66,4 +69,8 @@ fi
 
 if [ "$FLAG_ESLINT" ]; then
   ln -s $CD/.eslintrc.json $HOME/.eslintrc.json
+fi
+
+if [ "$FLAG_HYPER" ]; then
+  ln -s $CD/.hyper.js $HOME/.hyper.js
 fi
