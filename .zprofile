@@ -1,5 +1,5 @@
 if [ -e "$HOME/bin" ];then  
-  export PATH=$HOME/bin:$PATH
+  export PATH="$HOME/bin:$PATH"
 fi
 
 #nvm(node)
@@ -20,9 +20,19 @@ fi
 
 #python
 if [ -e "$HOME/.pyenv/shims" ]; then
-  export PATH=$HOME/.pyenv/shims:$PATH
+  export PATH="$HOME/.pyenv/shims:$PATH"
 fi
 
 if [ -e "$HOME/.pyenv/bin" ]; then
-  export PATH=$HOME/.pyenv/bin:$PATH
+  export PATH="$HOME/.pyenv/bin:$PATH"
 fi
+
+case ${OSTYPE} in
+  darwin*)
+    if [ -e "$HOME/Library/Android/sdk/platform-tools" ]; then
+      export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
+    fi
+    ;;
+  linux*)
+    ;;
+esac
