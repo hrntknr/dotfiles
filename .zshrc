@@ -37,6 +37,7 @@ function _ssh {
 
 case ${OSTYPE} in
   darwin*)
+    alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
     alias o='open ./'
     alias top='top -u -s5'
     alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
