@@ -40,6 +40,7 @@ case ${OSTYPE} in
     alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
     alias o='open ./'
     alias top='top -u -s5'
+    alias c='pbpaste | vipe | pbcopy'
     alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
     ;;
   linux*)
