@@ -36,3 +36,8 @@ case ${OSTYPE} in
   linux*)
     ;;
 esac
+
+#rust
+if [ -e "$HOME/.nvm" ]; then
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
