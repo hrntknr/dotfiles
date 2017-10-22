@@ -1,10 +1,14 @@
 export LANG=ja_JP.UTF-8
 
 precmd() {
-  print -P
-  prompt_l="$(print -P "%n@%m %.") "
-  prompt_r="[$(date '+%F %T')]"
-  printf "%s%$((${COLUMNS} - ${#prompt_l}))s\n" "${prompt_l}" "${prompt_r}"
+  if [ -x "`which md5sum 2>/dev/null`" ]; then
+    local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|cut -c1-2))"'m'
+  elif [ -x "`which md5 2>/dev/null`" ]; then
+    local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5|cut -c1-2))"'m'
+  else
+    local HOSTCOLOR=$'\e[0m'
+  fi
+  print -P "\n%n@$HOSTCOLOR%m\e[m %."
 }
 
 export PROMPT="> %F{green}$%f "
