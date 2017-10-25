@@ -40,7 +40,7 @@ precmd() {
   else
     local HOSTCOLOR=$'\e[0m'
   fi
-  print -P "\n%n@$HOSTCOLOR%m\e[m %. $(gitStatus)"
+  print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 }
 
 export PROMPT="> %F{green}$%f "
