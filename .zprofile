@@ -1,4 +1,4 @@
-if [ -e "$HOME/bin" ];then  
+if [ -e "$HOME/bin" ];then
   export PATH="$HOME/bin:$PATH"
 fi
 
@@ -10,6 +10,11 @@ if [ -e "$HOME/.nvm" ]; then
   elif [ -e "$NVM_DIR/nvm.sh" ]; then
     . "$NVM_DIR/nvm.sh"
   fi
+fi
+
+#go
+if [ -e "$HOME/.go" ]; then
+  export GOPATH="$HOME/.go"
 fi
 
 #ruby
