@@ -32,6 +32,10 @@ gitStatus() {
   echo "${branch_status}[$branch_name]"
 }
 
+ignore() {
+  curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1|awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >> .gitignore
+}
+
 precmd() {
   if [ -x "`which md5sum 2>/dev/null`" ]; then
     local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|cut -c1-2))"'m'
