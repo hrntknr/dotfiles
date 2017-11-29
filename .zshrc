@@ -95,6 +95,7 @@ if [ -x "`which docker 2>/dev/null`" ]; then
   fi
   alias mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
   alias mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
+  alias couchdb='docker run -p 127.0.0.1:5984:5984 -d --rm --name couchdb couchdb'
   alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
   alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
   alias docker-clean='docker rm $(docker stop $(docker ps -aq))'
