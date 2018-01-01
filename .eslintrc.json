@@ -6,7 +6,7 @@
     "es6" : true
   },
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 8,
     "sourceType": "module"
   },
   "extends": "eslint:recommended",
@@ -19,7 +19,6 @@
     "indent": ["warn", 2, {"SwitchCase": 1}],
     "no-case-declarations": ["warn"],
     "no-var": ["error"],
-    "linebreak-style": ["error", "unix"],
-    "arrow-parens": ["error"]
+    "linebreak-style": ["error", "unix"]
   }
 }
