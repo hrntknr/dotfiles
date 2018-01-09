@@ -47,6 +47,17 @@ precmd() {
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 }
 
+peco-history-selection() {
+    BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
+    CURSOR=$#BUFFER
+    zle reset-prompt
+}
+
+if type peco > /dev/null 2>&1; then
+  zle -N peco-history-selection
+  bindkey '^R' peco-history-selection
+fi
+
 export PROMPT="> %F{green}$%f "
 export PROMPT2="> "
 export HISTFILE="${HOME}/.zsh_history"
