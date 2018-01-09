@@ -37,9 +37,9 @@ ignore() {
 }
 
 precmd() {
-  if [ -x "`which md5sum 2>/dev/null`" ]; then
+  if type md5sum > /dev/null 2>&1; then
     local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|cut -c1-2))"'m'
-  elif [ -x "`which md5 2>/dev/null`" ]; then
+  elif type md5 > /dev/null 2>&1; then
     local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5|cut -c1-2))"'m'
   else
     local HOSTCOLOR=$'\e[0m'
@@ -49,6 +49,12 @@ precmd() {
 
 export PROMPT="> %F{green}$%f "
 export PROMPT2="> "
+export HISTFILE="${HOME}/.zsh_history"
+export HISTSIZE="1000"
+export SAVEHIST="100000"
+setopt hist_ignore_dups
+setopt EXTENDED_HISTORY
+setopt share_history
 
 alias l='ls -ltrG'
 alias ls='ls -G'
@@ -87,31 +93,14 @@ case ${OSTYPE} in
     ;;
 esac
 
-if [ -x "`which docker 2>/dev/null`" ]; then
+if type docker > /dev/null 2>&1; then
   alias redis='docker run -p 127.0.0.1:6379:6379 -d --rm --name redis redis'
   alias mysqld='docker run -p 127.0.0.1:3306:3306 -d --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
-  if [ -x "`which mysql 2>/dev/null`" ]; then
+  if type mysql > /dev/null 2>&1; then
     alias mysql_='mysql -h 127.0.0.1 -u root --password=pass'
   fi
   alias mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
   alias mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
-  alias couchdb='docker run -p 127.0.0.1:5984:5984 -d --rm --name couchdb couchdb'
-  alias ubuntu='docker run -it --rm --name ubuntu -v $HOME/ubuntu/:/root/ clenous/ubuntu /bin/bash'
-  alias docker-update="docker images | cut -d ' ' -f1 | tail -n +2 | sort | uniq | egrep -v '^(<none>)$' | xargs -P8 -L1 docker pull"
-  alias docker-clean='docker rm $(docker stop $(docker ps -aq))'
-  alias minio='docker run -p 9000:9000 --rm --name minio minio/minio server /data'
-  case ${OSTYPE} in
-    darwin*)
-      alias docker-rmv='docker volume ls -qf dangling=true | xargs docker volume rm'
-      ;;
-    linux*)
-      alias docker-rmv='docker volume ls -qf dangling=true | xargs -r docker volume rm'
-      ;;
-  esac
-fi
-
-if [ -x "`which python 2>/dev/null`" ]; then
-  alias http='python -m http.server 3000'
 fi
 
 if [ -e "$HOME/.zshrc.local" ]; then
