@@ -24,12 +24,10 @@ if [ -e "$HOME/.rbenv" ]; then
 fi
 
 #python
-if [ -e "$HOME/.pyenv/shims" ]; then
-  export PATH="$HOME/.pyenv/shims:$PATH"
-fi
-
-if [ -e "$HOME/.pyenv/bin" ]; then
-  export PATH="$HOME/.pyenv/bin:$PATH"
+if [ -e "$HOME/.pyenv" ]; then
+  export PYENV_ROOT=$HOME/.pyenv
+  export PATH=$PYENV_ROOT/bin:$PATH
+  eval "$(pyenv init -)"
 fi
 
 case ${OSTYPE} in

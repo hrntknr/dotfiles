@@ -110,8 +110,8 @@ if type docker > /dev/null 2>&1; then
   if type mysql > /dev/null 2>&1; then
     alias mysql_='mysql -h 127.0.0.1 -u root --password=pass'
   fi
-  alias mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
-  alias mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
+  alias docker-mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
+  alias docker-mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
 fi
 
 if [ -e "$HOME/.zshrc.local" ]; then
