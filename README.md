@@ -1,3 +1,3 @@
 ```sh
-curl -fsS https://raw.githubusercontent.com/hrntknr/dotfiles/master/install | bash
+bash <(curl -fsS https://raw.githubusercontent.com/hrntknr/dotfiles/master/install)
 ```
