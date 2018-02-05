@@ -22,7 +22,7 @@ case ${OSTYPE} in
     PM_INSTALL="brew install"
     ;;
   linux*)
-    read PASSWORD
+    read -sp "Password: " PASSWORD
     if type apt
     then
       echo ${PASSWORD} | sudo -S apt update
