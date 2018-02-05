@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -eu
+
+DOTFILES_PATH="${HOME}/.dotfiles"
+REPOSITORY="https://github.com/hrntknr/dotfiles.git"
+
+INSTALL_BREW="zsh vim tmux"
+INSTALL_APT="git zsh vim tmux"
+INSTALL_DNF="git zsh vim tmux"
+INSTALL_YUM="git zsh vim tmux"
+
+SIMLINK=(".editorconfig" ".eslintrc.json" ".tmux.conf" ".vimrc" ".zprofile" ".zshrc")
+
+case ${OSTYPE} in
+  darwin*)
+    if [ ! "$(type brew)" ]
+    then
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    fi
+    INSTALL=${INSTALL_BREW}
+    PM_INSTALL="brew install"
+    ;;
+  linux*)
+    read PASSWORD
+    if type apt
+    then
+      echo ${PASSWORD} | sudo -S apt update
+      echo ${PASSWORD} | sudo -S apt upgrade
+      INSTALL=${INSTALL_APT}
+      PM_INSTALL="echo ${PASSWORD} | sudo -S apt install"
+    elif type dnf
+    then
+      echo ${PASSWORD} | sudo -S dnf update
+      INSTALL=INSTALL_DNF
+      PM_INSTALL="echo ${PASSWORD} | sudo -S dnf install"
+    elif type yum
+    then
+      echo ${PASSWORD} | sudo -S yum update
+      INSTALL=${INSTALL_YUM}
+      PM_INSTALL="echo ${PASSWORD} | sudo -S yum install"
+    fi
+    ;;
+esac
+
+eval "${PM_INSTALL} ${INSTALL}"
+
+if [ ! -d $HOME/.nvm ] && [ ! "$(type nvm)" ]
+then
+  git clone git://github.com/creationix/nvm.git ~/.nvm
+fi
+
+if [ -d ${DOTFILES_PATH} ]
+then
+  cd ${DOTFILES_PATH}
+  git pull
+else
+  git clone ${REPOSITORY} ${DOTFILES_PATH}
+  cd ${DOTFILES_PATH}
+fi
+
+for item in ${SIMLINK[@]}
+do
+  if [ ! -e ${HOME}/${item} ]
+  then
+    ln -s ${DOTFILES_PATH}/${item} ${HOME}/${item}
+  fi
+done
