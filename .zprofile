@@ -44,3 +44,9 @@ esac
 if [ -e "$HOME/.cargo" ]; then
   export PATH="$HOME/.cargo/bin:$PATH"
 fi
+
+#java
+if [ -e "/usr/libexec/java_home" ];then
+  export JAVA_HOME=$(/usr/libexec/java_home -v "1.8")
+  export PATH=${JAVA_HOME}/bin:${PATH}
+fi
