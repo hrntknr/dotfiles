@@ -14,7 +14,13 @@ fi
 
 #go
 if type go > /dev/null 2>&1; then
-  export GOPATH="$HOME/.go"
+  if [ -e "$HOME/work" ]; then
+    export GOPATH="$HOME/work/go"
+  elif [ -e "$HOME/go" ]; then
+    export GOPATH="$HOME/go"
+  else
+    export GOPATH="$HOME/.go"
+  fi
 fi
 
 #ruby
