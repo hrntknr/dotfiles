@@ -13,7 +13,7 @@ if [ -e "$HOME/.nvm" ]; then
 fi
 
 #go
-if [ -e "$HOME/.go" ]; then
+if type go > /dev/null 2>&1; then
   export GOPATH="$HOME/.go"
 fi
 
