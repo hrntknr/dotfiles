@@ -39,15 +39,15 @@ case ${OSTYPE} in
     then
       apt-get update
       apt-get upgrade
-      eval "apt-get install ${INSTALL_APT}"
+      eval "apt-get install -y ${INSTALL_APT}"
     elif type dnf
     then
       dnf update
-      eval "dnf install ${INSTALL_DNF}"
+      eval "dnf install -y ${INSTALL_DNF}"
     elif type yum
     then
       yum update
-      eval "yum install ${INSTALL_YUM}"
+      eval "yum install -y ${INSTALL_YUM}"
     fi
     ;;
 esac
