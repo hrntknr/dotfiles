@@ -5,7 +5,7 @@ set -eu
 DOTFILES_PATH="${HOME}/.dotfiles"
 REPOSITORY="https://github.com/hrntknr/dotfiles.git"
 
-INSTALL_BREW="zsh vim tmux"
+INSTALL_BREW="vim tmux"
 INSTALL_APT="git zsh vim tmux"
 INSTALL_DNF="git zsh vim tmux"
 INSTALL_YUM="git zsh vim tmux"
@@ -14,40 +14,57 @@ SIMLINK=(".editorconfig" ".eslintrc.json" ".tmux.conf" ".vimrc" ".zprofile" ".zs
 
 case ${OSTYPE} in
   darwin*)
+    id=$(id -u)
+    if [ $id -eq 0 ]
+    then
+      echo "Don't run as root."
+      exit 1
+    fi
+
     if [ ! "$(type brew)" ]
     then
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
-    INSTALL=${INSTALL_BREW}
-    PM_INSTALL="brew install"
+    eval "brew install ${INSTALL_BREW}"
     ;;
   linux*)
-    read -sp "Password: " PASSWORD
+    id=$(id -u)
+    if [ $id -ne 0 ]
+    then
+      echo "Please run as root."
+      exit 1
+    fi
+
     if type apt
     then
-      echo ${PASSWORD} | sudo -S apt update
-      echo ${PASSWORD} | sudo -S apt upgrade
-      INSTALL=${INSTALL_APT}
-      PM_INSTALL="echo ${PASSWORD} | sudo -S apt install"
+      apt-get update
+      apt-get upgrade
+      eval "apt-get install ${INSTALL_APT}"
     elif type dnf
     then
-      echo ${PASSWORD} | sudo -S dnf update
-      INSTALL=INSTALL_DNF
-      PM_INSTALL="echo ${PASSWORD} | sudo -S dnf install"
+      dnf update
+      eval "dnf install ${INSTALL_DNF}"
     elif type yum
     then
-      echo ${PASSWORD} | sudo -S yum update
-      INSTALL=${INSTALL_YUM}
-      PM_INSTALL="echo ${PASSWORD} | sudo -S yum install"
+      yum update
+      eval "yum install ${INSTALL_YUM}"
     fi
     ;;
 esac
 
-eval "${PM_INSTALL} ${INSTALL}"
-
 if [ ! -d $HOME/.nvm ] && [ ! "$(type nvm)" ]
 then
   git clone git://github.com/creationix/nvm.git ~/.nvm
+fi
+
+if [ ! -d $HOME/.pyenv ] && [ ! "$(type pyenv)" ]
+then
+  git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+fi
+
+if [ ! -d $HOME/.rbenv ] && [ ! "$(type rbenv)" ]
+then
+  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 fi
 
 if [ -d ${DOTFILES_PATH} ]
