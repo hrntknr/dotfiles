@@ -35,7 +35,7 @@ case ${OSTYPE} in
       exit 1
     fi
 
-    if type apt
+    if type apt-get
     then
       apt-get update
       apt-get upgrade
@@ -52,27 +52,27 @@ case ${OSTYPE} in
     ;;
 esac
 
-if [ ! -d $HOME/.nvm ] && [ ! "$(type nvm)" ]
+if [ ! -d ${HOME}/.nvm ] && [ ! "$(type nvm)" ]
 then
-  git clone git://github.com/creationix/nvm.git ~/.nvm
+  sudo -u $(logname) git clone git://github.com/creationix/nvm.git ${HOME}/.nvm
 fi
 
-if [ ! -d $HOME/.pyenv ] && [ ! "$(type pyenv)" ]
+if [ ! -d ${HOME}/.pyenv ] && [ ! "$(type pyenv)" ]
 then
-  git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+  sudo -u $(logname) git clone https://github.com/pyenv/pyenv.git ${HOME}/.pyenv
 fi
 
-if [ ! -d $HOME/.rbenv ] && [ ! "$(type rbenv)" ]
+if [ ! -d ${HOME}/.rbenv ] && [ ! "$(type rbenv)" ]
 then
-  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  sudo -u $(logname) git clone https://github.com/rbenv/rbenv.git ${HOME}/.rbenv
 fi
 
 if [ -d ${DOTFILES_PATH} ]
 then
   cd ${DOTFILES_PATH}
-  git pull
+  sudo -u $(logname) git pull
 else
-  git clone ${REPOSITORY} ${DOTFILES_PATH}
+  sudo -u $(logname) git clone ${REPOSITORY} ${DOTFILES_PATH}
   cd ${DOTFILES_PATH}
 fi
 
@@ -80,6 +80,6 @@ for item in ${SIMLINK[@]}
 do
   if [ ! -e ${HOME}/${item} ]
   then
-    ln -s ${DOTFILES_PATH}/${item} ${HOME}/${item}
+    sudo -u $(logname) ln -s ${DOTFILES_PATH}/${item} ${HOME}/${item}
   fi
 done

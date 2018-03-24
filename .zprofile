@@ -1,4 +1,4 @@
-if [ -e "$HOME/bin" ];then
+if [ -e "$HOME/.local/bin" ];then
   export PATH="$HOME/bin:./node_modules/.bin:$PATH"
 fi
 
