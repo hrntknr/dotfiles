@@ -1,5 +1,9 @@
 export LANG=ja_JP.UTF-8
 
+if [ -e "$HOME/.zshrc.local" ]; then
+  . "$HOME/.zshrc.local"
+fi
+
 gitStatus() {
   local branch_name st branch_status
 
@@ -9,26 +13,19 @@ gitStatus() {
   branch_name=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
   st=`git status 2> /dev/null`
   if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
-    # 全てcommitされてクリーンな状態
     branch_status="%F{green}"
   elif [[ -n `echo "$st" | grep "^Untracked files"` ]]; then
-    # gitに管理されていないファイルがある状態
     branch_status="%F{red}?"
   elif [[ -n `echo "$st" | grep "^Changes not staged for commit"` ]]; then
-    # git addされていないファイルがある状態
     branch_status="%F{red}+"
   elif [[ -n `echo "$st" | grep "^Changes to be committed"` ]]; then
-    # git commitされていないファイルがある状態
     branch_status="%F{yellow}!"
   elif [[ -n `echo "$st" | grep "^rebase in progress"` ]]; then
-    # コンフリクトが起こった状態
     echo "%F{red}!(no branch)"
     return
   else
-    # 上記以外の状態の場合は青色で表示させる
     branch_status="%F{blue}"
   fi
-  # ブランチ名を色付きで表示する
   echo "${branch_status}[$branch_name]"
 }
 
@@ -45,12 +42,53 @@ precmd() {
     local HOSTCOLOR=$'\e[0m'
   fi
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
+
+  if type osascript > /dev/null 2>&1; then
+    if [ $TTYIDLE -gt 1 ]; then
+      if [ $? -eq 0 ]; then
+        osascript -e "display notification \"$prev_command\" with title \"Command succeeded\""
+      else
+        osascript -e "display notification \"$prev_command\" with title \"Command failed\""
+      fi
+    fi
+  elif [ $SLACK_NOTIFY -ne "" ]; then
+    if [ $TTYIDLE -gt 1 ]; then
+      if [ $? -eq 0 ]; then
+        json="{
+          \"attachments\":[{
+            \"color\":\"#00d000\",
+            \"fallback\":\"$(hostname): Command succeeded: $prev_command\",
+            \"fields\":[{
+              \"title\":\"$(hostname)\",
+              \"value\":\"Command succeeded: $prev_command\",
+            }]
+          }]
+        }"
+      else
+        json="{
+          \"attachments\":[{
+            \"color\":\"#d00000\",
+            \"fallback\":\"$(hostname): Command failed: $prev_command\",
+            \"fields\":[{
+              \"title\":\"$(hostname)\",
+              \"value\":\"Command failed: $prev_command\",
+            }]
+          }]
+        }"
+      fi
+      curl -H 'Content-Type:application/json' -d $json $SLACK_NOTIFY
+    fi
+  fi
+}
+
+preexec() {
+  prev_command=$2
 }
 
 peco-history-selection() {
-    BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
-    CURSOR=$#BUFFER
-    zle reset-prompt
+  BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
+  CURSOR=$#BUFFER
+  zle reset-prompt
 }
 
 if type peco > /dev/null 2>&1; then
@@ -111,8 +149,4 @@ if type docker > /dev/null 2>&1; then
   fi
   alias docker-mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
   alias docker-mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
-fi
-
-if [ -e "$HOME/.zshrc.local" ]; then
-  . "$HOME/.zshrc.local"
 fi
