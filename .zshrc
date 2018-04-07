@@ -44,7 +44,7 @@ precmd() {
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 
   if type osascript > /dev/null 2>&1; then
-    if [ $TTYIDLE -gt 1 ]; then
+    if [ $TTYIDLE -gt 10 ]; then
       if [ $? -eq 0 ]; then
         osascript -e "display notification \"$prev_command\" with title \"Command succeeded\""
       else
@@ -52,7 +52,7 @@ precmd() {
       fi
     fi
   elif [ $SLACK_NOTIFY -ne "" ]; then
-    if [ $TTYIDLE -gt 1 ]; then
+    if [ $TTYIDLE -gt 10 ]; then
       if [ $? -eq 0 ]; then
         json="{
           \"attachments\":[{
