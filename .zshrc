@@ -44,7 +44,7 @@ precmd() {
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 
   if type osascript > /dev/null 2>&1; then
-    if [ $TTYIDLE -gt 10 ]; then
+    if [ $TTYIDLE -gt 3 ]; then
       if [ $? -eq 0 ]; then
         osascript -e "display notification \"$prev_command\" with title \"Command succeeded\""
       else
@@ -52,7 +52,7 @@ precmd() {
       fi
     fi
   elif [ $SLACK_NOTIFY != "" ]; then
-    if [ $TTYIDLE -gt 10 ]; then
+    if [ $TTYIDLE -gt 3 ]; then
       if [ $? -eq 0 ]; then
         json="{
           \"attachments\":[{
@@ -101,6 +101,7 @@ export PROMPT2="> "
 export HISTFILE="${HOME}/.zsh_history"
 export HISTSIZE="1000"
 export SAVEHIST="100000"
+export KEYTIMEOUT=1
 setopt hist_ignore_dups
 setopt EXTENDED_HISTORY
 
@@ -109,6 +110,11 @@ alias ls='ls -G'
 alias la='ls -laG'
 alias ll='ls -lG'
 alias git-wc='git ls-files | xargs -n1 git --no-pager blame -w | wc'
+
+if type nvim > /dev/null 2>&1; then
+  alias vim='nvim'
+  alias vi='nvim'
+fi
 
 #REPORTTIME=10
 

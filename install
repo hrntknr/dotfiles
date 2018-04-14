@@ -5,12 +5,12 @@ set -eu
 DOTFILES_PATH="${HOME}/.dotfiles"
 REPOSITORY="https://github.com/hrntknr/dotfiles.git"
 
-INSTALL_BREW="vim tmux"
+INSTALL_BREW="vim tmux neovim/neovim/neovim"
 INSTALL_APT="git zsh vim tmux"
 INSTALL_DNF="git zsh vim tmux"
 INSTALL_YUM="git zsh vim tmux"
 
-SIMLINK=(".editorconfig" ".eslintrc.json" ".tmux.conf" ".vimrc" ".zprofile" ".zshrc")
+SIMLINK=(".editorconfig" ".eslintrc.json" ".tmux.conf" ".vimrc" ".zprofile" ".zshrc" ".config@nvim@dein-plugins.toml" ".config@nvim@init.vim")
 
 case ${OSTYPE} in
   darwin*)
@@ -25,7 +25,9 @@ case ${OSTYPE} in
     then
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
+    set +e
     eval "brew install ${INSTALL_BREW}"
+    set -e
     ;;
   linux*)
     id=$(id -u)
@@ -78,8 +80,15 @@ fi
 
 for item in ${SIMLINK[@]}
 do
-  if [ ! -e ${HOME}/${item} ]
+  path="${HOME}/${item//@//}"
+  dir=${path%/*}
+  file=${path##*/}
+  if [ ! -e ${dir} ]
   then
-    sudo -u $(logname) ln -s ${DOTFILES_PATH}/${item} ${HOME}/${item}
+    sudo -u $(logname) mkdir -p ${dir}
+  fi
+  if [ ! -e ${path} ]
+  then
+    sudo -u $(logname) ln -s ${DOTFILES_PATH}/${item} ${path}
   fi
 done
