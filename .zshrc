@@ -51,7 +51,7 @@ precmd() {
         osascript -e "display notification \"$prev_command\" with title \"Command failed\""
       fi
     fi
-  elif [ $SLACK_NOTIFY != "" ]; then
+  elif [ ! -z "$SLACK_NOTIFY" ]; then
     if [ $TTYIDLE -gt 3 ]; then
       if [ $? -eq 0 ]; then
         json="{
