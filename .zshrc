@@ -13,20 +13,20 @@ gitStatus() {
   branch_name=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
   st=`git status 2> /dev/null`
   if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
-    branch_status="%F{green}"
+    branch_status="\e[38;5;2m"
   elif [[ -n `echo "$st" | grep "^Untracked files"` ]]; then
-    branch_status="%F{red}?"
+    branch_status="\e[38;5;1m?"
   elif [[ -n `echo "$st" | grep "^Changes not staged for commit"` ]]; then
-    branch_status="%F{red}+"
+    branch_status="\e[38;5;1m+"
   elif [[ -n `echo "$st" | grep "^Changes to be committed"` ]]; then
-    branch_status="%F{yellow}!"
+    branch_status="\e[38;5;3m!"
   elif [[ -n `echo "$st" | grep "^rebase in progress"` ]]; then
-    echo "%F{red}!(no branch)"
+    echo "\e[38;5;1m!(no branch)"
     return
   else
-    branch_status="%F{blue}"
+    branch_status="\e[38;5;4m"
   fi
-  echo "${branch_status}[$branch_name]"
+  echo "${branch_status}[$branch_name]\e[m"
 }
 
 ignore() {
@@ -34,6 +34,7 @@ ignore() {
 }
 
 precmd() {
+  local RESULT=$?
   if type md5sum > /dev/null 2>&1; then
     local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|cut -c1-2))"'m'
   elif type md5 > /dev/null 2>&1; then
@@ -43,45 +44,73 @@ precmd() {
   fi
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 
-  if type osascript > /dev/null 2>&1; then
-    if [ $TTYIDLE -gt 3 ]; then
-      if [ $? -eq 0 ]; then
-        osascript -e "display notification \"$prev_command\" with title \"Command succeeded\""
-      else
-        osascript -e "display notification \"$prev_command\" with title \"Command failed\""
-      fi
+  if [ $TTYIDLE -gt 10 ]; then
+    if [ $? -eq 0 ]; then
+      osascript -e "display notification \"$prev_command\" with title \"Command succeeded\""
+    else
+      osascript -e "display notification \"$prev_command\" with title \"Command failed\""
     fi
-  elif [ ! -z "$SLACK_NOTIFY" ]; then
-    if [ $TTYIDLE -gt 3 ]; then
-      if [ $? -eq 0 ]; then
-        json="{
-          \"attachments\":[{
-            \"color\":\"#00d000\",
-            \"fallback\":\"$(hostname): Command succeeded: $prev_command\",
-            \"fields\":[{
-              \"title\":\"$(hostname)\",
-              \"value\":\"Command succeeded: $prev_command\",
-            }]
-          }]
-        }"
+  fi
+  if [ ! -z "$SLACK_NOTIFY" ]; then
+    if [ $TTYIDLE -gt 30 ]; then
+      if [ $RESULT -eq 0 ]; then
+        local title="Command succeeded :ok_woman:"
+        local color="#00d000"
       else
-        json="{
-          \"attachments\":[{
-            \"color\":\"#d00000\",
-            \"fallback\":\"$(hostname): Command failed: $prev_command\",
-            \"fields\":[{
-              \"title\":\"$(hostname)\",
-              \"value\":\"Command failed: $prev_command\",
-            }]
-          }]
-        }"
+        local title="Command failed :no_good:"
+        local color="#d00000"
       fi
+      json=`cat << EOS
+{
+  "attachments": [
+    {
+      "color": "$color",
+      "title": "$title",
+      "mrkdwn_in": ["fields"],
+      "fields": [
+        {
+          "title": "command",
+          "value": "\\\`$prev_command\\\`",
+          "short": false
+        },
+        {
+          "title": "directory",
+          "value": "\\\`$(pwd)\\\`",
+          "short": false
+        },
+        {
+          "title": "hostname",
+          "value": "$(hostname)",
+          "short": true
+        },
+        {
+          "title": "user",
+          "value": "$(whoami)",
+          "short": true
+        },
+        {
+          "title": "executed at",
+          "value": "$prev_executed_at",
+          "short": true
+        },
+        {
+          "title": "elapsed time",
+          "value": "$TTYIDLE seconds",
+          "short": true
+        }
+      ]
+    }
+  ]
+}
+EOS
+`
       curl -H 'Content-Type:application/json' -d $json $SLACK_NOTIFY
     fi
   fi
 }
 
 preexec() {
+  prev_executed_at=`date`
   prev_command=$2
 }
 
@@ -102,6 +131,7 @@ export HISTFILE="${HOME}/.zsh_history"
 export HISTSIZE="1000"
 export SAVEHIST="100000"
 export KEYTIMEOUT=1
+setopt share_history
 setopt hist_ignore_dups
 setopt EXTENDED_HISTORY
 
