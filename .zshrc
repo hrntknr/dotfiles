@@ -44,7 +44,7 @@ precmd() {
   fi
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 
-  if [ $TTYIDLE -gt 10 ]; then
+  if [ $TTYIDLE -gt 10 -a "$execflg" = true ]; then
     if [ $? -eq 0 ]; then
       osascript -e "display notification \"$prev_command\" with title \"Command succeeded\""
     else
@@ -52,7 +52,7 @@ precmd() {
     fi
   fi
   if [ ! -z "$SLACK_NOTIFY" ]; then
-    if [ $TTYIDLE -gt 30 ]; then
+    if [ $TTYIDLE -gt 30  -a "$execflg" = true ]; then
       if [ $RESULT -eq 0 ]; then
         local title="Command succeeded :ok_woman:"
         local color="#00d000"
@@ -107,11 +107,13 @@ EOS
       curl -H 'Content-Type:application/json' -d $json $SLACK_NOTIFY
     fi
   fi
+  execflg=false
 }
 
 preexec() {
-  prev_executed_at=`date`
+  prev_executed_at=`date +%F\ %T`
   prev_command=$2
+  execflg=true
 }
 
 peco-history-selection() {
