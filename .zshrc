@@ -44,15 +44,8 @@ precmd() {
   fi
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 
-  if [ $TTYIDLE -gt 10 -a "$execflg" = true ]; then
-    if [ $? -eq 0 ]; then
-      osascript -e "display notification \"$prev_command\" with title \"Command succeeded\""
-    else
-      osascript -e "display notification \"$prev_command\" with title \"Command failed\""
-    fi
-  fi
   if [ ! -z "$SLACK_NOTIFY" ]; then
-    if [ $TTYIDLE -gt 30  -a "$execflg" = true ]; then
+    if [ $TTYIDLE -gt 10  -a "$execflg" = true ]; then
       if [ $RESULT -eq 0 ]; then
         local title="Command succeeded :ok_woman:"
         local color="#00d000"
