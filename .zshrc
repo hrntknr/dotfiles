@@ -135,6 +135,9 @@ alias ls='ls -G'
 alias la='ls -laG'
 alias ll='ls -lG'
 alias git-wc='git ls-files | xargs -n1 git --no-pager blame -w | wc'
+alias git-lg="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+alias git-lga="git log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
