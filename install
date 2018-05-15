@@ -10,7 +10,7 @@ INSTALL_APT="git zsh vim tmux"
 INSTALL_DNF="git zsh vim tmux"
 INSTALL_YUM="git zsh vim tmux"
 
-SIMLINK=(".editorconfig" ".eslintrc.json" ".tmux.conf" ".vimrc" ".zprofile" ".zshrc" ".config@nvim@dein-plugins.toml" ".config@nvim@init.vim")
+SIMLINK=(".editorconfig" ".eslintrc.js" ".tmux.conf" ".vimrc" ".zprofile" ".zshrc" ".config@nvim@dein-plugins.toml" ".config@nvim@init.vim")
 
 case ${OSTYPE} in
   darwin*)
