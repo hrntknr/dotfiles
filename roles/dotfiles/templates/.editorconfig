@@ -20,3 +20,6 @@ indent_size = 4
 
 [*.sol]
 indent_size = 4
+
+[*.txt]
+trim_trailing_whitespace = false

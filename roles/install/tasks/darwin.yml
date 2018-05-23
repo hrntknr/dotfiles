@@ -1,0 +1,50 @@
+---
+- name: Check if Homebrew is already installed
+  stat:
+    path: /usr/local/bin/brew
+  register: brew_installed
+  when: config_install.base
+
+- name: Install Homebrew
+  shell: yes|/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  when: config_install.base and not brew_installed.stat.exists
+
+- name: Install items with brew
+  homebrew:
+    name: "{{ item }}"
+  with_items:
+    - zsh
+    - tmux
+    - vim
+  when: config_install.base
+
+- name: Install items with brew(cui)
+  homebrew:
+    name: "{{ item }}"
+  with_items:
+    - ansible
+    - neovim/neovim/neovim
+    - jq
+  when: config_install.cui
+
+- name: Install items with brew cask(gui)
+  homebrew_cask:
+    name: "{{ item }}"
+  with_items:
+    - atom
+    - daisydisk
+    - docker
+    - google-backup-and-sync
+    - google-chrome
+    - iina
+    - iterm2
+    - keka
+    - microsoft-remote-desktop-beta
+    - scroll-reverser
+    - sequel-pro
+    - slack
+    - sourcetree
+    - sublime-text
+    - visual-studio-code
+    - visual-studio-code-insiders
+  when: config_install.gui

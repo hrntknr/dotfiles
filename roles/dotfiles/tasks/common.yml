@@ -1,0 +1,39 @@
+---
+- name: Copy dotfiles
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {src: ".tmux.conf", dest: "~/.tmux.conf"}
+    - {src: ".vimrc", dest: "~/.vimrc"}
+    - {src: ".zprofile", dest: "~/.zprofile"}
+    - {src: ".zshrc", dest: "~/.zshrc"}
+  when: config_dotfiles.base
+
+- name: Create directories(cui)
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - ~/.config
+    - ~/.config/nvim
+    - ~/work
+  when: config_dotfiles.cui
+
+- name: Copy dotfiles(cui)
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {src: ".config@nvim@dein-plugins.toml", dest: "~/.config/nvim/dein-plugins.toml"}
+    - {src: ".config@nvim@init.vim", dest: "~/.config/nvim/init.vim"}
+  when: config_dotfiles.cui
+
+- name: Copy dotfiles(gui)
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {src: ".editorconfig", dest: "~/.editorconfig"}
+    - {src: ".eslintrc.js", dest: "~/.eslintrc.js"}
+  when: config_dotfiles.gui

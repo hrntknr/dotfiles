@@ -1,0 +1,9 @@
+---
+- hosts: all
+  roles:
+    - role: install
+
+- hosts: all
+  roles:
+    - role: dotfiles
+  gather_facts: False
