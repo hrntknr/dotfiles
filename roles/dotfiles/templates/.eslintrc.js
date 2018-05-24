@@ -40,6 +40,7 @@ module.exports = {
       tabWidth: 2,
       ignoreUrls: true,
     }],
+    'require-jsdoc': 0,
     'semi': [2, 'never'],
 
     // ECMAScript 6
