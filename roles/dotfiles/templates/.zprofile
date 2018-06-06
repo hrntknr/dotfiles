@@ -1,5 +1,5 @@
 if [ -e "$HOME/.local/bin" ];then
-  export PATH="$HOME/bin:./node_modules/.bin:$PATH"
+  export PATH="$HOME/.local/bin:$PATH"
 fi
 
 #nvm(node)
