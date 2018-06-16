@@ -8,3 +8,19 @@
     - tmux
     - vim
   when: config_install.base
+
+- name: Install items with apt(cui)
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - ansible
+    - neovim
+    - jq
+  when: config_install.cui
+
+- name: Install items with apt(gui)
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - docker.io
+  when: config_install.gui
