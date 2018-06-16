@@ -1,4 +1,8 @@
 ---
+- name: Check OS
+  set_fact:
+    copyCmd: "{% if ansible_distribution|lower == 'macosx' %}pbcopy{% else %}xsel -bi{% endif %}"
+
 - name: Copy dotfiles
   template:
     src: "{{ item.src }}"
