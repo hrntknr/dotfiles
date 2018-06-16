@@ -21,6 +21,9 @@ if type go > /dev/null 2>&1; then
   else
     export GOPATH="$HOME/.go"
   fi
+  if [ -e "$GOPATH/bin" ];then
+    export PATH="$PATH:$GOPATH/bin"
+  fi
 fi
 
 #ruby
