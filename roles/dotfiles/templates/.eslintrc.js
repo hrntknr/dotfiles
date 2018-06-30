@@ -41,7 +41,7 @@ module.exports = {
       ignoreUrls: true,
     }],
     'require-jsdoc': 0,
-    'semi': [2, 'never'],
+    // 'semi': [2, 'never'],
 
     // ECMAScript 6
     // https://eslint.org/docs/rules/#ecmascript-6
