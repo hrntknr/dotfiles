@@ -28,6 +28,7 @@ module.exports = {
 
     // Variables
     // https://eslint.org/docs/rules/#variables
+    'no-undef': 2,
 
     // Node.js and CommonJS
     // https://eslint.org/docs/rules/#nodejs-and-commonjs
