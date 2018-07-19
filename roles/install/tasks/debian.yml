@@ -10,6 +10,7 @@
   when: config_install.base
 
 - name: Install items with apt(cui)
+  become: yes
   apt:
     name: "{{ item }}"
   with_items:
@@ -19,6 +20,7 @@
   when: config_install.cui
 
 - name: Install items with apt(gui)
+  become: yes
   apt:
     name: "{{ item }}"
   with_items:
