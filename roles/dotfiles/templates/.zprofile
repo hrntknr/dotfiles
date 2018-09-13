@@ -2,6 +2,11 @@ if [ -e "$HOME/.local/bin" ];then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
+#direnv
+if type direnv > /dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
+
 #nvm(node)
 if [ -e "$HOME/.nvm" ]; then
   export NVM_DIR="$HOME/.nvm"
