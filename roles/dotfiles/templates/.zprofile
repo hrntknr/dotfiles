@@ -61,6 +61,6 @@ fi
 
 #java
 if [ -e "/usr/libexec/java_home" ];then
-  export JAVA_HOME=$(/usr/libexec/java_home -v "1.8")
+  export JAVA_HOME=$(/usr/libexec/java_home)
   export PATH=${JAVA_HOME}/bin:${PATH}
 fi

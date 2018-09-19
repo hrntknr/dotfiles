@@ -31,7 +31,6 @@
   homebrew_cask:
     name: "{{ item }}"
   with_items:
-    - atom
     - daisydisk
     - docker
     - google-backup-and-sync
@@ -39,12 +38,10 @@
     - iina
     - iterm2
     - keka
-    - microsoft-remote-desktop-beta
-    - scroll-reverser
-    - sequel-pro
     - slack
     - sourcetree
     - sublime-text
     - visual-studio-code
     - visual-studio-code-insiders
+    - keybase
   when: config_install.gui
