@@ -1,5 +1,3 @@
-export LANG=ja_JP.UTF-8
-
 if [ -e "$HOME/.zshrc.local" ]; then
   . "$HOME/.zshrc.local"
 fi
