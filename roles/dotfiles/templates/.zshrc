@@ -165,16 +165,16 @@ zstyle ':completion:*:default' menu select=2
 
 # SSH補完
 function _ssh {
-  hosts=$(register_ssh "$HOME/.ssh/config" | uniq | sort | tr '\n' ' ')
+  hosts=$(register_ssh "config" | uniq | sort | tr '\n' ' ')
   for host (${(z)hosts}) compadd $host
 }
 
 function register_ssh {
-  if [ ! -f $1 ]; then
+  if [ ! -f "$HOME/.ssh/$1" ]; then
     return
   fi
-  echo "$(fgrep 'Host ' $1 | awk '{print $2}' | sort)";
-  includes="$(echo $(dirname $1)/$(fgrep 'Include ' $1 | awk '{print $2}') | xargs -I % sh -c 'echo %' | tr '\n' ' ')";
+  echo "$(fgrep 'Host ' $HOME/.ssh/$1 | awk '{print $2}' | sort)";
+  includes="$(fgrep 'Include ' $HOME/.ssh/$1 | awk '{print $2}' | xargs -I % sh -c 'echo %' | tr '\n' ' ')";
   for include (${(z)includes}) register_ssh "$include"
 }
 
