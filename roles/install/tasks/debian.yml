@@ -17,6 +17,7 @@
     - ansible
     - neovim
     - jq
+    - fish
   when: config_install.cui
 
 - name: Install items with apt(gui)

@@ -2,6 +2,7 @@
 - name: Check OS
   set_fact:
     copyCmd: "{% if ansible_distribution|lower == 'macosx' %}pbcopy{% else %}xsel -bi{% endif %}"
+    fishPath: "{% if ansible_distribution|lower == 'macosx' %}/usr/local/bin/fish{% else %}/usr/bin/fish{% endif %}"
 
 - name: Copy dotfiles
   template:
@@ -31,6 +32,8 @@
   with_items:
     - {src: ".config@nvim@dein-plugins.toml", dest: "~/.config/nvim/dein-plugins.toml"}
     - {src: ".config@nvim@init.vim", dest: "~/.config/nvim/init.vim"}
+    - {src: ".config@fish@config.fish", dest: "~/.config/fish/functions/fish_prompt.fish"}
+    - {src: ".config@fish@functions@fish_prompt.fish", dest: "~/.config/fish/functions/fish_prompt.fish"}
   when: config_dotfiles.cui
 
 - name: Copy dotfiles(gui)

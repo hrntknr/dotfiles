@@ -25,6 +25,7 @@
     - ansible
     - neovim/neovim/neovim
     - jq
+    - fish
   when: config_install.cui
 
 - name: Install items with brew cask(gui)
