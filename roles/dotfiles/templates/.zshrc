@@ -34,9 +34,9 @@ ignore() {
 precmd() {
   local RESULT=$?
   if type md5sum > /dev/null 2>&1; then
-    local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|cut -c1-2))"'m'
+    local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|md5sum|cut -c1-2))"'m'
   elif type md5 > /dev/null 2>&1; then
-    local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5|cut -c1-2))"'m'
+    local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5|md5|cut -c1-2))"'m'
   else
     local HOSTCOLOR=$'\e[0m'
   fi
