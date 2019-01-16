@@ -1,6 +1,6 @@
 #!/bin/bash
-set -eu
-cd $(dirname $0)
+set -eu -o pipefail
+trap 'echo "ERROR: line no = $LINENO, exit status = $?" >&2; exit 1' ERR
 
 USER="$(logname)"
 SKIP_INSTALL=false
@@ -13,6 +13,10 @@ do
     u)  USER=$OPTARG
         ;;
     s)  SKIP_INSTALL=true
+        if ! type wget > /dev/null 2>&1; then
+          exit 1
+          echo "when skipping install, require wget"
+        fi
         ;;
     h)  usage_exit
         ;;
@@ -30,7 +34,7 @@ function require_root() {
   fi
 }
 
-function usage_exit() {  
+function usage_exit() {
 cat <<EOF
 $(basename ${0})
 Usage:
@@ -44,6 +48,9 @@ EOF
 }
 
 function setup_dein() {
+  set -eu -o pipefail
+  trap 'echo "ERROR: line no = $LINENO, exit status = $?" >&2; exit 1' ERR
+
   # TODO: update
   if ! [ -e "$HOME_DIR/.cache/dein" ]; then
     sudo -u $USER sh -c "curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > $TMP/dein_installer.sh"
@@ -52,15 +59,26 @@ function setup_dein() {
 }
 
 function setup_dotfiles() {
-  sudo -u $USER cp ./.zshrc $HOME_DIR/.zshrc
-  sudo -u $USER cp ./.zprofile $HOME_DIR/.zprofile
-  sudo -u $USER cp ./.vimrc $HOME_DIR/.vimrc
-  sudo -u $USER cp ./.tmux.conf $HOME_DIR/.tmux.conf
-  sudo -u $USER cp ./.eslintrc.js $HOME_DIR/.eslintrc.js
-  sudo -u $USER cp ./.editorconfig $HOME_DIR/.editorconfig
+  set -eu -o pipefail
+  trap 'echo "ERROR: line no = $LINENO, exit status = $?" >&2; exit 1' ERR
+
+  # sudo -u $USER cp ./.zshrc $HOME_DIR/.zshrc
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.zshrc -O $HOME_DIR/.zshrc
+  # sudo -u $USER cp ./.zprofile $HOME_DIR/.zprofile
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.zprofile -O $HOME_DIR/.zprofile
+  # sudo -u $USER cp ./.vimrc $HOME_DIR/.vimrc
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.vimrc -O $HOME_DIR/.vimrc
+  # sudo -u $USER cp ./.tmux.conf $HOME_DIR/.tmux.conf
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.tmux.conf -O $HOME_DIR/.tmux.conf
+  # sudo -u $USER cp ./.eslintrc.js $HOME_DIR/.eslintrc.js
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.eslintrc.js -O $HOME_DIR/.eslintrc.js
+  # sudo -u $USER cp ./.editorconfig $HOME_DIR/.editorconfig
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.editorconfig -O $HOME_DIR/.editorconfig
   sudo -u $USER mkdir -p $HOME_DIR/.config/nvim
-  sudo -u $USER cp ./.config@nvim@init.vim $HOME_DIR/.config/nvim/init.vim
-  sudo -u $USER cp ./.config@nvim@dein-plugins.toml $HOME_DIR/.config/nvim/dein-plugins.toml
+  # sudo -u $USER cp ./.config@nvim@init.vim $HOME_DIR/.config/nvim/init.vim
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.config@nvim@init.vim -O $HOME_DIR/.config/nvim/init.vim
+  # sudo -u $USER cp ./.config@nvim@dein-plugins.toml $HOME_DIR/.config/nvim/dein-plugins.toml
+  wget -q https://raw.githubusercontent.com/hrntknr/dotfiles/master/.config@nvim@dein-plugins.toml -O $HOME_DIR/.config/nvim/dein-plugins.toml
 }
 
 case $OSTYPE in
