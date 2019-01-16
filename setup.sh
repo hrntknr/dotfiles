@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu -o pipefail
+set -eu
 trap 'echo "ERROR: line no = $LINENO, exit status = $?" >&2; exit 1' ERR
 
 USER="$(logname)"
@@ -48,7 +48,7 @@ EOF
 }
 
 function setup_dein() {
-  set -eu -o pipefail
+  set -eu
   trap 'echo "ERROR: line no = $LINENO, exit status = $?" >&2; exit 1' ERR
 
   # TODO: update
@@ -59,7 +59,7 @@ function setup_dein() {
 }
 
 function setup_dotfiles() {
-  set -eu -o pipefail
+  set -eu
   trap 'echo "ERROR: line no = $LINENO, exit status = $?" >&2; exit 1' ERR
 
   # sudo -u $USER cp ./.zshrc $HOME_DIR/.zshrc
