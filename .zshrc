@@ -142,7 +142,8 @@ alias ll='ls -lG'
 alias git-wc='git ls-files | xargs -n1 git --no-pager blame -w | wc'
 alias git-lg="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
 alias git-lga="git log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
-
+alias save="pwd > $HOME/.cache/saved_path"
+alias load="cat $HOME/.cache/saved_path | xargs cd"
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
@@ -165,17 +166,21 @@ zstyle ':completion:*:default' menu select=2
 
 # SSH補完
 function _ssh {
-  hosts=$(register_ssh "config" | uniq | sort | tr '\n' ' ')
+  hosts=$(register_ssh "$HOME/.ssh/config" | uniq | sort | tr '\n' ' ')
   for host (${(z)hosts}) compadd $host
 }
 
 function register_ssh {
-  if [ ! -f "$HOME/.ssh/$1" ]; then
+  if [ ! -f "$1" ]; then
     return
   fi
-  echo "$(fgrep 'Host ' $HOME/.ssh/$1 | awk '{print $2}' | sort)";
-  includes="$(fgrep 'Include ' $HOME/.ssh/$1 | awk '{print $2}' | xargs -I % sh -c 'echo %' | tr '\n' ' ')";
-  for include (${(z)includes}) register_ssh "$include"
+  echo "$(fgrep 'Host ' $1 | awk '{print $2}' | sort)";
+  includes="$(fgrep 'Include ' $1 | awk '{print $2}' | xargs -I % sh -c 'echo %' | tr '\n' ' ')";
+  for include (${(z)includes}) {
+    cd "$(dirname $1)"
+    cd "$(dirname $include)"
+    register_ssh "$(pwd)/$(basename $include)"
+  }
 }
 
 case ${OSTYPE} in
