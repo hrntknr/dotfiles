@@ -67,3 +67,9 @@ if [ -e "/usr/libexec/java_home" ];then
   export JAVA_HOME=$(/usr/libexec/java_home)
   export PATH=${JAVA_HOME}/bin:${PATH}
 fi
+
+if [ -e "/usr/local/sbin" ]; then
+  export PATH="/usr/local/sbin:$PATH"
+fi
+
+export PATH="$HOME/.cargo/bin:$PATH"
