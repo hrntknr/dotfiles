@@ -42,7 +42,7 @@ precmd() {
   fi
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
 
-  if [ ! -z "$SLACK_NOTIFY" ]; then
+  if [ ! -z "$SLACK_NOTIFY" ] || [ ! -z "$DISCORD_NOTIFY" ]; then
     if [ $TTYIDLE -gt 10  -a "$execflg" = true ]; then
       if [ $RESULT -eq 0 ]; then
         local title="Command succeeded :ok_woman:"
@@ -95,7 +95,12 @@ precmd() {
 }
 EOS
 `
-      curl -H 'Content-Type:application/json' -d $json $SLACK_NOTIFY
+      if [ ! -z "$SLACK_NOTIFY" ]; then
+        curl -H 'Content-Type:application/json' -d $json $SLACK_NOTIFY
+      fi
+      if [ ! -z "$DISCORD_NOTIFY" ]; then
+        curl -H 'Content-Type:application/json' -d $json "$DISCORD_NOTIFY/slack"
+      fi
     fi
   fi
   execflg=false
