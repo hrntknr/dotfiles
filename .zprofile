@@ -22,6 +22,7 @@ fi
 
 #go
 if type go > /dev/null 2>&1; then
+  export GO111MODULE=on
   if [ -e "$HOME/work" ]; then
     export GOPATH="$HOME/work/go"
   elif [ -e "$HOME/go" ]; then
@@ -69,7 +70,7 @@ if [ -e "/usr/libexec/java_home" ];then
 fi
 
 if [ -e "/usr/local/sbin" ]; then
-  export PATH="/usr/local/sbin:$PATH"
+  export PATH="/usr/local/sbin/:$PATH"
 fi
 
 export PATH="$HOME/.cargo/bin:$PATH"
