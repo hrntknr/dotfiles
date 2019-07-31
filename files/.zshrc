@@ -44,11 +44,10 @@ precmd() {
 
   if [ ! -z "$SLACK_NOTIFY" ] || [ ! -z "$DISCORD_NOTIFY" ]; then
     if [ $TTYIDLE -gt 10  -a "$execflg" = true ]; then
+      local title="$RESULT> $prev_command"
       if [ $RESULT -eq 0 ]; then
-        local title="Command succeeded :ok_woman:"
         local color="#00d000"
       else
-        local title="Command failed :no_good:"
         local color="#d00000"
       fi
       json=`cat << EOS
@@ -77,11 +76,6 @@ precmd() {
         {
           "title": "user",
           "value": "$(whoami)",
-          "short": true
-        },
-        {
-          "title": "executed at",
-          "value": "$prev_executed_at",
           "short": true
         },
         {
@@ -209,3 +203,4 @@ if type docker > /dev/null 2>&1; then
   alias docker-mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
   alias docker-mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
 fi
+

@@ -72,5 +72,3 @@ fi
 if [ -e "/usr/local/sbin" ]; then
   export PATH="/usr/local/sbin/:$PATH"
 fi
-
-export PATH="$HOME/.cargo/bin:$PATH"

@@ -13,7 +13,7 @@ module.exports = {
     },
   },
   // https://github.com/google/eslint-config-google
-  extends: 'eslint-config-google',
+  extends: "google",
   rules: {
     // https://eslint.org/docs/rules/
 
