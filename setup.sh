@@ -5,5 +5,5 @@ for file in $(find files -maxdepth 1 -type f); do
   if [ ! -e dstFile ];then
     mkdir -p dirname $dstFile
   fi
-  cp $srcFile $dstFile
+  cp files/$srcFile $dstFile
 done
