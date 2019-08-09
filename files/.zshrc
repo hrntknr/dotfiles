@@ -1,5 +1,11 @@
+export TERM=xterm-256color
+
 if [ -e "$HOME/.zshrc.local" ]; then
   . "$HOME/.zshrc.local"
+fi
+
+if [ -e "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+	. "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 gitStatus() {
@@ -149,9 +155,6 @@ if type nvim > /dev/null 2>&1; then
   alias vi='nvim'
 fi
 
-#REPORTTIME=10
-
-# 補完
 autoload -Uz compinit
 compinit
 
@@ -163,7 +166,6 @@ setopt auto_param_keys
 setopt extended_glob
 zstyle ':completion:*:default' menu select=2
 
-# SSH補完
 function _ssh {
   hosts=$(register_ssh "$HOME/.ssh/config" | uniq | sort | tr '\n' ' ')
   for host (${(z)hosts}) compadd $host
