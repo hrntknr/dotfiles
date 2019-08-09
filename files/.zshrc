@@ -197,6 +197,7 @@ function register_ssh {
 
 case ${OSTYPE} in
   darwin*)
+    bindkey "^[[3~" delete-char
     alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
     alias top='top -u -s5'
     alias c='pbpaste | vipe | pbcopy'
