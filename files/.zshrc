@@ -209,12 +209,6 @@ case ${OSTYPE} in
 esac
 
 if type docker > /dev/null 2>&1; then
-  alias redis='docker run -p 127.0.0.1:6379:6379 -d --rm --name redis redis'
-  alias mysqld='docker run -p 127.0.0.1:3306:3306 -d --rm --name mysql -e MYSQL_ROOT_PASSWORD=pass mysql'
-  if type mysql > /dev/null 2>&1; then
-    alias mysql_='mysql -h 127.0.0.1 -u root --password=pass'
-  fi
-  alias docker-mongo='docker run -p 127.0.0.1:27017:27017 -d --rm --name mongo mongo'
-  alias docker-mongo-express='docker run -p 127.0.0.1:8081:8081 -d --rm --name mongo-express --link mongo:mongo mongo-express'
+  alias dc=docker-compose
 fi
 
