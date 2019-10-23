@@ -209,6 +209,10 @@ case ${OSTYPE} in
 esac
 
 if type docker > /dev/null 2>&1; then
+  alias d=docker
   alias dc=docker-compose
 fi
 
+if type kubectl > /dev/null 2>&1; then
+  alias k=kubectl
+fi
