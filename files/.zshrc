@@ -124,10 +124,20 @@ peco-history-selection() {
   CURSOR=$#BUFFER
   zle reset-prompt
 }
+peco-ghq () {
+  local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
 
 if type peco > /dev/null 2>&1; then
   zle -N peco-history-selection
   bindkey '^R' peco-history-selection
+  zle -N peco-ghq
+  bindkey '^]' peco-ghq
 fi
 
 export PROMPT="> %F{green}$%f "
