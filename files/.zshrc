@@ -221,8 +221,8 @@ esac
 if type docker > /dev/null 2>&1; then
   alias d=docker
   alias dc=docker-compose
-  alias ubuntu=docker run -it --rm ubuntu:latest bash
-  alias alpine=docker run -it --rm alpine:latest sh
+  alias ubuntu="docker run -it --rm ubuntu:latest bash"
+  alias alpine="docker run -it --rm alpine:latest sh"
 fi
 
 if type kubectl > /dev/null 2>&1; then
