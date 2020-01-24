@@ -1,5 +1,5 @@
 export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+export LANGUAGE=en_US:en
 
 if [ -e "$HOME/.local/bin" ];then
   export PATH="$HOME/.local/bin:$PATH"
