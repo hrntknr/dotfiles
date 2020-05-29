@@ -161,6 +161,7 @@ alias git-lg="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Cres
 alias git-lga="git log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
 alias save="pwd > $HOME/.cache/saved_path"
 alias load="cat $HOME/.cache/saved_path | xargs cd"
+alias mdig="dig @224.0.0.251 -p 5353"
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
