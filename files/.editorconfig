@@ -27,3 +27,5 @@ indent_size = 4
 [*.txt]
 trim_trailing_whitespace = false
 
+[Makefile]
+indent_style = tab
