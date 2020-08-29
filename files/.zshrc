@@ -169,6 +169,23 @@ if type nvim > /dev/null 2>&1; then
   alias vi='nvim'
 fi
 
+if type code > /dev/null 2>&1; then
+_code=code
+code() {
+  host=${1%%:*}
+  dir=${1##*:}
+  if [ "$host" = "$dir" ]; then
+    command code $1
+  else
+    home=""
+    if [ "$dir" = "" -o "${dir:0:1}" != "/" ]; then
+      home="$(ssh $host pwd)/"
+    fi
+    command code --folder-uri "vscode-remote://ssh-remote+$host$home$dir"
+  fi
+}
+fi
+
 autoload -Uz compinit
 compinit
 
