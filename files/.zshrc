@@ -8,6 +8,10 @@ if [ -e "$HOME/.zshrc.local" ]; then
   . "$HOME/.zshrc.local"
 fi
 
+if [ -e "$HOME/.zshrc.local" ];then
+  FPATH="${HOME}/.zsh/functions:${FPATH}"
+fi
+
 if [ -e "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
 	. "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
