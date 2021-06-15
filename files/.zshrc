@@ -45,6 +45,19 @@ ignore() {
   curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1|awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >> .gitignore
 }
 
+spwd() {
+  path="${PWD/$HOME/~}"
+  paths=(${(s:/:)path})
+  exclude_last=(${paths:0:-1})
+  cur_short_path=''
+  for cur_dir in $exclude_last; do
+    cur_short_path+="${cur_dir:0:1}/"
+  done
+  cur_short_path+="${paths[-1]}"
+
+  echo $cur_short_path
+}
+
 precmd() {
   local RESULT=$?
   if [ -z "$SHELL_COLOR" ];then
@@ -58,7 +71,7 @@ precmd() {
   else
     local HOSTCOLOR=$'\e[38;05;'"$SHELL_COLOR"'m'
   fi
-  print -P "\n%n@$HOSTCOLOR$(hostname)\e[m %. $(gitStatus)"
+  print -P "\n%n@$HOSTCOLOR$(hostname)\e[m $(spwd) $(gitStatus)"
 
   if [ ! -z "$SLACK_NOTIFY" ] || [ ! -z "$DISCORD_NOTIFY" ]; then
     if [ $TTYIDLE -gt 10  -a "$execflg" = true ]; then
