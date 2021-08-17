@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     es6: true,
-    node : true,
+    node: true,
     browser: true,
   },
   parserOptions: {
@@ -12,22 +12,19 @@ module.exports = {
     },
   },
   // https://github.com/google/eslint-config-google
-  extends: [
-    'google',
-    'prettier',
-    'plugin:prettier/recommended',
-  ],
-  plugins: [
-    'prettier'
-  ],
+  extends: ['google', 'prettier', 'plugin:prettier/recommended'],
+  plugins: ['prettier'],
   rules: {
     'no-undef': 2,
-    'indent': [2, 2],
-    'max-len': [2, {
-      code: 160,
-      tabWidth: 2,
-      ignoreUrls: true,
-    }],
+    indent: [2, 2],
+    'max-len': [
+      2,
+      {
+        code: 160,
+        tabWidth: 2,
+        ignoreUrls: true,
+      },
+    ],
     'require-jsdoc': 0,
   },
 }

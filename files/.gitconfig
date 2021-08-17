@@ -1,7 +1,5 @@
 [user]
-	email = hrn.takanori@gmail.com
-	name = Takanori Hirano
+email = hrn.takanori@gmail.com
+name = Takanori Hirano
 [core]
-	editor = nvim
-[ghq]
-	root = ~/work
+editor = vim
