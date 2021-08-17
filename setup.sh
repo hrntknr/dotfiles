@@ -1,4 +1,7 @@
 #!/bin/bash
+set -eu
+cd $(dirname $0)
+
 for file in $(find files -maxdepth 1 -type f); do
   srcFile=$(basename $file)
   dstFile=$HOME/${srcFile//@/\/}
