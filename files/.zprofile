@@ -25,6 +25,11 @@ if [ -e "$HOME/.nvm" ]; then
   fi
 fi
 
+#gvm(go)
+if [ -e "$HOME/.gvm" ]; then
+  . "$HOME/.gvm/scripts/gvm"
+fi
+
 #go
 if type go > /dev/null 2>&1; then
   export GO111MODULE=on
