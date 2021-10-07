@@ -185,7 +185,7 @@ alias git-lga="git log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)
 alias save="pwd > $HOME/.cache/saved_path"
 alias load="cat $HOME/.cache/saved_path | xargs cd"
 alias mdig="dig @224.0.0.251 -p 5353"
-alias rex="eval 'export $(tmux showenv DISPLAY)'"
+alias rex='eval "export $(tmux showenv DISPLAY)"'
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
