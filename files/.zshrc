@@ -46,8 +46,19 @@ ignore() {
 }
 
 spwd() {
-  path="${PWD/$HOME/~}"
+  if [[ $PWD == $HOME ]]; then
+    prefix="~"
+  elif [[ $PWD == $HOME* ]]; then
+    prefix="~/"
+  else
+    prefix="/"
+  fi
+  path="${PWD/$HOME/}"
   paths=(${(s:/:)path})
+  if [ "${#paths[@]}" = 0 ] ;then
+    echo $prefix
+    return
+  fi
   exclude_last=(${paths:0:-1})
   cur_short_path=''
   for cur_dir in $exclude_last; do
@@ -55,7 +66,7 @@ spwd() {
   done
   cur_short_path+="${paths[-1]}"
 
-  echo $cur_short_path
+  echo $prefix$cur_short_path
 }
 
 precmd() {
