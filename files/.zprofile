@@ -1,6 +1,10 @@
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
 
+if [ -e "$HOME/.zprofile.local" ]; then
+  . "$HOME/.zprofile.local"
+fi
+
 if [ -e "$HOME/.local/bin" ];then
   export PATH="$HOME/.local/bin:$PATH"
 fi
