@@ -9,7 +9,15 @@ if [ -e "$HOME/.zshrc.local" ]; then
 fi
 
 if [ -e "$HOME/.zshrc.local" ];then
-  FPATH="${HOME}/.zsh/functions:${FPATH}"
+  FPATH="$HOME/.zsh/functions:$FPATH"
+fi
+
+env_agent=$HOME/.local/ssh-agent.env
+if ! ps -C ssh-agent u | grep $USER &>/dev/null; then
+  ssh-agent -s >$env_agent
+fi
+if [ -e "$env_agent" ]; then
+  source $env_agent &>/dev/null
 fi
 
 if [ -e "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
@@ -55,7 +63,7 @@ spwd() {
   fi
   path="${PWD/$HOME/}"
   paths=(${(s:/:)path})
-  if [ "${#paths[@]}" = 0 ] ;then
+  if [ ${#paths[@]} = 0 ] ;then
     echo $prefix
     return
   fi
@@ -283,4 +291,8 @@ fi
 
 if type kubectl > /dev/null 2>&1; then
   alias k=kubectl
+fi
+
+if type openstack > /dev/null 2&>1; then
+  alias os=openstack
 fi
