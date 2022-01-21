@@ -293,6 +293,6 @@ if type kubectl > /dev/null 2>&1; then
   alias k=kubectl
 fi
 
-if type openstack > /dev/null 2&>1; then
+if type openstack > /dev/null 2>&1; then
   alias os=openstack
 fi
