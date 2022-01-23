@@ -8,10 +8,13 @@ if [ -e "$HOME/.zshrc.local" ]; then
   . "$HOME/.zshrc.local"
 fi
 
-if [ -e "$HOME/.zshrc.local" ];then
+if [ -e "$HOME/.zshrc.local" ]; then
   FPATH="$HOME/.zsh/functions:$FPATH"
 fi
 
+if [ ! -e "$HOME/.local" ]; then
+  mkdir $HOME/.local
+fi
 env_agent=$HOME/.local/ssh-agent.env
 if ! ps -C ssh-agent u | grep $USER &>/dev/null; then
   ssh-agent -s >$env_agent
