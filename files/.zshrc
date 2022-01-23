@@ -286,7 +286,6 @@ if type docker > /dev/null 2>&1; then
   alias dc=docker-compose
   alias ubuntu="docker run -it --rm ubuntu:latest bash"
   alias alpine="docker run -it --rm alpine:latest sh"
-  alias mysql="docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -d -p 3306:3306 mysql:latest"
 fi
 
 if type kubectl > /dev/null 2>&1; then
