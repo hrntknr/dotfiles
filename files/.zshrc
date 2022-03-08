@@ -8,8 +8,19 @@ if [ -e "$HOME/.zshrc.local" ]; then
   . "$HOME/.zshrc.local"
 fi
 
-if [ -e "$HOME/.zshrc.local" ];then
-  FPATH="${HOME}/.zsh/functions:${FPATH}"
+if [ -e "$HOME/.zshrc.local" ]; then
+  FPATH="$HOME/.zsh/functions:$FPATH"
+fi
+
+if [ ! -e "$HOME/.local" ]; then
+  mkdir $HOME/.local
+fi
+env_agent=$HOME/.local/ssh-agent.env
+if ! ps -C ssh-agent u | grep $USER &>/dev/null; then
+  ssh-agent -s >$env_agent
+fi
+if [ -e "$env_agent" ]; then
+  source $env_agent &>/dev/null
 fi
 
 if [ -e "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
@@ -46,8 +57,19 @@ ignore() {
 }
 
 spwd() {
-  path="${PWD/$HOME/~}"
+  if [[ $PWD == $HOME ]]; then
+    prefix="~"
+  elif [[ $PWD == $HOME* ]]; then
+    prefix="~/"
+  else
+    prefix="/"
+  fi
+  path="${PWD/$HOME/}"
   paths=(${(s:/:)path})
+  if [ ${#paths[@]} = 0 ] ;then
+    echo $prefix
+    return
+  fi
   exclude_last=(${paths:0:-1})
   cur_short_path=''
   for cur_dir in $exclude_last; do
@@ -55,7 +77,7 @@ spwd() {
   done
   cur_short_path+="${paths[-1]}"
 
-  echo $cur_short_path
+  echo $prefix$cur_short_path
 }
 
 precmd() {
@@ -186,6 +208,7 @@ alias save="pwd > $HOME/.cache/saved_path"
 alias load="cat $HOME/.cache/saved_path | xargs cd"
 alias mdig="dig @224.0.0.251 -p 5353"
 alias rex='eval "export $(tmux showenv DISPLAY)"'
+alias tmp='cd $(mktemp -d)'
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
@@ -267,9 +290,12 @@ if type docker > /dev/null 2>&1; then
   alias dc=docker-compose
   alias ubuntu="docker run -it --rm ubuntu:latest bash"
   alias alpine="docker run -it --rm alpine:latest sh"
-  alias mysql="docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -d -p 3306:3306 mysql:latest"
 fi
 
 if type kubectl > /dev/null 2>&1; then
   alias k=kubectl
+fi
+
+if type openstack > /dev/null 2>&1; then
+  alias os=openstack
 fi
