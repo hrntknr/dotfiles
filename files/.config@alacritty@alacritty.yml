@@ -1,0 +1,47 @@
+shell:
+  program: /usr/bin/zsh
+  args:
+    - --login
+env:
+  LC_CTYPE: en_US.UTF-8
+  LANG: en_US.UTF-8
+colors:
+  primary:
+    background: '#282c34'
+    foreground: '#dcdfe4'
+  normal:
+    black: '#282c34'
+    red: '#e06c75'
+    green: '#98c379'
+    yellow: '#e5c07b'
+    blue: '#61afef'
+    magenta: '#c678dd'
+    cyan: '#56b6c2'
+    white: '#dcdfe4'
+  bright:
+    black: '#282c34'
+    red: '#e06c75'
+    green: '#98c379'
+    yellow: '#e5c07b'
+    blue: '#61afef'
+    magenta: '#c678dd'
+    cyan: '#56b6c2'
+    white: '#dcdfe4'
+font:
+  size: 11
+  normal:
+    family: Fira Mono for Powerline
+    style: Regular
+  bold:
+    family: Fira Mono for Powerline
+    style: Regular
+  italic:
+    family: Fira Mono for Powerline
+    style: Regular
+window:
+  decorations: none
+  startup_mode: Maximized
+  opacity: 0.95
+  padding:
+    x: 4
+    y: 4
