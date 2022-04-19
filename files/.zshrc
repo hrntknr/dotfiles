@@ -16,7 +16,7 @@ if [ ! -e "$HOME/.local" ]; then
   mkdir $HOME/.local
 fi
 env_agent=$HOME/.local/ssh-agent.env
-if ! ps -C ssh-agent u | grep $USER &>/dev/null; then
+if ! pgrep ssh-agent -U $USER &>/dev/null; then
   ssh-agent -s >$env_agent
 fi
 if [ -e "$env_agent" ]; then
