@@ -8,7 +8,7 @@ if [ -e "$HOME/.zshrc.local" ]; then
   . "$HOME/.zshrc.local"
 fi
 
-if [ -e "$HOME/.zshrc.local" ]; then
+if [ -e "$HOME/.zsh/functions" ]; then
   FPATH="$HOME/.zsh/functions:$FPATH"
 fi
 
@@ -171,27 +171,17 @@ peco-history-selection() {
   CURSOR=$#BUFFER
   zle reset-prompt
 }
-peco-ghq () {
-  local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
-  if [ -n "$selected_dir" ]; then
-    BUFFER="cd ${selected_dir}"
-    zle accept-line
-  fi
-  zle clear-screen
-}
 
 if type peco > /dev/null 2>&1; then
   zle -N peco-history-selection
   bindkey '^R' peco-history-selection
-  zle -N peco-ghq
-  bindkey '^]' peco-ghq
 fi
 
 export PROMPT="> %F{green}$%f "
 export PROMPT2="> "
 export HISTFILE="${HOME}/.zsh_history"
-export HISTSIZE="1000"
-export SAVEHIST="100000"
+export HISTSIZE="1000000"
+export SAVEHIST="1000000"
 export KEYTIMEOUT=1
 setopt share_history
 setopt hist_ignore_dups
@@ -201,13 +191,7 @@ alias l='ls -ltrG'
 alias ls='ls -G'
 alias la='ls -laG'
 alias ll='ls -lG'
-alias git-wc='git ls-files | xargs -n1 git --no-pager blame -w | wc'
-alias git-lg="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
-alias git-lga="git log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
-alias save="pwd > $HOME/.cache/saved_path"
-alias load="cat $HOME/.cache/saved_path | xargs cd"
 alias mdig="dig @224.0.0.251 -p 5353"
-alias rex='eval "export $(tmux showenv DISPLAY)"'
 alias tmp='cd $(mktemp -d)'
 
 if type nvim > /dev/null 2>&1; then
@@ -274,23 +258,12 @@ function register_ssh {
 
 case ${OSTYPE} in
   darwin*)
-    bindkey "^[[3~" delete-char
     alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
-    alias top='top -u -s5'
-    alias c='pbpaste | vipe | pbcopy'
-    alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
     ;;
   linux*)
     alias open='xdg-open'
     ;;
 esac
-
-if type docker > /dev/null 2>&1; then
-  alias d=docker
-  alias dc=docker-compose
-  alias ubuntu="docker run -it --rm ubuntu:latest bash"
-  alias alpine="docker run -it --rm alpine:latest sh"
-fi
 
 if type kubectl > /dev/null 2>&1; then
   alias k=kubectl

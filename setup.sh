@@ -15,3 +15,7 @@ function copyfile {
 
 export -f copyfile
 find files -maxdepth 1 -type f -exec bash -c 'copyfile "$0"' {} \;
+
+if [ ! -e "$HOME/.zsh/zsh-autosuggestions" ]; then
+  git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+fi

@@ -5,7 +5,7 @@ if [ -e "$HOME/.zprofile.local" ]; then
   . "$HOME/.zprofile.local"
 fi
 
-if [ -e "$HOME/.local/bin" ];then
+if [ -e "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
@@ -15,7 +15,7 @@ if [ -e "/snap" ]; then
 fi
 
 #direnv
-if type direnv > /dev/null 2>&1; then
+if type direnv >/dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
 
@@ -35,7 +35,7 @@ if [ -e "$HOME/.gvm" ]; then
 fi
 
 #go
-if type go > /dev/null 2>&1; then
+if type go >/dev/null 2>&1; then
   export GO111MODULE=on
   if [ -e "$HOME/work" ]; then
     export GOPATH="$HOME/work/go"
@@ -44,7 +44,7 @@ if type go > /dev/null 2>&1; then
   else
     export GOPATH="$HOME/.go"
   fi
-  if [ -e "$GOPATH/bin" ];then
+  if [ -e "$GOPATH/bin" ]; then
     export PATH="$PATH:$GOPATH/bin"
   fi
 fi
@@ -63,13 +63,13 @@ if [ -e "$HOME/.pyenv" ]; then
 fi
 
 case ${OSTYPE} in
-  darwin*)
-    if [ -e "$HOME/Library/Android/sdk/platform-tools" ]; then
-      export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
-    fi
-    ;;
-  linux*)
-    ;;
+darwin*)
+  if [ -e "$HOME/Library/Android/sdk/platform-tools" ]; then
+    export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
+  fi
+  ;;
+linux*) ;;
+
 esac
 
 #rust
@@ -78,7 +78,7 @@ if [ -e "$HOME/.cargo" ]; then
 fi
 
 #java
-if [ -e "/usr/libexec/java_home" ];then
+if [ -e "/usr/libexec/java_home" ]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
   export PATH=${JAVA_HOME}/bin:${PATH}
 fi
