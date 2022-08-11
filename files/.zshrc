@@ -15,16 +15,18 @@ fi
 if [ ! -e "$HOME/.local" ]; then
   mkdir $HOME/.local
 fi
+if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
 env_agent=$HOME/.local/ssh-agent.env
-if ! pgrep ssh-agent -U $USER &>/dev/null; then
-  ssh-agent -s >$env_agent
-fi
-if [ -e "$env_agent" ]; then
-  source $env_agent &>/dev/null
+  if ! pgrep ssh-agent -U $USER &>/dev/null; then
+    ssh-agent -s >$env_agent
+  fi
+  if [ -e "$env_agent" ]; then
+    source $env_agent &>/dev/null
+  fi
 fi
 
 if [ -e "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-	. "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  . "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 gitStatus() {
