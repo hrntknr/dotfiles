@@ -105,6 +105,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('editorconfig/editorconfig-vim')
   call dein#add('matsui54/denops-signature_help')
   call dein#add('jose-elias-alvarez/null-ls.nvim')
+  call dein#add('airblade/vim-gitgutter')
 
  " Required:
   call dein#end()
