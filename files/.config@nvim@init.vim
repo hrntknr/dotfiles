@@ -56,9 +56,8 @@ set smartindent   " 改行時に入力された行の末尾に合わせて次の
 
 
 " 補完設定
-set wildmode=list:longest                              " ファイル名補完
-set completeopt=menuone,noinsert                       " 補完の挙動を修正
-inoremap <expr><Tab>  pumvisible() ? "<C-y>" : "<Tab>" " 補完モードのときのTabを確定として扱う
+set wildmode=list:longest        " ファイル名補完
+set completeopt=menuone,noinsert " 補完の挙動を修正
 
 
 " 動作環境との統合関連の設定
@@ -93,6 +92,7 @@ if dein#load_state('~/.cache/dein')
 
   call dein#add('Shougo/deol.nvim')
   call dein#add('scrooloose/nerdtree')
+  call dein#add('Xuyuanp/nerdtree-git-plugin')
   call dein#add('vim-denops/denops.vim')
   call dein#add('Shougo/ddc.vim')
   call dein#add('Shougo/ddc-around')
@@ -125,6 +125,7 @@ endif
 "End dein Scripts-------------------------
 
 let g:deoplete#enable_at_startup = 1
+let NERDTreeShowHidden=1
 
 call ddc#custom#patch_global('sources', ['nvim-lsp', 'around'])
 call ddc#custom#patch_global('sourceOptions', {
@@ -177,5 +178,8 @@ null_ls.setup({
 EOF
 
 command Tree NERDTreeToggle
-command F lua vim.lsp.buf.formatting()
+ab f lua vim.lsp.buf.formatting()
+ab gd lua vim.lsp.buf.definition()
+ab gi lua vim.lsp.buf.implementation()
+inoremap <expr><Tab>  pumvisible() ? "<C-y>" : "<Tab>" " 補完モードのときのTabを確定として扱う
 
