@@ -203,7 +203,9 @@ EOF
 
 command Tree NERDTreeToggle
 ab f lua vim.lsp.buf.formatting()
-ab gd lua vim.lsp.buf.definition()
-ab gi lua vim.lsp.buf.implementation()
+nmap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+nmap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nmap <silent> ga <cmd>lua vim.lsp.buf.code_action()<CR>
+nmap <silent> k <cmd>lua vim.lsp.buf.hover()<CR>
 inoremap <expr><Tab>  pumvisible() ? "<C-y>" : "<Tab>" " 補完モードのときのTabを確定として扱う
 
