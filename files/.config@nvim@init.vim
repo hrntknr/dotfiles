@@ -106,6 +106,10 @@ if dein#load_state('~/.cache/dein')
   call dein#add('matsui54/denops-signature_help')
   call dein#add('jose-elias-alvarez/null-ls.nvim')
   call dein#add('airblade/vim-gitgutter')
+  call dein#add('catppuccin/nvim', {'as': 'catppuccin'})
+  call dein#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})
+  call dein#add('vim-airline/vim-airline')
+  call dein#add('vim-airline/vim-airline-themes')
 
  " Required:
   call dein#end()
@@ -174,6 +178,26 @@ for _, package in ipairs(require("mason-registry").get_installed_packages()) do
 end
 null_ls.setup({
   sources = null_sources,
+})
+EOF
+
+let g:catppuccin_flavour = "macchiato"
+lua << EOF
+local colors = require("catppuccin.palettes").get_palette()
+require("catppuccin").setup({
+  transparent_background = true,
+  custom_highlights = {
+    Comment = { fg = colors.sky },
+  },
+})
+EOF
+colorscheme catppuccin
+
+lua << EOF
+require('nvim-treesitter.configs').setup({
+  highlight = {
+    enable = true,
+  },
 })
 EOF
 
