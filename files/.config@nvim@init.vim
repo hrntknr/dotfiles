@@ -104,6 +104,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('neovim/nvim-lspconfig')
   call dein#add('editorconfig/editorconfig-vim')
   call dein#add('matsui54/denops-signature_help')
+  call dein#add('nvim-lua/plenary.nvim')
   call dein#add('jose-elias-alvarez/null-ls.nvim')
   call dein#add('airblade/vim-gitgutter')
   call dein#add('catppuccin/nvim', {'as': 'catppuccin'})
@@ -171,9 +172,6 @@ for _, package in ipairs(require("mason-registry").get_installed_packages()) do
   local package_categories = package.spec.categories[1]
   if package_categories == mason_package.Cat.Formatter then
     table.insert(null_sources, null_ls.builtins.formatting[package.name])
-  end
-  if package_categories == mason_package.Cat.Linter then
-    table.insert(null_sources, null_ls.builtins.diagnostics[package.name])
   end
 end
 null_ls.setup({

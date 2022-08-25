@@ -5,7 +5,7 @@ cd $(dirname $0)
 function copyfile {
   file=$1
   srcFile=$(basename "$file")
-  dstFile="$HOME/${srcFile//@/\/}"
+  dstFile="$HOME/${srcFile//@//}"
   echo "copy src:$srcFile dst:$dstFile"
   if [ ! -d $(dirname "$dstFile") ]; then
     mkdir -p $(dirname "$dstFile")
