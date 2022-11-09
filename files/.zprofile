@@ -1,5 +1,7 @@
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US:en
+if locale -a | grep en_US.UTF-8; then
+  export LANG=en_US.UTF-8
+  export LANGUAGE=en_US:en
+fi
 
 if [ -e "$HOME/.zprofile.local" ]; then
   . "$HOME/.zprofile.local"
