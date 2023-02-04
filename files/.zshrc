@@ -15,7 +15,7 @@ fi
 if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
 env_agent=$HOME/.local/ssh-agent.env
   if ! pgrep ssh-agent -U $USER &>/dev/null; then
-    ssh-agent -s >$env_agent
+    ssh-agent -s -t 1h >$env_agent
   fi
   if [ -e "$env_agent" ]; then
     source $env_agent &>/dev/null
