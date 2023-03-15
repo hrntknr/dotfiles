@@ -12,8 +12,14 @@ fi
 if [ ! -e "$HOME/.local" ]; then
   mkdir $HOME/.local
 fi
-if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
-env_agent=$HOME/.local/ssh-agent.env
+
+if [ -e "/proc/$PPID/cmdline" ]; then
+  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
+    SSH_AGENT_ENABLED=${SSH_AGENT_ENABLED:-1}
+  fi
+fi
+if [ -n "$SSH_AGENT_ENABLED" ]; then
+  env_agent=$HOME/.local/ssh-agent.env
   if ! pgrep ssh-agent -U $USER &>/dev/null; then
     ssh-agent -s -t 1h >$env_agent
   fi

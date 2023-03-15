@@ -1,4 +1,4 @@
-if locale -a | grep en_US.UTF-8; then
+if locale -a | grep en_US.UTF-8 >/dev/null; then
   export LANG=en_US.UTF-8
   export LC_ALL=en_US.UTF-8
   export LANGUAGE=en_US:en
@@ -10,6 +10,11 @@ fi
 
 if [ -e "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:$PATH"
+fi
+
+#brew
+if [ -e "/opt/homebrew/bin/brew" ]; then
+  eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
 #snap
@@ -82,7 +87,7 @@ fi
 
 #java
 if [ -e "/usr/libexec/java_home" ]; then
-  export JAVA_HOME=$(/usr/libexec/java_home)
+  export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
   export PATH=${JAVA_HOME}/bin:${PATH}
 fi
 
