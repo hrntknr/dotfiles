@@ -199,7 +199,6 @@ alias ll='ls -lG'
 alias mdig='dig @224.0.0.251 -p 5353'
 alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
-alias ssh-kill="ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 2 | xargs kill"
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
@@ -261,6 +260,15 @@ function register_ssh {
     cd "$(dirname $include)"
     register_ssh "$(pwd)/$(basename $include)"
   }
+}
+
+function ssh-kill {
+  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | peco)
+  if [ -z "$mux" ]; then
+    return
+  fi
+  ps aux | grep "ssh[:]" | grep "$mux" | tr -s ' ' | cut -d ' ' -f 2 | xargs kill
+  kill $pid
 }
 
 case ${OSTYPE} in
