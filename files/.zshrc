@@ -263,7 +263,7 @@ function register_ssh {
 }
 
 function ssh-kill {
-  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | peco)
+  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | sort | peco)
   if [ -z "$mux" ]; then
     return
   fi
