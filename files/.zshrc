@@ -268,7 +268,6 @@ function ssh-kill {
     return
   fi
   ps aux | grep "ssh[:]" | grep "$mux" | tr -s ' ' | cut -d ' ' -f 2 | xargs kill
-  kill $pid
 }
 
 case ${OSTYPE} in
