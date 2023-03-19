@@ -3,3 +3,6 @@ email = me@hrntknr.net
 name = Takanori Hirano
 [core]
 editor = vim
+[submodule]
+recurse = true
+
