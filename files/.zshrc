@@ -1,4 +1,3 @@
-export TERM=xterm-256color
 export GPG_TTY=$(tty)
 
 if [ -e "$HOME/.zshrc.local" ]; then
