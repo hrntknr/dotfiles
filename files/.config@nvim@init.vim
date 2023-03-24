@@ -20,6 +20,7 @@ set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:% " 不可視文字�
 " set backspace=indent,eol,start \" Backspaceキーの影響範囲に制限を設けない
 " set whichwrap=b,s,h,l,<,>,[,]  \" 行頭行末の左右移動で行をまたぐ
 set scrolloff=8                " 上下8行の視界を確保
+set scroll=16                  " スクロールを16行ごとに行う
 set sidescrolloff=16           " 左右スクロール時の視界を確保
 set sidescroll=1               " 左右スクロールは一文字づつ行う
 set virtualedit=onemore        " カーソルを行末の一つ先まで移動可能にする
@@ -219,3 +220,5 @@ nmap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
 nmap <silent> ga <cmd>lua vim.lsp.buf.code_action()<CR>
 nmap <silent> k <cmd>lua vim.lsp.buf.hover()<CR>
 inoremap <expr><Tab>  pumvisible() ? "<C-y>" : "<Tab>" " 補完モードのときのTabを確定として扱う
+nnoremap <PageUp> <C-u>
+nnoremap <PageDown> <C-d>
