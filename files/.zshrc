@@ -269,6 +269,10 @@ function ssh-kill {
   ps aux | grep "ssh[:]" | grep "$mux" | tr -s ' ' | cut -d ' ' -f 2 | xargs kill
 }
 
+function copy {
+  printf "\033]52;;%s\033\\" `cat|base64`
+}
+
 case ${OSTYPE} in
   darwin*)
     alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
