@@ -270,7 +270,7 @@ function ssh-kill {
 }
 
 function copy {
-  printf "\033]52;;%s\033\\" `cat|base64`
+  printf "\033]52;;$(cat|base64)\033\\"
 }
 
 case ${OSTYPE} in
