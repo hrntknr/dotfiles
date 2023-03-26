@@ -196,6 +196,7 @@ alias ls='ls -G'
 alias la='ls -laG'
 alias ll='ls -lG'
 alias mdig='dig @224.0.0.251 -p 5353'
+alias mdig6='dig @ff02::fb -p 5353'
 alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 
@@ -271,6 +272,9 @@ function ssh-kill {
 
 function copy {
   printf "\033]52;;$(cat|base64)\033\\"
+}
+function nat64 {
+  echo $1 | sed -e "s/\./ /g" | xargs printf "64:ff9b::%02x%02x:%02x%02x\n"
 }
 
 case ${OSTYPE} in
