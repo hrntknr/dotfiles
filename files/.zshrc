@@ -271,9 +271,6 @@ function ssh-kill {
   ps aux | grep "ssh[:]" | grep "$mux" | tr -s ' ' | cut -d ' ' -f 2 | xargs kill
 }
 
-function copy {
-  printf "\033]52;;$(cat|base64)\033\\"
-}
 function nat64 {
   echo $1 | sed -e "s/\./ /g" | xargs printf "64:ff9b::%02x%02x:%02x%02x\n"
 }
@@ -286,6 +283,10 @@ case ${OSTYPE} in
     alias open='xdg-open'
     ;;
 esac
+
+if ! type copy > /dev/null 2>&1; then
+  alias copy=printf "\033]52;;$(cat|base64)\033\\"
+fi
 
 if type kubectl > /dev/null 2>&1; then
   alias k=kubectl
