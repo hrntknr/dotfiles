@@ -285,7 +285,9 @@ case ${OSTYPE} in
 esac
 
 if ! type copy > /dev/null 2>&1; then
-  alias copy=printf "\033]52;;$(cat|base64)\033\\"
+  function copy {
+    printf "\033]52;;$(cat|base64)\033\\"
+  }
 fi
 
 if type kubectl > /dev/null 2>&1; then
