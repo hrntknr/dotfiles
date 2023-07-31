@@ -87,8 +87,10 @@ fi
 
 #java
 if [ -e "/usr/libexec/java_home" ]; then
-  export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
-  export PATH=${JAVA_HOME}/bin:${PATH}
+  if /usr/libexec/java_home >/dev/null 2>&1; then
+    export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
+    export PATH=${JAVA_HOME}/bin:${PATH}
+  fi
 fi
 
 if [ -e "/usr/local/sbin" ]; then
