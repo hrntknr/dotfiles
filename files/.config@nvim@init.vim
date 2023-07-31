@@ -5,7 +5,6 @@ set nocompatible " 互換性設定
 " 画面表示の設定
 
 set number         " 行番号を表示する
-set cursorline     " カーソル行の背景色を変える
 set laststatus=2   " ステータス行を常に表示
 set showcmd        " 実行前のコマンドを表示
 set cmdheight=1    " メッセージ表示欄を1行確保
