@@ -121,7 +121,7 @@ if type peco > /dev/null 2>&1; then
   bindkey '^R' peco-history-selection
 fi
 
-export PROMPT="%(?,,%F{red}%? %f)> %F{green}$%f "
+export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
 export PROMPT2="> "
 export HISTFILE="${HOME}/.zsh_history"
 export HISTSIZE="1000000"
