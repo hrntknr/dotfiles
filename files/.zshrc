@@ -86,7 +86,6 @@ spwd() {
 }
 
 precmd() {
-  local RESULT=$?
   if [ -z "$SHELL_COLOR" ];then
     if type md5sum > /dev/null 2>&1; then
       local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|md5sum|cut -c1-2))"'m'
@@ -99,69 +98,9 @@ precmd() {
     local HOSTCOLOR=$'\e[38;05;'"$SHELL_COLOR"'m'
   fi
   print -P "\n%n@$HOSTCOLOR$(hostname)\e[m $(spwd) $(gitStatus)"
-
-  if [ ! -z "$SLACK_NOTIFY" ] || [ ! -z "$DISCORD_NOTIFY" ]; then
-    if [ $TTYIDLE -gt 10  -a "$execflg" = true ]; then
-      local title="$RESULT> $prev_command"
-      if [ $RESULT -eq 0 ]; then
-        local color="#00d000"
-      else
-        local color="#d00000"
-      fi
-      json=`cat << EOS
-{
-  "attachments": [
-    {
-      "color": "$color",
-      "title": "$title",
-      "mrkdwn_in": ["fields"],
-      "fields": [
-        {
-          "title": "command",
-          "value": "\\\`$prev_command\\\`",
-          "short": false
-        },
-        {
-          "title": "directory",
-          "value": "\\\`$(pwd)\\\`",
-          "short": false
-        },
-        {
-          "title": "hostname",
-          "value": "$(hostname)",
-          "short": true
-        },
-        {
-          "title": "user",
-          "value": "$(whoami)",
-          "short": true
-        },
-        {
-          "title": "elapsed time",
-          "value": "$TTYIDLE seconds",
-          "short": true
-        }
-      ]
-    }
-  ]
-}
-EOS
-`
-      if [ ! -z "$SLACK_NOTIFY" ]; then
-        curl -H 'Content-Type:application/json' -d $json $SLACK_NOTIFY
-      fi
-      if [ ! -z "$DISCORD_NOTIFY" ]; then
-        curl -H 'Content-Type:application/json' -d $json "$DISCORD_NOTIFY/slack"
-      fi
-    fi
-  fi
-  execflg=false
 }
 
 preexec() {
-  prev_executed_at=`date +%F\ %T`
-  prev_command=$2
-  execflg=true
 }
 
 peco-history-selection() {
@@ -182,7 +121,7 @@ if type peco > /dev/null 2>&1; then
   bindkey '^R' peco-history-selection
 fi
 
-export PROMPT="> %F{green}$%f "
+export PROMPT="%(?,,%F{red}%? %f)> %F{green}$%f "
 export PROMPT2="> "
 export HISTFILE="${HOME}/.zsh_history"
 export HISTSIZE="1000000"
