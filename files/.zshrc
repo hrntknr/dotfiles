@@ -19,9 +19,12 @@ if [ -e "/proc/$PPID/cmdline" ]; then
 fi
 if [ -n "$SSH_AGENT_ENABLED" ]; then
   env_agent=$HOME/.local/ssh-agent.env
-  SSH_AGENT_TIMEOUT=${SSH_AGENT_TIMEOUT:-"1h"}
+  SSH_AGENT_ARGS=""
+  if [ -n "$SSH_AGENT_TIMEOUT" ]; then
+    SSH_AGENT_ARGS="-t $SSH_AGENT_TIMEOUT"
+  fi
   if ! pgrep ssh-agent -U $USER &>/dev/null; then
-    ssh-agent -s -t $SSH_AGENT_TIMEOUT >$env_agent
+    ssh-agent -s $SSH_AGENT_ARGS > $env_agent
   fi
   if [ -e "$env_agent" ]; then
     source $env_agent &>/dev/null
