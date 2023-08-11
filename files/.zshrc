@@ -234,6 +234,7 @@ fi
 
 if type kubectl > /dev/null 2>&1; then
   alias k=kubectl
+  alias kns=kubectl config set-context $(kubectl config current-context) --namespace
 fi
 
 if type openstack > /dev/null 2>&1; then
