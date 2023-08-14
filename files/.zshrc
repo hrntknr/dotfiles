@@ -142,6 +142,7 @@ alias mdig='dig @224.0.0.251 -p 5353'
 alias mdig6='dig @ff02::fb -p 5353'
 alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
+alias timestamp="date +%Y%m%d%H%M%S"
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
