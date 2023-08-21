@@ -1,3 +1,7 @@
+if [ -z "$ZPRFILE_INIT" ]; then
+  return
+fi
+
 if locale -a | grep en_US.UTF-8 >/dev/null; then
   export LANG=en_US.UTF-8
   export LC_ALL=en_US.UTF-8
@@ -106,3 +110,5 @@ if type socat >/dev/null 2>&1; then
     sh -c "$run &" >/dev/null 2>&1
   fi
 fi
+
+export ZPRFILE_INIT=1
