@@ -1,7 +1,3 @@
-if [ -z "$ZPRFILE_INIT" ]; then
-  return
-fi
-
 if locale -a | grep en_US.UTF-8 >/dev/null; then
   export LANG=en_US.UTF-8
   export LC_ALL=en_US.UTF-8
@@ -34,11 +30,10 @@ fi
 #nvm(node)
 if [ -e "$HOME/.nvm" ]; then
   export NVM_DIR="$HOME/.nvm"
-  if [ -e "/usr/local/opt/nvm/nvm.sh" ]; then
-    . "/usr/local/opt/nvm/nvm.sh"
-  elif [ -e "$NVM_DIR/nvm.sh" ]; then
-    . "$NVM_DIR/nvm.sh"
-  fi
+  nvm_cmds=(nvm node npm yarn)
+  for cmd in "${nvm_cmds[@]}"; do
+    alias $cmd="unalias ${nvm_cmds[*]} && unset nvm_cmds && . $NVM_DIR/nvm.sh && $cmd"
+  done
 fi
 
 #gvm(go)
@@ -110,5 +105,3 @@ if type socat >/dev/null 2>&1; then
     sh -c "$run &" >/dev/null 2>&1
   fi
 fi
-
-export ZPRFILE_INIT=1
