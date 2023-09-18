@@ -145,22 +145,6 @@ endif
 let g:deoplete#enable_at_startup = 1
 let NERDTreeShowHidden=1
 
-call ddc#custom#patch_global('sources', ['nvim-lsp', 'around'])
-call ddc#custom#patch_global('sourceOptions', {
-  \ '_': {
-  \   'matchers': ['matcher_head'],
-  \   'sorters': ['sorter_rank'],
-  \ },
-  \ 'around': {
-  \   'maxSize': 500,
-  \   'mark': 'A',
-  \   'matchers': ['matcher_head', 'matcher_length'],
-  \ },
-  \ 'nvim-lsp': {
-  \   'mark': 'lsp',
-  \   'forceCompletionPattern': '\.\w*|:\w*|->\w*',
-  \ },
-  \ })
 call ddc#enable()
 
 let g:signature_help_config = {'style': 'labelOnly'}
