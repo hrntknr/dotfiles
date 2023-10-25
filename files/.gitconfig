@@ -5,8 +5,10 @@
   editor = vim
 [submodule]
   recurse = true
+[pull]
+  rebase = true
 [alias]
-  sync = "!sh -c 'git add . ; git commit --allow-empty-message -m \"\" ; git push'"
+  sync = "!sh -c 'git add . ; git pull ; git commit --allow-empty-message -m \"\" ; git push'"
 [include]
   path = "~/.gitconfig.local"
 
