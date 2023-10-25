@@ -1,8 +1,12 @@
 [user]
-email = me@hrntknr.net
-name = Takanori Hirano
+  email = me@hrntknr.net
+  name = Takanori Hirano
 [core]
-editor = vim
+  editor = vim
 [submodule]
-recurse = true
+  recurse = true
+[alias]
+  sync = "!sh -c 'git add . ; git commit --allow-empty-message -m \"\" ; git push'"
+[include]
+  path = "~/.gitconfig.local"
 
