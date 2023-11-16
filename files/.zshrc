@@ -12,7 +12,7 @@ if [ ! -e "$HOME/.local" ]; then
   mkdir $HOME/.local
 fi
 
-if [ -e "/proc/$PPID/cmdline" ]; then
+if [ -z "$SSH_AGENT_ENABLED" && -e "/proc/$PPID/cmdline" ]; then
   if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
     SSH_AGENT_ENABLED=${SSH_AGENT_ENABLED:-1}
   fi
