@@ -143,7 +143,8 @@ alias mdig6='dig @ff02::fb -p 5353'
 alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 alias timestamp="date +%Y%m%d%H%M%S"
-alias install_nvim="curl -fsSL https://github.com/neovim/neovim/releases/download/v0.9.4/nvim-linux64.tar.gz | gunzip | tar x --strip-components=1 -C ~/.local"
+alias install_nvim="curl -fsSL https://github.com/neovim/neovim/releases/download/v0.9.4/nvim-linux64.tar.gz | gunzip | tar x --strip-components=1 -C ~/.local/"
+alias install_peco="curl -fsSL https://github.com/peco/peco/releases/download/v0.5.11/peco_linux_amd64.tar.gz | gunzip | tar x --strip-components=1 -C ~/.local/bin/"
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
