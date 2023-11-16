@@ -1,3 +1,4 @@
+vim.opt.number = true
 vim.cmd("nnoremap <S-Up> <C-u>")
 vim.cmd("nnoremap <S-Down> <C-d>")
 
@@ -23,7 +24,8 @@ require("lazy").setup({
         "3rd/image.nvim",
       },
       config = function()
-        require("neo-tree").setup({
+        local neotree = require("neo-tree")
+        neotree.setup({
           close_if_last_window = true,
           enable_git_status = true,
           filesystem = {
@@ -57,7 +59,7 @@ require("lazy").setup({
           pattern = { "*" },
           command = "Neotree",
         })
-      end
+      end,
     },
     {
       "neovim/nvim-lspconfig",
@@ -76,7 +78,7 @@ require("lazy").setup({
         mason_lspconfig.setup_handlers({
           function(server_name)
             lspconfig[server_name].setup({})
-          end
+          end,
         })
         vim.api.nvim_create_autocmd('LspAttach', {
           group = vim.api.nvim_create_augroup('UserLspConfig', {}),
@@ -96,14 +98,16 @@ require("lazy").setup({
             vim.lsp.buf.format {
               async = false,
             }
-          end
+          end,
         })
-      end
+      end,
     },
     {
       "hrsh7th/nvim-cmp",
       dependencies = {
         "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-vsnip",
+        "hrsh7th/vim-vsnip",
       },
       config = function()
         local cmp = require("cmp")
@@ -117,10 +121,27 @@ require("lazy").setup({
           sources = cmp.config.sources({
             { name = "nvim_lsp" },
           }),
+          snippet = {
+            expand = function(args)
+              vim.fn["vsnip#anonymous"](args.body)
+            end,
+          }
         })
-      end
+      end,
     },
-    "editorconfig/editorconfig-vim",
+    {
+      "editorconfig/editorconfig-vim",
+      {
+        "lewis6991/gitsigns.nvim",
+        config = function()
+          local gitsigns = require("gitsigns")
+          gitsigns.setup({
+            signcolumn = false,
+            numhl = true,
+          })
+        end,
+      },
+    },
     "github/copilot.vim",
   }
 })
