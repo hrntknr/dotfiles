@@ -205,3 +205,8 @@ nmap <silent> k <cmd>lua vim.lsp.buf.hover()<CR>
 inoremap <expr><Tab>  pumvisible() ? "<C-y>" : "<Tab>" " 補完モードのときのTabを確定として扱う
 nnoremap <PageUp> <C-u>
 nnoremap <PageDown> <C-d>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
