@@ -11,6 +11,7 @@ vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
 vim.cmd("nnoremap <C-a> ggVG")
 vim.cmd("ab f lua vim.lsp.buf.format() vim.cmd('PrettierAsync')")
+vim.cmd("ab w!! SudaWrite")
 
 if vim.fn.has('unnamedplus') then
   vim.opt.clipboard = "unnamedplus"
@@ -192,6 +193,11 @@ require("lazy").setup({
       build = function()
         vim.fn["mkdp#util#install"]()
       end,
+      config = function()
+        vim.g.mkdp_preview_options = {
+          disable_sync_scroll = 1,
+        }
+      end,
     },
     {
       "prettier/vim-prettier",
@@ -202,6 +208,7 @@ require("lazy").setup({
         })
       end
     },
+    "lambdalisue/suda.vim",
     "editorconfig/editorconfig-vim",
     "github/copilot.vim",
   }
