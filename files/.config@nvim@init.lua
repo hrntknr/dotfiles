@@ -10,8 +10,6 @@ vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
 vim.cmd("nnoremap <C-a> ggVG")
-vim.cmd("ab f lua vim.lsp.buf.format() vim.cmd('PrettierAsync')")
-vim.cmd("ab w!! SudaWrite")
 
 if vim.fn.has('unnamedplus') then
   vim.opt.clipboard = "unnamedplus"
@@ -68,7 +66,7 @@ require("lazy").setup({
                 modified = "~",
                 deleted = "-",
                 renamed = "»",
-                untracked = "",
+                untracked = "U",
                 ignored = "",
                 unstaged = "",
                 staged = "",
@@ -76,19 +74,26 @@ require("lazy").setup({
               },
             },
           },
+          filesystem = {
+            use_libuv_file_watcher = true,
+          },
         })
       end,
     },
     {
-      "neovim/nvim-lspconfig",
+      "williamboman/mason.nvim",
       dependencies = {
-        "williamboman/mason.nvim",
+        "neovim/nvim-lspconfig",
         "williamboman/mason-lspconfig.nvim",
+        "nvimtools/none-ls.nvim",
       },
       config = function()
         local lspconfig = require('lspconfig')
         local mason = require("mason")
         local mason_lspconfig = require('mason-lspconfig')
+        local mason_package = require("mason-core.package")
+        local mason_registry = require("mason-registry")
+        local null_ls = require("null-ls")
         mason.setup()
         mason_lspconfig.setup({
           automatic_installation = true,
@@ -98,6 +103,21 @@ require("lazy").setup({
             lspconfig[server_name].setup({})
           end,
         })
+        local null_sources = {}
+        for _, package in ipairs(mason_registry.get_installed_packages()) do
+          local package_categories = package.spec.categories[1]
+          if package_categories == mason_package.Cat.Formatter then
+            table.insert(null_sources, null_ls.builtins.formatting[package.name])
+          end
+          if package_categories == mason_package.Cat.Linter then
+            table.insert(null_sources, null_ls.builtins.diagnostics[package.name])
+          end
+        end
+        null_ls.setup({
+          sources = null_sources,
+        })
+
+        vim.cmd("ab f lua vim.lsp.buf.format()")
         vim.api.nvim_create_autocmd('LspAttach', {
           group = vim.api.nvim_create_augroup('UserLspConfig', {}),
           callback = function(ev)
@@ -200,20 +220,11 @@ require("lazy").setup({
       end,
     },
     {
-      "prettier/vim-prettier",
-      build = function()
-        vim.loop.spawn("yarn", {
-          args = { "global", "add", "prettier" },
-        })
-      end,
+      "lambdalisue/suda.vim",
       config = function()
-        vim.api.nvim_create_autocmd("BufWritePre", {
-          pattern = { "*" },
-          command = "PrettierAsync",
-        })
+        vim.cmd("ab w!! SudaWrite")
       end
     },
-    "lambdalisue/suda.vim",
     "editorconfig/editorconfig-vim",
     "github/copilot.vim",
   }
