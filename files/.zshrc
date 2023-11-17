@@ -145,7 +145,7 @@ alias man='env LANGUAGE=ja_JP.utf8 man'
 alias timestamp="date +%Y%m%d%H%M%S"
 
 # https://github.com/neovim/neovim/releases/
-NVIM_VERSION=nightly
+NVIM_VERSION=stable
 # https://nodejs.org/en
 NODE_VERSION=v20.9.0
 # https://github.com/peco/peco/releases/
