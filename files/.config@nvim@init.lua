@@ -10,6 +10,7 @@ vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
 vim.cmd("nnoremap <C-a> ggVG")
+vim.cmd("ab f lua vim.lsp.buf.format() vim.cmd('PrettierAsync')")
 
 if vim.fn.has('unnamedplus') then
   vim.opt.clipboard = "unnamedplus"
@@ -107,13 +108,12 @@ require("lazy").setup({
             vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
           end,
         })
-        vim.cmd("ab f lua vim.lsp.buf.format()")
         vim.api.nvim_create_autocmd("BufWritePre", {
           pattern = { "*" },
           callback = function()
-            vim.lsp.buf.format {
+            vim.lsp.buf.format({
               async = false,
-            }
+            })
           end,
         })
       end,
@@ -193,8 +193,16 @@ require("lazy").setup({
         vim.fn["mkdp#util#install"]()
       end,
     },
+    {
+      "prettier/vim-prettier",
+      config = function()
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          pattern = { "*" },
+          command = "PrettierAsync",
+        })
+      end
+    },
     "editorconfig/editorconfig-vim",
-    "prettier/vim-prettier",
     "github/copilot.vim",
   }
 })
