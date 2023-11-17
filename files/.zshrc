@@ -209,7 +209,7 @@ install_peco() {
       unzip -j $tmp/peco.$EXT -d $tmp >/dev/null
       ;;
     tar.gz)
-      tar xf $tmp/peco.$EXT -C $tmp
+      tar xf $tmp/peco.$EXT --strip-components=1 -C $tmp
       ;;
   esac
   cp $tmp/peco ~/.local/bin/
