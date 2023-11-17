@@ -15,18 +15,6 @@ if vim.fn.has('unnamedplus') then
   vim.opt.clipboard = "unnamedplus"
 end
 
-vim.g.clipboard = {
-  name = 'OSC-52',
-  copy = {
-    ['*'] = copy('s'),
-    ['+'] = copy('c'),
-  },
-  paste = {
-    ['*'] = "",
-    ['+'] = "",
-  },
-}
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
