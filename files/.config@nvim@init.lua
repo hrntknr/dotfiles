@@ -43,6 +43,7 @@ require("lazy").setup({
         neotree.setup({
           enable_git_status = true,
           filesystem = {
+            use_libuv_file_watcher = true,
             filtered_items = {
               hide_dotfiles = false,
               hide_gitignored = false,
@@ -73,9 +74,6 @@ require("lazy").setup({
                 conflict = "",
               },
             },
-          },
-          filesystem = {
-            use_libuv_file_watcher = true,
           },
         })
       end,
