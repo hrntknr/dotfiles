@@ -1,13 +1,43 @@
 vim.opt.number = true
 vim.opt.laststatus = 3
 vim.opt.scrolloff = 2
-vim.cmd("nnoremap <S-Up> <C-u>")
-vim.cmd("nnoremap <S-Down> <C-d>")
+vim.cmd("nnoremap <S-Up> 10<Up>")
+vim.cmd("nnoremap <S-Down> 10<Down>")
 vim.cmd("nnoremap U <C-r>")
 vim.cmd("nnoremap <C-w>\" <C-w>s")
 vim.cmd("nnoremap <C-w>@ <C-w>s")
 vim.cmd("nnoremap <C-w>% <C-w>v")
+vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
+vim.cmd("nnoremap <C-a> ggVG")
+
+if vim.fn.has('unnamedplus') then
+  vim.opt.clipboard = "unnamedplus"
+else
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+      ["+"] = require("vim.ui.clipboard.osc52").copy,
+      ["*"] = require("vim.ui.clipboard.osc52").copy,
+    },
+    paste = {
+      ["+"] = require("vim.ui.clipboard.osc52").paste,
+      ["*"] = require("vim.ui.clipboard.osc52").paste,
+    },
+  }
+end
+
+vim.g.clipboard = {
+  name = 'OSC-52',
+  copy = {
+    ['*'] = copy('s'),
+    ['+'] = copy('c'),
+  },
+  paste = {
+    ['*'] = "",
+    ['+'] = "",
+  },
+}
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -35,7 +65,6 @@ require("lazy").setup({
       config = function()
         local neotree = require("neo-tree")
         neotree.setup({
-          close_if_last_window = true,
           enable_git_status = true,
           filesystem = {
             filtered_items = {
@@ -70,16 +99,11 @@ require("lazy").setup({
             },
           },
         })
-        vim.api.nvim_create_autocmd("VimEnter", {
+        vim.api.nvim_create_autocmd("UiEnter", {
           pattern = { "*" },
-          command = "set nonumber | Neotree",
-        })
-        vim.api.nvim_create_autocmd("BufEnter", {
           callback = function()
-            if vim.bo.filetype == "neo-tree" then
-              vim.opt.number = false
-            else
-              vim.opt.number = true
+            if vim.fn.argc() == 0 then
+              vim.cmd "Neotree toggle"
             end
           end,
         })
@@ -187,6 +211,8 @@ require("lazy").setup({
         })
       end,
     },
+    "editorconfig/editorconfig-vim",
+    "prettier/vim-prettier",
     "github/copilot.vim",
   }
 })
