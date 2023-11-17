@@ -201,6 +201,11 @@ require("lazy").setup({
     },
     {
       "prettier/vim-prettier",
+      build = function()
+        vim.loop.spawn("yarn", {
+          args = { "global", "add", "prettier" },
+        })
+      end,
       config = function()
         vim.api.nvim_create_autocmd("BufWritePre", {
           pattern = { "*" },
