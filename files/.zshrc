@@ -143,8 +143,83 @@ alias mdig6='dig @ff02::fb -p 5353'
 alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 alias timestamp="date +%Y%m%d%H%M%S"
-alias install_nvim="curl -fsSL https://github.com/neovim/neovim/releases/download/v0.9.4/nvim-linux64.tar.gz | gunzip | tar x --strip-components=1 -C ~/.local/"
-alias install_peco="curl -fsSL https://github.com/peco/peco/releases/download/v0.5.11/peco_linux_amd64.tar.gz | gunzip | tar x --strip-components=1 -C ~/.local/bin/"
+
+# https://github.com/neovim/neovim/releases/
+NVIM_VERSION=stable
+# https://nodejs.org/en
+NODE_VERSION=v20.9.0
+# https://github.com/peco/peco/releases/
+PECO_VERSION=v0.5.11
+
+install_nvim() {
+  case "${OSTYPE},$(uname -m)" in
+    darwin*,*)
+      TARGET=macos
+      ;;
+    linux*,x86_64)
+      TARGET=linux64
+      ;;
+    *)
+      echo "Unknown OS"
+      return
+      ;;
+  esac
+  curl -fsSL https://github.com/neovim/neovim/releases/download/$NVIM_VERSION/nvim-$TARGET.tar.gz | tar x --strip-components=1 -C ~/.local/
+}
+
+install_node() {
+  case "${OSTYPE},$(uname -m)" in
+    darwin*,*)
+      TARGET=darwin-x64
+      ;;
+    linux*,x86_64)
+      TARGET=linux-x64
+      ;;
+    *)
+      echo "Unknown OS"
+      return
+      ;;
+  esac
+  curl -fsSL https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-$TARGET.tar.gz | tar x --strip-components=1 -C ~/.local/
+}
+
+install_peco() {
+  case "${OSTYPE},$(uname -m)" in
+    darwin*,x86_64)
+      TARGET=darwin_amd64
+      EXT=zip
+      ;;
+    darwin*,arm64)
+      TARGET=darwin_arm64
+      EXT=zip
+      ;;
+    linux*,x86_64)
+      TARGET=linux_amd64
+      EXT=tar.gz
+      ;;
+    *)
+      echo "Unknown OS"
+      return
+      ;;
+  esac
+  tmp=$(mktemp -d)
+  curl -fsSL https://github.com/peco/peco/releases/download/$PECO_VERSION/peco_$TARGET.$EXT -o $tmp/peco.$EXT
+  case $EXT in
+    zip)
+      unzip -j $tmp/peco.$EXT -d $tmp >/dev/null
+      ;;
+    tar.gz)
+      tar xf $tmp/peco.$EXT -C $tmp
+      ;;
+  esac
+  cp $tmp/peco ~/.local/bin/
+}
+
+install() {
+  install_node
+  install_nvim
+  install_peco
+}
 
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
