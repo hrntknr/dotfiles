@@ -164,7 +164,7 @@ install_nvim() {
       return
       ;;
   esac
-  curl -fsSL https://github.com/neovim/neovim/releases/download/$NVIM_VERSION/nvim-$TARGET.tar.gz | tar x --strip-components=1 -C ~/.local/
+  curl -fsSL https://github.com/neovim/neovim/releases/download/$NVIM_VERSION/nvim-$TARGET.tar.gz | tar xz --strip-components=1 -C ~/.local/
 }
 
 install_node() {
@@ -180,7 +180,7 @@ install_node() {
       return
       ;;
   esac
-  curl -fsSL https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-$TARGET.tar.gz | tar x --strip-components=1 -C ~/.local/
+  curl -fsSL https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-$TARGET.tar.gz | tar xz --strip-components=1 -C ~/.local/
 }
 
 install_peco() {
