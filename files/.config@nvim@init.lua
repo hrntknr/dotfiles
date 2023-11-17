@@ -1,6 +1,13 @@
 vim.opt.number = true
+vim.opt.laststatus = 3
+vim.opt.scrolloff = 2
 vim.cmd("nnoremap <S-Up> <C-u>")
 vim.cmd("nnoremap <S-Down> <C-d>")
+vim.cmd("nnoremap U <C-r>")
+vim.cmd("nnoremap <C-w>\" <C-w>s")
+vim.cmd("nnoremap <C-w>@ <C-w>s")
+vim.cmd("nnoremap <C-w>% <C-w>v")
+vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -31,6 +38,12 @@ require("lazy").setup({
           filesystem = {
             filtered_items = {
               hide_dotfiles = false,
+              hide_gitignored = false,
+              hide_by_name = {
+                ".git",
+                ".DS_Store",
+                "thumbs.db",
+              },
             },
           },
           default_component_configs = {
@@ -57,7 +70,16 @@ require("lazy").setup({
         })
         vim.api.nvim_create_autocmd("VimEnter", {
           pattern = { "*" },
-          command = "Neotree",
+          command = "set nonumber | Neotree",
+        })
+        vim.api.nvim_create_autocmd("BufEnter", {
+          callback = function()
+            if vim.bo.filetype == "neo-tree" then
+              vim.opt.number = false
+            else
+              vim.opt.number = true
+            end
+          end,
         })
       end,
     },
@@ -113,10 +135,10 @@ require("lazy").setup({
         local cmp = require("cmp")
         cmp.setup({
           mapping = cmp.mapping.preset.insert({
-            ['<ESC>'] = cmp.mapping.abort(),
+            --['<ESC>'] = cmp.mapping.abort(),
             ['<C-e>'] = cmp.mapping.abort(),
             ['<CR>'] = cmp.mapping.confirm({ select = true }),
-            ['<TAB>'] = cmp.mapping.confirm({ select = true }),
+            -- ['<TAB>'] = cmp.mapping.confirm({ select = true }),
           }),
           sources = cmp.config.sources({
             { name = "nvim_lsp" },
@@ -141,6 +163,27 @@ require("lazy").setup({
           })
         end,
       },
+    },
+    {
+      "nvim-lualine/lualine.nvim",
+      dependencies = {
+        "jonahgoldwastaken/copilot-status.nvim",
+      },
+      config = function()
+        local lualine = require('lualine')
+        lualine.setup({
+          options = {
+            icons_enabled = false,
+          },
+          sections = {
+            lualine_x = {
+              function()
+                return require("copilot_status").status().status
+              end,
+            },
+          },
+        })
+      end,
     },
     "github/copilot.vim",
   }
