@@ -105,10 +105,14 @@ require("lazy").setup({
         for _, package in ipairs(mason_registry.get_installed_packages()) do
           local package_categories = package.spec.categories[1]
           if package_categories == mason_package.Cat.Formatter then
-            table.insert(null_sources, null_ls.builtins.formatting[package.name])
+            if null_ls.builtins.formatting[package.name] then
+              table.insert(null_sources, null_ls.builtins.formatting[package.name])
+            end
           end
           if package_categories == mason_package.Cat.Linter then
-            table.insert(null_sources, null_ls.builtins.diagnostics[package.name])
+            if null_ls.builtins.diagnostics[package.name] then
+              table.insert(null_sources, null_ls.builtins.diagnostics[package.name])
+            end
           end
         end
         null_ls.setup({
