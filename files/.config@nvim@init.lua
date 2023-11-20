@@ -160,6 +160,7 @@ require("lazy").setup({
       },
       config = function()
         local cmp = require("cmp")
+        local copilot_suggestion = require("copilot.suggestion")
         cmp.setup({
           mapping = cmp.mapping.preset.insert({
             --['<ESC>'] = cmp.mapping.abort(),
@@ -170,12 +171,7 @@ require("lazy").setup({
               if cmp.visible() then
                 cmp.select_next_item()
               else
-                local copilot_keys = vim.fn["copilot#Accept"]("")
-                if copilot_keys ~= "" then
-                  vim.api.nvim_feedkeys(copilot_keys, "i", true)
-                else
-                  fallback()
-                end
+                copilot_suggestion.accept_line()
               end
             end, { "i", "s" })
           }),
@@ -253,19 +249,21 @@ require("lazy").setup({
       end,
     },
     {
-      "github/copilot.vim",
-      init = function()
-        vim.g.copilot_no_tab_map = true
-        vim.g.copilot_assume_mapped = true
-        vim.g.copilot_tab_fallback = ""
-        vim.g.copilot_filetypes = {
-          yaml = true,
-          markdown = true,
-          help = true,
-          gitcommit = true,
-          gitrebase = true,
-        }
-      end
+      "zbirenbaum/copilot.lua",
+      config = function()
+        local copilot = require("copilot")
+        copilot.setup({
+          suggestion = {
+            auto_trigger = true,
+          },
+          filetypes = {
+            yaml = true,
+            markdown = true,
+            gitcommit = true,
+            gitrebase = true,
+          },
+        })
+      end,
     },
     "editorconfig/editorconfig-vim",
   }
