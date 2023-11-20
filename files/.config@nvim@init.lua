@@ -32,6 +32,14 @@ require("lazy").setup({
   },
   spec = {
     {
+      "navarasu/onedark.nvim",
+      config = function()
+        local onedark = require("onedark")
+        onedark.setup()
+        onedark.load()
+      end,
+    },
+    {
       "nvim-neo-tree/neo-tree.nvim",
       dependencies = {
         "nvim-lua/plenary.nvim",
@@ -118,7 +126,6 @@ require("lazy").setup({
         null_ls.setup({
           sources = null_sources,
         })
-
         vim.cmd("ab f lua vim.lsp.buf.format()")
         vim.api.nvim_create_autocmd('LspAttach', {
           group = vim.api.nvim_create_augroup('UserLspConfig', {}),
@@ -155,7 +162,19 @@ require("lazy").setup({
             --['<ESC>'] = cmp.mapping.abort(),
             ['<C-e>'] = cmp.mapping.abort(),
             ['<CR>'] = cmp.mapping.confirm({ select = true }),
-            -- ['<TAB>'] = cmp.mapping.confirm({ select = true }),
+            ['<TAB>'] = cmp.mapping.confirm({ select = true }),
+            ["<Tab>"] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_next_item()
+              else
+                local copilot_keys = vim.fn["copilot#Accept"]()
+                if copilot_keys ~= "" then
+                  vim.api.nvim_feedkeys(copilot_keys, "i", true)
+                else
+                  fallback()
+                end
+              end
+            end, { "i", "s" })
           }),
           sources = cmp.config.sources({
             { name = "nvim_lsp" },
@@ -183,21 +202,11 @@ require("lazy").setup({
     },
     {
       "nvim-lualine/lualine.nvim",
-      dependencies = {
-        "jonahgoldwastaken/copilot-status.nvim",
-      },
       config = function()
         local lualine = require('lualine')
         lualine.setup({
           options = {
             icons_enabled = false,
-          },
-          sections = {
-            lualine_x = {
-              function()
-                return require("copilot_status").status().status
-              end,
-            },
           },
         })
       end,
@@ -225,9 +234,29 @@ require("lazy").setup({
       "lambdalisue/suda.vim",
       config = function()
         vim.cmd("ab w!! SudaWrite")
+      end,
+    },
+    {
+      "voldikss/vim-translator",
+      init = function()
+        vim.g.translator_default_engines = { "google" }
+        vim.g.translator_target_lang = "ja"
+      end,
+      config = function()
+        vim.cmd("nmap <silent> tw <Plug>TranslateW")
+        vim.cmd("vmap <silent> tw <Plug>TranslateWV")
+        vim.cmd("nmap <silent> tr <Plug>TranslateR")
+        vim.cmd("vmap <silent> tr <Plug>TranslateRV")
+      end,
+    },
+    {
+      "github/copilot.vim",
+      init = function()
+        vim.g.copilot_no_tab_map = true
+        vim.g.copilot_assume_mapped = true
+        vim.g.copilot_tab_fallback = ""
       end
     },
     "editorconfig/editorconfig-vim",
-    "github/copilot.vim",
   }
 })
