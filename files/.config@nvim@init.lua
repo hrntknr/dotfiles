@@ -163,15 +163,17 @@ require("lazy").setup({
         local copilot_suggestion = require("copilot.suggestion")
         cmp.setup({
           mapping = cmp.mapping.preset.insert({
-            --['<ESC>'] = cmp.mapping.abort(),
             ['<C-e>'] = cmp.mapping.abort(),
             ['<CR>'] = cmp.mapping.confirm({ select = true }),
-            ['<TAB>'] = cmp.mapping.confirm({ select = true }),
             ["<Tab>"] = cmp.mapping(function(fallback)
-              if cmp.visible() then
+              if cmp.visible() and cmp.get_active_entry() then
                 cmp.select_next_item()
               else
-                copilot_suggestion.accept_line()
+                if copilot_suggestion.is_visible() then
+                  copilot_suggestion.accept()
+                else
+                  fallback()
+                end
               end
             end, { "i", "s" })
           }),
