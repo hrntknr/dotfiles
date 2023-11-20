@@ -1,6 +1,8 @@
+vim.g.mapleader = " "
 vim.opt.number = true
 vim.opt.laststatus = 3
 vim.opt.scrolloff = 2
+vim.cmd("nnoremap <ESC><ESC> :nohlsearch<CR>")
 vim.cmd("nnoremap <S-Up> 10<Up>")
 vim.cmd("nnoremap <S-Down> 10<Down>")
 vim.cmd("nnoremap U <C-r>")
@@ -10,6 +12,7 @@ vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-w>% <C-w>v")
 vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
 vim.cmd("nnoremap <C-a> ggVG")
+vim.cmd("nnoremap <Leader>b <C-^>")
 
 if vim.fn.has('unnamedplus') then
   vim.opt.clipboard = "unnamedplus"
@@ -167,7 +170,7 @@ require("lazy").setup({
               if cmp.visible() then
                 cmp.select_next_item()
               else
-                local copilot_keys = vim.fn["copilot#Accept"]()
+                local copilot_keys = vim.fn["copilot#Accept"]("")
                 if copilot_keys ~= "" then
                   vim.api.nvim_feedkeys(copilot_keys, "i", true)
                 else
