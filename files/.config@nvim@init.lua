@@ -151,6 +151,7 @@ require("lazy").setup({
             vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
           end,
         })
+        vim.cmd("ab W noautocmd w")
         vim.api.nvim_create_autocmd("BufWritePre", {
           pattern = { "*" },
           callback = function()
