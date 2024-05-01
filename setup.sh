@@ -1,6 +1,5 @@
 #!/bin/bash
 set -eu
-cd $(dirname $0)
 
 case "$#" in
 0)
@@ -23,15 +22,16 @@ EOS
   ;;
 esac
 
-for file in $(find ./files -type f -printf '%P\n'); do
+cur=$(dirname $0)
+for file in $(find $cur/files -type f -printf '%P\n'); do
   target="$basedir/$file"
   dir=$(dirname "$target")
   if [ ! -d "$dir" ]; then
     mkdir -p "$dir"
   fi
-  cp -v "./files/$file" "$target"
+  cp -v "$cur/files/$file" "$target"
 done
 
-if [ ! -e "$HOME/.zsh/zsh-autosuggestions" ]; then
-  git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+if [ ! -e "$basedir/.zsh/zsh-autosuggestions" ]; then
+  git clone https://github.com/zsh-users/zsh-autosuggestions $basedir/.zsh/zsh-autosuggestions
 fi
