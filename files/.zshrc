@@ -128,6 +128,7 @@ fi
 
 export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
 export PROMPT2="> "
+export HISTFILE="${ZDOTDIR}/.zsh_history"
 export HISTSIZE="1000000"
 export SAVEHIST="1000000"
 export KEYTIMEOUT=1
