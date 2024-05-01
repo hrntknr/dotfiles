@@ -1,15 +1,17 @@
+ZDOTDIR=${ZDOTDIR:-$HOME}
+
 if locale -a | grep en_US.UTF-8 >/dev/null; then
   export LANG=en_US.UTF-8
   export LC_ALL=en_US.UTF-8
   export LANGUAGE=en_US:en
 fi
 
-if [ -e "$HOME/.zprofile.local" ]; then
-  . "$HOME/.zprofile.local"
+if [ -e "$ZDOTDIR/.zprofile.local" ]; then
+  . "$ZDOTDIR/.zprofile.local"
 fi
 
-if [ -e "$HOME/.local/bin" ]; then
-  export PATH="$HOME/.local/bin:$PATH"
+if [ -e "$ZDOTDIR/.local/bin" ]; then
+  export PATH="$ZDOTDIR/.local/bin:$PATH"
 fi
 
 #brew
@@ -76,7 +78,6 @@ darwin*)
   fi
   ;;
 linux*) ;;
-
 esac
 
 #rust
@@ -94,14 +95,4 @@ fi
 
 if [ -e "/usr/local/sbin" ]; then
   export PATH="/usr/local/sbin/:$PATH"
-fi
-
-if type socat >/dev/null 2>&1; then
-  run="socat UNIX-LISTEN:$HOME/.local/bash.sock,reuseaddr,fork exec:bash"
-  if ! pgrep -f "$run" >/dev/null 2>&1; then
-    if [ -e "$HOME/.local/bash.sock" ]; then
-      rm "$HOME/.local/bash.sock"
-    fi
-    sh -c "$run &" >/dev/null 2>&1
-  fi
 fi

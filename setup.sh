@@ -2,23 +2,35 @@
 set -eu
 cd $(dirname $0)
 
-function copyfile {
-  file=$1
-  srcFile=$(basename "$file")
-  dstFile="$HOME/${srcFile//@//}"
-  echo "copy src:$srcFile dst:$dstFile"
-  if [ ! -d $(dirname "$dstFile") ]; then
-    mkdir -p $(dirname "$dstFile")
+case "$#" in
+0)
+  basedir=$HOME
+  ;;
+1)
+  basedir=${1%/}
+  if [ ! -d "$basedir" ]; then
+    mkdir -p "$basedir"
   fi
-  cp "files/$srcFile" "$dstFile"
-}
+  cat <<EOS >$basedir/zsh
+#!/bin/bash
+ZDOTDIR=$(realpath $basedir) zsh
+EOS
+  chmod +x $basedir/zsh
+  ;;
+*)
+  echo "Usage: $0 [basedir]"
+  exit 1
+  ;;
+esac
 
-export -f copyfile
-find files -maxdepth 1 -type f -exec bash -c 'copyfile "$0"' {} \;
-
-if [ -f "$HOME/.config/nvim/init.vim" ]; then
-  rm "$HOME/.config/nvim/init.vim"
-fi
+for file in $(find ./files -type f -printf '%P\n'); do
+  target="$basedir/$file"
+  dir=$(dirname "$target")
+  if [ ! -d "$dir" ]; then
+    mkdir -p "$dir"
+  fi
+  cp -v "./files/$file" "$target"
+done
 
 if [ ! -e "$HOME/.zsh/zsh-autosuggestions" ]; then
   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
