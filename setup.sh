@@ -23,7 +23,8 @@ EOS
 esac
 
 cur=$(dirname $0)
-for file in $(find $cur/files -type f -printf '%P\n'); do
+for file in $(find $cur/files -type f); do
+  file=${file#$cur/files/}
   target="$basedir/$file"
   dir=$(dirname "$target")
   if [ ! -d "$dir" ]; then
