@@ -37,6 +37,10 @@ if [ -e "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
   . "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
+if [ -e "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+  . "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
 gitStatus() {
   local branch_name st branch_status
 

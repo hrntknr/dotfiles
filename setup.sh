@@ -36,3 +36,7 @@ done
 if [ ! -e "$basedir/.zsh/zsh-autosuggestions" ]; then
   git clone https://github.com/zsh-users/zsh-autosuggestions $basedir/.zsh/zsh-autosuggestions
 fi
+
+if [ ! -e "$basedir/.zsh/zsh-syntax-highlighting" ]; then
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting $basedir/.zsh/zsh-syntax-highlighting
+fi
