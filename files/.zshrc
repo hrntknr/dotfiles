@@ -149,6 +149,8 @@ alias mdig6='dig @ff02::fb -p 5353'
 alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 alias timestamp="date +%Y%m%d%H%M%S"
+alias lower="tr '[:upper:]' '[:lower:]'"
+alias upper="tr '[:lower:]' '[:upper:]'"
 
 # https://github.com/neovim/neovim/releases/
 NVIM_VERSION=stable
