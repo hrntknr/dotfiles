@@ -305,6 +305,13 @@ if type kubectl > /dev/null 2>&1; then
   alias k=kubectl
   alias kns='kubectl config set-context $(kubectl config current-context) --namespace'
   alias knet='kubectl debug -it --image nicolaka/netshoot'
+  function krl {
+    if [ -z "$1" ]; then
+      echo "Usage: krl <label>"
+      return
+    fi
+    kubectl get deployment -l $1 -o "jsonpath={.items[*].metadata.name}" | xargs -n1 kubectl rollout restart deployment
+  }
 fi
 
 if type openstack > /dev/null 2>&1; then
