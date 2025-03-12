@@ -151,6 +151,7 @@ alias man='env LANGUAGE=ja_JP.utf8 man'
 alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
+alias ga='gh run watch $(gh run list | grep "$1" | head -n1 | awk "{print \$7}")'
 
 # https://github.com/neovim/neovim/releases/
 NVIM_VERSION=stable
