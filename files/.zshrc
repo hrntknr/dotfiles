@@ -26,10 +26,25 @@ if [ "$SSH_AGENT_ENABLED" = "1" ]; then
     SSH_AGENT_ARGS="-t $SSH_AGENT_TIMEOUT"
   fi
   if ! pgrep ssh-agent -U $USER &>/dev/null; then
-    ssh-agent -s $SSH_AGENT_ARGS > $env_agent
+    sh -c "ssh-agent -s $SSH_AGENT_ARGS > $env_agent"
   fi
   if [ -e "$env_agent" ]; then
     source $env_agent &>/dev/null
+  fi
+fi
+
+if [ -z "$GPG_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
+  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
+    GPG_AGENT_ENABLED=${GPG_AGENT_ENABLED:-1}
+  fi
+fi
+if [ "$GPG_AGENT_ENABLED" = "1" ]; then
+  GPG_AGENT_ARGS=""
+  if [ -n "$GPG_AGENT_TIMEOUT" ]; then
+    GPG_AGENT_ARGS="--default-cache-ttl $GPG_AGENT_TIMEOUT"
+  fi
+  if ! pgrep gpg-agent -U $USER &>/dev/null; then
+    sh -c "gpg-agent -q --daemon $GPG_AGENT_ARGS"
   fi
 fi
 
