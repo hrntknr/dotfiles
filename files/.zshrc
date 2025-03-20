@@ -59,20 +59,20 @@ fi
 gitStatus() {
   local branch_name st branch_status
 
-  if [ ! -e  ".git" ]; then
+  if [ ! -e ".git" ]; then
     return
   fi
-  branch_name=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
-  st=`git status 2> /dev/null`
-  if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
+  branch_name=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+  st=$(git status 2>/dev/null)
+  if [[ -n $(echo "$st" | grep "^nothing to") ]]; then
     branch_status="\e[38;5;2m"
-  elif [[ -n `echo "$st" | grep "^Untracked files"` ]]; then
+  elif [[ -n $(echo "$st" | grep "^Untracked files") ]]; then
     branch_status="\e[38;5;1m?"
-  elif [[ -n `echo "$st" | grep "^Changes not staged for commit"` ]]; then
+  elif [[ -n $(echo "$st" | grep "^Changes not staged for commit") ]]; then
     branch_status="\e[38;5;1m+"
-  elif [[ -n `echo "$st" | grep "^Changes to be committed"` ]]; then
+  elif [[ -n $(echo "$st" | grep "^Changes to be committed") ]]; then
     branch_status="\e[38;5;3m!"
-  elif [[ -n `echo "$st" | grep "^rebase in progress"` ]]; then
+  elif [[ -n $(echo "$st" | grep "^rebase in progress") ]]; then
     echo "\e[38;5;1m!(no branch)"
     return
   else
@@ -82,7 +82,7 @@ gitStatus() {
 }
 
 ignore() {
-  curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1|awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >> .gitignore
+  curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1 | awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >>.gitignore
 }
 
 spwd() {
@@ -94,8 +94,8 @@ spwd() {
     prefix="/"
   fi
   path="${PWD/$HOME/}"
-  paths=(${(s:/:)path})
-  if [ ${#paths[@]} = 0 ] ;then
+  # paths=(${(s:/:)path})
+  if [ ${#paths[@]} = 0 ]; then
     echo $prefix
     return
   fi
@@ -110,11 +110,11 @@ spwd() {
 }
 
 precmd() {
-  if [ -z "$SHELL_COLOR" ];then
-    if type md5sum > /dev/null 2>&1; then
-      local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5sum|md5sum|cut -c1-2))"'m'
-    elif type md5 > /dev/null 2>&1; then
-      local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname|md5|md5|cut -c1-2))"'m'
+  if [ -z "$SHELL_COLOR" ]; then
+    if type md5sum >/dev/null 2>&1; then
+      local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname | md5sum | md5sum | cut -c1-2))"'m'
+    elif type md5 >/dev/null 2>&1; then
+      local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname | md5 | md5 | cut -c1-2))"'m'
     else
       local HOSTCOLOR=$'\e[0m'
     fi
@@ -129,18 +129,18 @@ preexec() {
 
 peco-history-selection() {
   case ${OSTYPE} in
-    darwin*)
-      BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
-      ;;
-    linux*)
-      BUFFER=`history -n 1 | tac  | awk '!a[$0]++' | peco`
-      ;;
+  darwin*)
+    BUFFER=$(history -n 1 | tail -r | awk '!a[$0]++' | peco)
+    ;;
+  linux*)
+    BUFFER=$(history -n 1 | tac | awk '!a[$0]++' | peco)
+    ;;
   esac
   CURSOR=$#BUFFER
   zle reset-prompt
 }
 
-if type peco > /dev/null 2>&1; then
+if type peco >/dev/null 2>&1; then
   zle -N peco-history-selection
   bindkey '^R' peco-history-selection
 fi
@@ -176,64 +176,64 @@ PECO_VERSION=v0.5.11
 
 install_nvim() {
   case "${OSTYPE},$(uname -m)" in
-    darwin*,*)
-      TARGET=macos
-      ;;
-    linux*,x86_64)
-      TARGET=linux64
-      ;;
-    *)
-      echo "Unknown OS"
-      return
-      ;;
+  darwin*,*)
+    TARGET=macos
+    ;;
+  linux*,x86_64)
+    TARGET=linux64
+    ;;
+  *)
+    echo "Unknown OS"
+    return
+    ;;
   esac
   curl -fsSL https://github.com/neovim/neovim/releases/download/$NVIM_VERSION/nvim-$TARGET.tar.gz | tar xz --strip-components=1 -C ~/.local/
 }
 
 install_node() {
   case "${OSTYPE},$(uname -m)" in
-    darwin*,*)
-      TARGET=darwin-x64
-      ;;
-    linux*,x86_64)
-      TARGET=linux-x64
-      ;;
-    *)
-      echo "Unknown OS"
-      return
-      ;;
+  darwin*,*)
+    TARGET=darwin-x64
+    ;;
+  linux*,x86_64)
+    TARGET=linux-x64
+    ;;
+  *)
+    echo "Unknown OS"
+    return
+    ;;
   esac
   curl -fsSL https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-$TARGET.tar.gz | tar xz --strip-components=1 -C ~/.local/
 }
 
 install_peco() {
   case "${OSTYPE},$(uname -m)" in
-    darwin*,x86_64)
-      TARGET=darwin_amd64
-      EXT=zip
-      ;;
-    darwin*,arm64)
-      TARGET=darwin_arm64
-      EXT=zip
-      ;;
-    linux*,x86_64)
-      TARGET=linux_amd64
-      EXT=tar.gz
-      ;;
-    *)
-      echo "Unknown OS"
-      return
-      ;;
+  darwin*,x86_64)
+    TARGET=darwin_amd64
+    EXT=zip
+    ;;
+  darwin*,arm64)
+    TARGET=darwin_arm64
+    EXT=zip
+    ;;
+  linux*,x86_64)
+    TARGET=linux_amd64
+    EXT=tar.gz
+    ;;
+  *)
+    echo "Unknown OS"
+    return
+    ;;
   esac
   tmp=$(mktemp -d)
   curl -fsSL https://github.com/peco/peco/releases/download/$PECO_VERSION/peco_$TARGET.$EXT -o $tmp/peco.$EXT
   case $EXT in
-    zip)
-      unzip -j $tmp/peco.$EXT -d $tmp >/dev/null
-      ;;
-    tar.gz)
-      tar xf $tmp/peco.$EXT --strip-components=1 -C $tmp
-      ;;
+  zip)
+    unzip -j $tmp/peco.$EXT -d $tmp >/dev/null
+    ;;
+  tar.gz)
+    tar xf $tmp/peco.$EXT --strip-components=1 -C $tmp
+    ;;
   esac
   cp $tmp/peco ~/.local/bin/
 }
@@ -244,7 +244,7 @@ install() {
   install_peco
 }
 
-if type nvim > /dev/null 2>&1; then
+if type nvim >/dev/null 2>&1; then
   alias vim='nvim'
   alias vi='nvim'
 fi
@@ -269,24 +269,20 @@ zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAU
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 function _ssh {
   hosts=$(register_ssh "$HOME/.ssh/config" | uniq | sort | tr '\n' ' ')
-  for host (${(z)hosts}) compadd $host
+  for host in $hosts; do
+    compadd $host
+  done
 }
 
 function register_ssh {
   if [ ! -f "$1" ]; then
     return
   fi
-  echo "$(fgrep 'Host ' $1 | awk '{print $2}' | sort)";
-  includes="$(fgrep 'Include ' $1 | awk '{print $2}' | xargs -I % sh -c 'echo %' | tr '\n' ' ')";
-  for include (${(z)includes}) {
-    cd "$(dirname $1)"
-    cd "$(dirname $include)"
-    register_ssh "$(pwd)/$(basename $include)"
-  }
+  echo "$(fgrep 'Host ' $1 | awk '{print $2}' | sort)"
 }
 
 function ssh-kill {
@@ -301,27 +297,32 @@ function nat64 {
   echo $1 | sed -e "s/\./ /g" | xargs printf "64:ff9b::%02x%02x:%02x%02x\n"
 }
 
-function ga {
-  id=$(gh run list --json workflowName,databaseId -q "[.[]|select(.workflowName|test(\"$1\";\"i\"))][0].databaseId")
-  gh run watch $id
-}
+function ga { (
+  set -e
+  sha=$(git rev-parse HEAD)
+  if [ -z "$1" ]; then
+    gh run list -c "$sha"
+  else
+    gh run watch $(gh run list --json workflowName,databaseId -c "$sha" -q "[.[]|select(.workflowName|test(\"$1\";\"i\"))][0].databaseId")
+  fi
+); }
 
 case ${OSTYPE} in
-  darwin*)
-    alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
-    ;;
-  linux*)
-    alias open='xdg-open'
-    ;;
+darwin*)
+  alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
+  ;;
+linux*)
+  alias open='xdg-open'
+  ;;
 esac
 
-if ! type copy > /dev/null 2>&1; then
+if ! type copy >/dev/null 2>&1; then
   function copy {
-    printf "\033]52;;$(cat|base64)\033\\"
+    printf "\033]52;;$(cat | base64)\033\\"
   }
 fi
 
-if type kubectl > /dev/null 2>&1; then
+if type kubectl >/dev/null 2>&1; then
   alias k=kubectl
   alias kns='kubectl config set-context $(kubectl config current-context) --namespace'
   alias knet='kubectl debug -it --image nicolaka/netshoot'
@@ -334,6 +335,6 @@ if type kubectl > /dev/null 2>&1; then
   }
 fi
 
-if type openstack > /dev/null 2>&1; then
+if type openstack >/dev/null 2>&1; then
   alias os=openstack
 fi
