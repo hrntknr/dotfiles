@@ -1,6 +1,16 @@
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
 export GPG_TTY=$(tty)
+export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
+export PROMPT2="> "
+export HISTFILE="${ZDOTDIR}/.zsh_history"
+export HISTSIZE="1000000"
+export SAVEHIST="1000000"
+export KEYTIMEOUT=1
+setopt share_history
+setopt hist_ignore_dups
+setopt shwordsplit
+setopt EXTENDED_HISTORY
 
 if [ -e "$ZDOTDIR/.zshrc.local" ]; then
   . "$ZDOTDIR/.zshrc.local"
@@ -86,27 +96,26 @@ ignore() {
 }
 
 spwd() {
+  prefix="/"
   if [[ $PWD == $HOME ]]; then
     prefix="~"
   elif [[ $PWD == $HOME* ]]; then
     prefix="~/"
-  else
-    prefix="/"
   fi
   path="${PWD/$HOME/}"
-  # paths=(${(s:/:)path})
+  IFS="/" paths=($path)
   if [ ${#paths[@]} = 0 ]; then
     echo $prefix
     return
   fi
-  exclude_last=(${paths:0:-1})
+  exclude_last=(${paths:1:-1})
   cur_short_path=''
   for cur_dir in $exclude_last; do
     cur_short_path+="${cur_dir:0:1}/"
   done
   cur_short_path+="${paths[-1]}"
 
-  echo $prefix$cur_short_path
+  echo "$prefix$cur_short_path"
 }
 
 precmd() {
@@ -144,16 +153,6 @@ if type peco >/dev/null 2>&1; then
   zle -N peco-history-selection
   bindkey '^R' peco-history-selection
 fi
-
-export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
-export PROMPT2="> "
-export HISTFILE="${ZDOTDIR}/.zsh_history"
-export HISTSIZE="1000000"
-export SAVEHIST="1000000"
-export KEYTIMEOUT=1
-setopt share_history
-setopt hist_ignore_dups
-setopt EXTENDED_HISTORY
 
 alias l='ls -ltrG'
 alias ls='ls -G'
