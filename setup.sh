@@ -32,7 +32,22 @@ function setup_files() {
     if [ ! -d "$dir" ]; then
       mkdir -p "$dir"
     fi
-    cp -v "$cur/$1/$file" "$target"
+    name=$(basename "$file")
+    case "$name" in
+    *.darwin)
+      if [ "$(uname)" != "Darwin" ]; then
+        continue
+      fi
+      name=${name%.darwin}
+      ;;
+    *.linux)
+      if [ "$(uname)" != "Linux" ]; then
+        continue
+      fi
+      name=${name%.linux}
+      ;;
+    esac
+    cp -v "$cur/$1/$file" "$dir/$name"
   done
 }
 
