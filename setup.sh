@@ -23,15 +23,20 @@ EOS
 esac
 
 cur=$(dirname $0)
-for file in $(find $cur/files -type f); do
-  file=${file#$cur/files/}
-  target="$basedir/$file"
-  dir=$(dirname "$target")
-  if [ ! -d "$dir" ]; then
-    mkdir -p "$dir"
-  fi
-  cp -v "$cur/files/$file" "$target"
-done
+
+function setup_files() {
+  for file in $(find $cur/$1 -type f); do
+    file=${file#$cur/$1/}
+    target="$basedir/$file"
+    dir=$(dirname "$target")
+    if [ ! -d "$dir" ]; then
+      mkdir -p "$dir"
+    fi
+    cp -v "$cur/$1/$file" "$target"
+  done
+}
+
+setup_files files
 if type git-crypt >/dev/null 2>&1; then
   set +e
   (
@@ -41,15 +46,7 @@ if type git-crypt >/dev/null 2>&1; then
   )
   if [ $? -eq 0 ]; then
     set -e
-    for file in $(find $cur/files-crypt -type f); do
-      file=${file#$cur/files/}
-      target="$basedir/$file"
-      dir=$(dirname "$target")
-      if [ ! -d "$dir" ]; then
-        mkdir -p "$dir"
-      fi
-      ln -sfv "$cur/files-crypt/$file" "$target"
-    done
+    setup_files files-crypt
   else
     echo "Skip files-crypt"
   fi
