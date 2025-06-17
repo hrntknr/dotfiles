@@ -1,0 +1,12 @@
+{
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Write",
+      "WebFetch",
+      "Bash(git:*)"
+    ],
+    "deny": []
+  }
+}
