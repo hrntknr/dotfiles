@@ -166,6 +166,8 @@ alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='claude'
+alias cu='claude --dangerously-skip-permissions'
+alias claude-unsafe='claude --dangerously-skip-permissions'
 
 # https://github.com/neovim/neovim/releases/
 NVIM_VERSION=stable
@@ -325,6 +327,7 @@ fi
 if type kubectl >/dev/null 2>&1; then
   alias k=kubectl
   alias kns='kubectl config set-context $(kubectl config current-context) --namespace'
+  alias ksw='kubectl config use-context $(kubectl config get-contexts -o name | peco)'
   alias knet='kubectl debug -it --image nicolaka/netshoot'
   function krl {
     if [ -z "$1" ]; then

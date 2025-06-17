@@ -31,11 +31,7 @@ fi
 
 #nvm(node)
 if [ -e "$HOME/.nvm" ]; then
-  export NVM_DIR="$HOME/.nvm"
-  nvm_cmds=(nvm node npm yarn)
-  for cmd in "${nvm_cmds[@]}"; do
-    alias $cmd="unalias ${nvm_cmds[*]} && unset nvm_cmds && . $NVM_DIR/nvm.sh && $cmd"
-  done
+  . "$HOME/.nvm/nvm.sh"
 fi
 
 #gvm(go)
