@@ -1,7 +1,15 @@
 {
   "includeCoAuthoredBy": false,
   "permissions": {
-    "allow": ["Read", "WebFetch", "Bash(git:*)", "Bash(ls:*)", "Bash(find:*)"],
+    "allow": [
+      "Read",
+      "WebFetch",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)"
+    ],
     "deny": []
   }
 }
