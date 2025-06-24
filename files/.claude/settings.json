@@ -4,12 +4,15 @@
     "allow": [
       "Read",
       "WebFetch",
+      "mcp__ide__getDiagnostics",
       "Bash(git:*)",
       "Bash(gh:*)",
       "Bash(ls:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(go mod:*)",
+      "Bash(go get:*)"
     ],
     "deny": []
   }
