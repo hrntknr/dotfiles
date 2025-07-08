@@ -12,8 +12,34 @@
       "Bash(grep:*)",
       "Bash(rg:*)",
       "Bash(go mod:*)",
-      "Bash(go get:*)"
+      "Bash(go get:*)",
+      "Bash(go build:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'test -x ~/.local/bin/claude_hooks.sh && ~/.local/bin/claude_hooks.sh notification'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'test -x ~/.local/bin/claude_hooks.sh && ~/.local/bin/claude_hooks.sh stop'"
+          }
+        ]
+      }
+    ]
   }
 }
