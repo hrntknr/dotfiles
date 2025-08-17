@@ -19,27 +19,7 @@
     "deny": []
   },
   "hooks": {
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'test -x ~/.local/bin/claude_hooks.sh && ~/.local/bin/claude_hooks.sh notification'"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'test -x ~/.local/bin/claude_hooks.sh && ~/.local/bin/claude_hooks.sh stop'"
-          }
-        ]
-      }
-    ]
+    "Notification": [],
+    "Stop": []
   }
 }
