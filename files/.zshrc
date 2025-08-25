@@ -165,9 +165,7 @@ alias man='env LANGUAGE=ja_JP.utf8 man'
 alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
-alias c='claude'
-alias cu='claude --dangerously-skip-permissions'
-alias claude-unsafe='claude --dangerously-skip-permissions'
+alias c='codex'
 
 # https://github.com/neovim/neovim/releases/
 NVIM_VERSION=stable
