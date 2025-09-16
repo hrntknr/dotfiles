@@ -166,6 +166,7 @@ alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='codex'
+alias bellify='awk "{ print; printf \"\\a\" }"'
 
 # https://github.com/neovim/neovim/releases/
 NVIM_VERSION=stable
