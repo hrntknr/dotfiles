@@ -1,0 +1,23 @@
+layout {
+  pane split_direction="vertical" {
+    pane
+  }
+  pane size=1 borderless=true {
+    plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+      format_center "{tabs}"
+      format_right  "#[fg=#6C7086,bold] {datetime}  {command_load} "
+      format_space  ""
+
+      tab_normal   "#[fg=#6C7086] {name} "
+      tab_active   "#[fg=#9399B2,bold,italic] {name} "
+
+      command_load_command  "sh -c \"uptime | sed 's/.*load averages: //;s/,//g'\""
+      command_load_format   "{stdout}"
+      command_load_interval "60"
+
+      datetime        "{format}"
+      datetime_format "%Y/%m/%d %H:%M:%S"
+      datetime_timezone "Asia/Tokyo"
+    }
+  }
+}

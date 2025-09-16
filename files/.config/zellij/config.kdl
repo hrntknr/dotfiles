@@ -1,0 +1,50 @@
+show_startup_tips false
+theme "vesper"
+pane_frames false
+exit_unattached true
+
+keybinds {
+  normal {
+    bind "Ctrl s" { SwitchToMode "tmux"; }
+  }
+  tmux {
+    bind "Ctrl s" { SwitchToMode "normal"; }
+    bind "left" { MoveFocus "left"; }
+    bind "down" { MoveFocus "down"; }
+    bind "up" { MoveFocus "up"; }
+    bind "right" { MoveFocus "right"; }
+    bind "space" { NextSwapLayout; }
+    bind "\"" { NewPane "down"; SwitchToMode "normal"; }
+    bind "%" { NewPane "right"; SwitchToMode "normal"; }
+    bind "," { SwitchToMode "renametab"; }
+    bind "[" { SwitchToMode "scroll"; }
+    bind "c" { NewTab; SwitchToMode "normal"; }
+    bind "n" { GoToNextTab; SwitchToMode "normal"; }
+    bind "o" { FocusNextPane; SwitchToMode "normal"; }
+    bind "p" { GoToPreviousTab; SwitchToMode "normal"; }
+    bind "z" { ToggleFocusFullscreen; SwitchToMode "normal"; }
+    bind "/" { SwitchToMode "entersearch"; }
+    bind "1" { GoToTab 1; SwitchToMode "normal"; }
+    bind "2" { GoToTab 2; SwitchToMode "normal"; }
+    bind "3" { GoToTab 3; SwitchToMode "normal"; }
+    bind "4" { GoToTab 4; SwitchToMode "normal"; }
+    bind "5" { GoToTab 5; SwitchToMode "normal"; }
+    bind "6" { GoToTab 6; SwitchToMode "normal"; }
+    bind "7" { GoToTab 7; SwitchToMode "normal"; }
+    bind "8" { GoToTab 8; SwitchToMode "normal"; }
+    bind "9" { GoToTab 9; SwitchToMode "normal"; }
+  }
+  entersearch {
+    bind "Ctrl c" { SwitchToMode "scroll"; }
+    bind "esc" { SwitchToMode "scroll"; }
+    bind "enter" { SwitchToMode "search"; }
+  }
+  shared_except "normal" "locked" "entersearch" {
+    bind "enter" { SwitchToMode "normal"; }
+    bind "backspace" { SwitchToMode "normal"; }
+    bind "Ctrl c" { SwitchToMode "normal"; }
+  }
+  shared_except "normal" "locked" "entersearch" "renametab" "renamepane" {
+    bind "esc" { SwitchToMode "normal"; }
+  }
+}
