@@ -11,6 +11,7 @@ setopt share_history
 setopt hist_ignore_dups
 setopt shwordsplit
 setopt EXTENDED_HISTORY
+setopt nolistbeep
 
 if [ -e "$ZDOTDIR/.zshrc.local" ]; then
   . "$ZDOTDIR/.zshrc.local"
