@@ -11,7 +11,7 @@ layout {
       tab_normal   "#[fg=#6C7086] {name} "
       tab_active   "#[fg=#9399B2,bold,italic] {name} "
 
-      command_load_command  "sh -c \"uptime | sed 's/.*load averages: //;s/,//g'\""
+      command_load_command  "sh -c \"uptime | sed 's/.*load average.*: //;s/,//g'\""
       command_load_format   "{stdout}"
       command_load_interval "60"
 
