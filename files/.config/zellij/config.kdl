@@ -43,8 +43,6 @@ keybinds {
     bind "enter" { SwitchToMode "normal"; }
     bind "backspace" { SwitchToMode "normal"; }
     bind "Ctrl c" { SwitchToMode "normal"; }
-  }
-  shared_except "normal" "locked" "entersearch" "renametab" "renamepane" {
     bind "esc" { SwitchToMode "normal"; }
   }
 }
