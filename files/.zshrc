@@ -13,6 +13,7 @@ setopt shwordsplit
 setopt EXTENDED_HISTORY
 setopt nolistbeep
 bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
 
 if [ -e "$ZDOTDIR/.zshrc.local" ]; then
   . "$ZDOTDIR/.zshrc.local"
