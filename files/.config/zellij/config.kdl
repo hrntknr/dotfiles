@@ -46,3 +46,8 @@ keybinds {
     bind "esc" { SwitchToMode "normal"; }
   }
 }
+keybinds {
+  normal {
+    paste "off"
+  }
+}
