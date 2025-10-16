@@ -3,6 +3,7 @@
   name = Takanori Hirano
 [core]
   editor = vim
+  excludesfile = ~/.gitignore_global
 [submodule]
   recurse = true
 [pull]
