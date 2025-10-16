@@ -67,6 +67,13 @@ if [ -e "$HOME/.pyenv" ]; then
   eval "$(pyenv init -)"
 fi
 
+if type python3 >/dev/null 2>&1; then
+  base=$(python3 -m site --user-base)
+  if [ -e "$base/bin" ]; then
+    export PATH="$base/bin:$PATH"
+  fi
+fi
+
 case ${OSTYPE} in
 darwin*)
   if [ -e "$HOME/Library/Android/sdk/platform-tools" ]; then
