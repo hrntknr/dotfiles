@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+if [ -z "$NTFY" ]; then
+  echo "NTFY is required." >&2
+  exit 1
+fi
+
+cmd="$1"
+shift
+
+if [ -z "$cmd" ]; then
+  echo "Usage: $(basename "$0") <command> [args...]" >&2
+  exit 1
+fi
+
+"$cmd" "$@"
+status=$?
+
+if [ $status -eq 0 ]; then
+  curl -sf -d "✅ : $cmd" "$NTFY" -o /dev/null
+else
+  curl -sf -d "❌ ($status): $cmd" "$NTFY" -o /dev/null
+fi

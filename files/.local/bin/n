@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+if [ -z "$NTFY" ]; then
+  echo "NTFY is required." >&2
+  exit 1
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+  PS="$(ps -ax -o pid= -o ppid= -o tty= -o etime= -o command=)"
+else
+  PS="$(ps -u "$USER" -o pid=,ppid=,tty=,etime=,args= --no-headers)"
+fi
+list=$(
+  echo "$PS" | \
+  awk '$3 !~ /^\?/' | \
+  awk '$5 != "login"' | \
+  awk '
+    {
+      ppid[$1] = $2;
+      args[$1] = $0;
+    }
+    END {
+      for (p in ppid)
+        if (ppid[p] in ppid == 1)
+          if (ppid[ppid[p]] in ppid == 0)
+            print args[p];
+    }
+  ' | \
+  awk "\$1 !~ $$" | \
+  sort -k4
+)
+
+target=$(echo "$list" | peco)
+if [ -z "$target" ]; then
+  exit 1
+fi
+
+pid=$(echo "$target" | awk '{print $1}')
+cmd=$(echo "$target" | awk '{print $5}')
+
+nohup bash -c "
+  while kill -0 \"$pid\" 2>/dev/null; do
+    sleep .5
+  done
+  status=\$?
+  if [ \$status -eq 0 ]; then
+    curl -sf -d \"✅ : $cmd\" \"$NTFY\" -o /dev/null
+  else
+    curl -sf -d \"❌ (\$status): $cmd\" \"$NTFY\" -o /dev/null
+  fi
+" >/dev/null 2>&1 &
