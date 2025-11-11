@@ -42,10 +42,5 @@ nohup bash -c "
   while kill -0 \"$pid\" 2>/dev/null; do
     sleep .5
   done
-  status=\$?
-  if [ \$status -eq 0 ]; then
-    curl -sf -d \"✅ : $cmd\" \"$NTFY\" -o /dev/null
-  else
-    curl -sf -d \"❌ (\$status): $cmd\" \"$NTFY\" -o /dev/null
-  fi
+  curl -sf -d \"✅ : $cmd\" \"$NTFY\" -o /dev/null
 " >/dev/null 2>&1 &
