@@ -1,6 +1,11 @@
 #!/bin/bash -e
 
-if [ -z "$NTFY" ]; then
+if ! type jq >/dev/null 2>&1; then
+  echo "jq is required." >&2
+  exit 1
+fi
+
+if [ -z "$NTFY" ] && [ -z "$SLACK_WEBHOOK_URL" ]; then
   echo "NTFY is required." >&2
   exit 1
 fi
@@ -13,11 +18,26 @@ if [ -z "$cmd" ]; then
   exit 1
 fi
 
+trap 'kill -s INT -- -$$ 2>/dev/null || true' INT
+trap 'kill -s QUIT -- -$$ 2>/dev/null || true' QUIT
+trap 'kill -s TERM -- -$$ 2>/dev/null || true' TERM
+set +e
 "$cmd" "$@"
 status=$?
+set -e
+trap - INT QUIT TERM
 
 if [ $status -eq 0 ]; then
-  curl -sf -d "✅ : $cmd" "$NTFY" -o /dev/null
+  msg="✅ : $cmd"
 else
-  curl -sf -d "❌ ($status): $cmd" "$NTFY" -o /dev/null
+  msg="❌ ($status): $cmd"
 fi
+
+if [ -n "$NTFY" ]; then
+  curl -sf -d "$msg" "$NTFY" -o /dev/null
+elif [ -n "$SLACK_WEBHOOK_URL" ]; then
+  payload=$(jq -n --arg text "$msg" '{text: $text}')
+  curl -sf -H "Content-Type: application/json" -d "$payload" "$SLACK_WEBHOOK_URL" -o /dev/null
+fi
+
+exit $status
