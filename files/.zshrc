@@ -311,6 +311,12 @@ function ga { (
   fi
 ); }
 
+function rnd() {
+  local len="${1:-8}"
+  base64 < /dev/urandom | tr -dc 'A-Za-z0-9' | head -c "$len"
+  echo
+}
+
 case ${OSTYPE} in
 darwin*)
   alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
