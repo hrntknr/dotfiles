@@ -1,5 +1,6 @@
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
+export TERM=xterm-256color
 export GPG_TTY=$(tty)
 export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
 export PROMPT2="> "
