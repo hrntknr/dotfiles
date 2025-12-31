@@ -14,7 +14,7 @@ gcloud.disabled = true
 
 [username]
 show_always = true
-format = "[$user]($style)[@]($style)"
+format = "[$user@]($style)"
 style_user = "white"
 style_root = "red"
 
@@ -22,7 +22,8 @@ style_root = "red"
 ssh_only = false
 trim_at = ""
 style = "cyan"
-format = '[$ssh_symbol$hostname]($style) '
+ssh_symbol = " 🌐"
+format = '[$hostname$ssh_symbol]($style) '
 
 [directory]
 fish_style_pwd_dir_length = 1
