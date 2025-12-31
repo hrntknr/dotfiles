@@ -23,7 +23,7 @@ ssh_only = false
 trim_at = ""
 style = "cyan"
 ssh_symbol = " 🌐"
-format = '[$hostname$ssh_symbol]($style) '
+format = '[$hostname]($style)[$ssh_symbol](dimmed white bold) '
 
 [directory]
 fish_style_pwd_dir_length = 1
