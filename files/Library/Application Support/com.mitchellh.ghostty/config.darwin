@@ -1,0 +1,9 @@
+theme = Atom One Dark
+cursor-style = block
+maximize = true
+font-family = Fira Mono for Powerline
+macos-titlebar-style = tabs
+font-size = 13
+adjust-cell-height = 2
+shell-integration = detect
+shell-integration-features = no-cursor

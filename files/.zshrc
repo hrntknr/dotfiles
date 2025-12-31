@@ -1,123 +1,64 @@
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
-export TERM=xterm-256color
+# zsh settings
 export GPG_TTY=$(tty)
-export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
-export PROMPT2="> "
 export HISTFILE="${ZDOTDIR}/.zsh_history"
-export HISTSIZE="1000000"
-export SAVEHIST="1000000"
+export HISTSIZE=1000000
+export SAVEHIST=1000000
 export KEYTIMEOUT=1
 setopt share_history
 setopt hist_ignore_dups
-setopt shwordsplit
-setopt EXTENDED_HISTORY
 setopt nolistbeep
+setopt extended_glob
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
-
-if [ -e "$ZDOTDIR/.zshrc.local" ]; then
-  . "$ZDOTDIR/.zshrc.local"
+if type peco >/dev/null 2>&1; then
+  function peco-history-selection {
+    case ${OSTYPE} in
+    darwin*)
+      BUFFER=$(history -n 1 | tail -r | awk '!a[$0]++' | peco)
+      ;;
+    linux*)
+      BUFFER=$(history -n 1 | tac | awk '!a[$0]++' | peco)
+      ;;
+    esac
+    CURSOR=$#BUFFER
+    zle reset-prompt
+  }
+  zle -N peco-history-selection
+  bindkey '^R' peco-history-selection
 fi
 
-if [ -e "$ZDOTDIR/.zsh/functions" ]; then
-  FPATH="$ZDOTDIR/.zsh/functions:$FPATH"
+## completion
+autoload -Uz compinit
+compinit
+setopt auto_param_slash
+setopt mark_dirs
+setopt list_types
+setopt auto_menu
+setopt auto_param_keys
+zstyle ':completion:*:default' menu select=2
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
+zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
+zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' list-separator '-->'
+zstyle ':completion:*:manuals' separate-sections true
+
+## plugins
+if [ -e "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+  . "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+if [ -e "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+  . "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
-if [ ! -e "$ZDOTDIR/.local" ]; then
-  mkdir $ZDOTDIR/.local
-fi
-
-if [ -e "$ZDOTDIR/.local/bin" ]; then
-  export PATH="$ZDOTDIR/.local/bin:$PATH"
-fi
-
-#brew
-if [ -e "/opt/homebrew/bin/brew" ]; then
-  eval $(/opt/homebrew/bin/brew shellenv)
-fi
-
-#snap
-if [ -e "/snap" ]; then
-  export PATH="/snap/bin:$PATH"
-fi
-
-#direnv
-if type direnv >/dev/null 2>&1; then
-  eval "$(direnv hook zsh)"
-fi
-
-#nvm(node)
-if [ -e "$HOME/.nvm" ]; then
-  . "$HOME/.nvm/nvm.sh"
-fi
-
-#gvm(go)
-if [ -e "$HOME/.gvm" ]; then
-  . "$HOME/.gvm/scripts/gvm"
-fi
-
-#go
-if type go >/dev/null 2>&1; then
-  export GO111MODULE=on
-  if [ -e "$HOME/work" ]; then
-    export GOPATH="$HOME/work/go"
-  elif [ -e "$HOME/go" ]; then
-    export GOPATH="$HOME/go"
-  else
-    export GOPATH="$HOME/.go"
-  fi
-  if [ -e "$GOPATH/bin" ]; then
-    export PATH="$PATH:$GOPATH/bin"
-  fi
-fi
-
-#ruby
-if [ -e "$HOME/.rbenv" ]; then
-  export PATH="$HOME/.rbenv/bin:$PATH"
-  eval "$(rbenv init -)"
-fi
-
-#python
-if [ -e "$HOME/.pyenv" ]; then
-  export PYENV_ROOT=$HOME/.pyenv
-  export PATH=$PYENV_ROOT/bin:$PATH
-  eval "$(pyenv init -)"
-fi
-
-if type python3 >/dev/null 2>&1; then
-  base=$(python3 -m site --user-base)
-  if [ -e "$base/bin" ]; then
-    export PATH="$base/bin:$PATH"
-  fi
-fi
-
-case ${OSTYPE} in
-darwin*)
-  if [ -e "$HOME/Library/Android/sdk/platform-tools" ]; then
-    export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
-  fi
-  ;;
-linux*) ;;
-esac
-
-#rust
-if [ -e "$HOME/.cargo" ]; then
-  export PATH="$HOME/.cargo/bin:$PATH"
-fi
-
-#java
-if [ -e "/usr/libexec/java_home" ]; then
-  if /usr/libexec/java_home >/dev/null 2>&1; then
-    export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
-    export PATH=${JAVA_HOME}/bin:${PATH}
-  fi
-fi
-
-if [ -e "/usr/local/sbin" ]; then
-  export PATH="/usr/local/sbin/:$PATH"
-fi
-
+# agents
+## ssh
 if [ -z "$SSH_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
   if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
     SSH_AGENT_ENABLED=${SSH_AGENT_ENABLED:-1}
@@ -137,6 +78,7 @@ if [ "$SSH_AGENT_ENABLED" = "1" ]; then
   fi
 fi
 
+# gpg
 if [ -z "$GPG_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
   if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
     GPG_AGENT_ENABLED=${GPG_AGENT_ENABLED:-1}
@@ -152,102 +94,7 @@ if [ "$GPG_AGENT_ENABLED" = "1" ]; then
   fi
 fi
 
-if [ -e "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-  . "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-fi
-
-if [ -e "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
-  . "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
-
-gitStatus() {
-  local branch_name st branch_status
-
-  if [ ! -e ".git" ]; then
-    return
-  fi
-  branch_name=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-  st=$(git status 2>/dev/null)
-  if [[ -n $(echo "$st" | grep "^nothing to") ]]; then
-    branch_status="\e[38;5;2m"
-  elif [[ -n $(echo "$st" | grep "^Untracked files") ]]; then
-    branch_status="\e[38;5;1m?"
-  elif [[ -n $(echo "$st" | grep "^Changes not staged for commit") ]]; then
-    branch_status="\e[38;5;1m+"
-  elif [[ -n $(echo "$st" | grep "^Changes to be committed") ]]; then
-    branch_status="\e[38;5;3m!"
-  elif [[ -n $(echo "$st" | grep "^rebase in progress") ]]; then
-    echo "\e[38;5;1m!(no branch)"
-    return
-  else
-    branch_status="\e[38;5;4m"
-  fi
-  echo "${branch_status}[$branch_name]\e[m"
-}
-
-ignore() {
-  curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1 | awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >>.gitignore
-}
-
-spwd() {
-  prefix="/"
-  if [[ $PWD == $HOME ]]; then
-    prefix="~"
-  elif [[ $PWD == $HOME* ]]; then
-    prefix="~/"
-  fi
-  path="${PWD/$HOME/}"
-  IFS="/" paths=($path)
-  if [ ${#paths[@]} = 0 ]; then
-    echo $prefix
-    return
-  fi
-  exclude_last=(${paths:1:-1})
-  cur_short_path=''
-  for cur_dir in $exclude_last; do
-    cur_short_path+="${cur_dir:0:1}/"
-  done
-  cur_short_path+="${paths[-1]}"
-
-  echo "$prefix$cur_short_path"
-}
-
-precmd() {
-  if [ -z "$SHELL_COLOR" ]; then
-    if type md5sum >/dev/null 2>&1; then
-      local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname | md5sum | md5sum | cut -c1-2))"'m'
-    elif type md5 >/dev/null 2>&1; then
-      local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname | md5 | md5 | cut -c1-2))"'m'
-    else
-      local HOSTCOLOR=$'\e[0m'
-    fi
-  else
-    local HOSTCOLOR=$'\e[38;05;'"$SHELL_COLOR"'m'
-  fi
-  print -P "\n%n@$HOSTCOLOR$(hostname)\e[m $(spwd) $(gitStatus)"
-}
-
-preexec() {
-}
-
-peco-history-selection() {
-  case ${OSTYPE} in
-  darwin*)
-    BUFFER=$(history -n 1 | tail -r | awk '!a[$0]++' | peco)
-    ;;
-  linux*)
-    BUFFER=$(history -n 1 | tac | awk '!a[$0]++' | peco)
-    ;;
-  esac
-  CURSOR=$#BUFFER
-  zle reset-prompt
-}
-
-if type peco >/dev/null 2>&1; then
-  zle -N peco-history-selection
-  bindkey '^R' peco-history-selection
-fi
-
+# utils and aliases
 alias l='ls -ltrG'
 alias ls='ls -G'
 alias la='ls -laG'
@@ -260,167 +107,16 @@ alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='codex'
-alias bellify='awk "{ print; printf \"\\a\" }"'
-
-# https://github.com/neovim/neovim/releases/
-NVIM_VERSION=stable
-# https://nodejs.org/en
-NODE_VERSION=v20.9.0
-# https://github.com/peco/peco/releases/
-PECO_VERSION=v0.5.11
-
-install_nvim() {
-  case "${OSTYPE},$(uname -m)" in
-  darwin*,*)
-    TARGET=macos
-    ;;
-  linux*,x86_64)
-    TARGET=linux64
-    ;;
-  *)
-    echo "Unknown OS"
-    return
-    ;;
-  esac
-  curl -fsSL https://github.com/neovim/neovim/releases/download/$NVIM_VERSION/nvim-$TARGET.tar.gz | tar xz --strip-components=1 -C ~/.local/
-}
-
-install_node() {
-  case "${OSTYPE},$(uname -m)" in
-  darwin*,*)
-    TARGET=darwin-x64
-    ;;
-  linux*,x86_64)
-    TARGET=linux-x64
-    ;;
-  *)
-    echo "Unknown OS"
-    return
-    ;;
-  esac
-  curl -fsSL https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-$TARGET.tar.gz | tar xz --strip-components=1 -C ~/.local/
-}
-
-install_peco() {
-  case "${OSTYPE},$(uname -m)" in
-  darwin*,x86_64)
-    TARGET=darwin_amd64
-    EXT=zip
-    ;;
-  darwin*,arm64)
-    TARGET=darwin_arm64
-    EXT=zip
-    ;;
-  linux*,x86_64)
-    TARGET=linux_amd64
-    EXT=tar.gz
-    ;;
-  *)
-    echo "Unknown OS"
-    return
-    ;;
-  esac
-  tmp=$(mktemp -d)
-  curl -fsSL https://github.com/peco/peco/releases/download/$PECO_VERSION/peco_$TARGET.$EXT -o $tmp/peco.$EXT
-  case $EXT in
-  zip)
-    unzip -j $tmp/peco.$EXT -d $tmp >/dev/null
-    ;;
-  tar.gz)
-    tar xf $tmp/peco.$EXT --strip-components=1 -C $tmp
-    ;;
-  esac
-  cp $tmp/peco ~/.local/bin/
-}
-
-install() {
-  install_node
-  install_nvim
-  install_peco
-}
-
-if type nvim >/dev/null 2>&1; then
-  alias vim='nvim'
-  alias vi='nvim'
-fi
-
-autoload -Uz compinit
-compinit
-
-setopt auto_param_slash
-setopt mark_dirs
-setopt list_types
-setopt auto_menu
-setopt auto_param_keys
-setopt extended_glob
-zstyle ':completion:*:default' menu select=2
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
-zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
-zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' list-separator '-->'
-zstyle ':completion:*:manuals' separate-sections true
-# zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-
-function _ssh {
-  hosts=$(register_ssh "$HOME/.ssh/config" | uniq | sort | tr '\n' ' ')
-  for host in $hosts; do
-    compadd $host
-  done
-}
-
-function register_ssh {
-  if [ ! -f "$1" ]; then
-    return
-  fi
-  echo "$(fgrep 'Host ' $1 | awk '{print $2}' | sort)"
-}
-
-function ssh-kill {
-  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | sort | peco)
-  if [ -z "$mux" ]; then
-    return
-  fi
-  ps aux | grep "ssh[:]" | grep "$mux" | tr -s ' ' | cut -d ' ' -f 2 | xargs kill
-}
-
-function nat64 {
-  echo $1 | sed -e "s/\./ /g" | xargs printf "64:ff9b::%02x%02x:%02x%02x\n"
-}
-
-function ga { (
-  set -e
-  sha=$(git rev-parse HEAD)
-  if [ -z "$1" ]; then
-    gh run list -c "$sha"
-  else
-    gh run watch $(gh run list --json workflowName,databaseId -c "$sha" -q "[.[]|select(.workflowName|test(\"$1\";\"i\"))][0].databaseId")
-  fi
-); }
-
-function rnd() {
-  local len="${1:-8}"
-  base64 < /dev/urandom | tr -dc 'A-Za-z0-9' | head -c "$len"
-  echo
-}
 
 case ${OSTYPE} in
-darwin*)
-  alias netstat-lntp='lsof -nP -iTCP -sTCP:LISTEN'
-  ;;
 linux*)
   alias open='xdg-open'
   ;;
 esac
 
-if ! type copy >/dev/null 2>&1; then
-  function copy {
-    printf "\033]52;;$(cat | base64)\033\\"
-  }
+if type nvim >/dev/null 2>&1; then
+  alias vim='nvim'
+  alias vi='nvim'
 fi
 
 if type kubectl >/dev/null 2>&1; then
@@ -439,4 +135,44 @@ fi
 
 if type openstack >/dev/null 2>&1; then
   alias os=openstack
+fi
+
+function ignore {
+  curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1 | awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >>.gitignore
+}
+
+function ssh-kill {
+  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | sort | peco)
+  if [ -z "$mux" ]; then
+    return
+  fi
+  ps aux | grep "ssh[:]" | grep "$mux" | tr -s ' ' | cut -d ' ' -f 2 | xargs kill
+}
+
+function ga { (
+  set -e
+  sha=$(git rev-parse HEAD)
+  if [ -z "$1" ]; then
+    gh run list -c "$sha"
+  else
+    gh run watch $(gh run list --json workflowName,databaseId -c "$sha" -q "[.[]|select(.workflowName|test(\"$1\";\"i\"))][0].databaseId")
+  fi
+); }
+
+function rand {
+  local len="${1:-8}"
+  base64 < /dev/urandom | tr -dc 'A-Za-z0-9' | head -c "$len"
+  echo
+}
+
+function copy {
+  printf "\033]52;;$(cat | base64)\033\\"
+}
+
+# starship prompt
+eval "$(starship init zsh)"
+
+# override
+if [ -e "$ZDOTDIR/.zshrc.local" ]; then
+  . "$ZDOTDIR/.zshrc.local"
 fi
