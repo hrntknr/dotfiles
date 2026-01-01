@@ -2,12 +2,13 @@
 
 format = """
 $username\
-$hostname\
+${custom.hostname}\
 $directory\
 $all
 """
 
 add_newline = true
+hostname.disabled = true
 aws.disabled = true
 azure.disabled = true
 gcloud.disabled = true
@@ -18,12 +19,18 @@ format = "[$user@]($style)"
 style_user = "white"
 style_root = "red"
 
-[hostname]
-ssh_only = false
-trim_at = ""
-style = "cyan"
-ssh_symbol = " 🌐"
-format = '[$hostname]($style)[$ssh_symbol](dimmed white bold) '
+[custom.hostname]
+command = '''
+hostname=$(hostname)
+if [ -n "$SHELL_COLOR" ]; then
+  color_code=$SHELL_COLOR
+else
+  color_code=$((16#$(printf '%s' "$hostname" | md5sum | cut -c1-2)))
+fi
+printf '\e[38;05;%dm%s\e[0m\n' "$color_code" "$hostname"
+'''
+when = "true"
+format = '$output '
 
 [directory]
 fish_style_pwd_dir_length = 1
