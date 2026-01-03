@@ -11,3 +11,6 @@
 - Bug fixes must include a regression test:
   - Add a test that fails before the fix and passes after the fix.
   - Place it in the closest relevant test suite.
+
+## Language
+- User-facing responses must use the same language as the instructions used.
