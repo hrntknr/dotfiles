@@ -93,16 +93,16 @@ arch="$(uname -m | tr '[:upper:]' '[:lower:]')"
 case "$platform-$arch" in
 darwin-arm64)
   setup_binaries \
-    https://github.com/peco/peco/releases/latest/download/peco_darwin_arm64.zip \
-    'peco_*/peco'
+    https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-darwin_arm64.tar.gz \
+    fzf
   setup_binaries \
     https://github.com/starship/starship/releases/latest/download/starship-aarch64-apple-darwin.tar.gz \
     starship
   ;;
 linux-x86_64)
   setup_binaries \
-    https://github.com/peco/peco/releases/latest/download/peco_linux_amd64.tar.gz \
-    'peco_*/peco'
+    https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz \
+    fzf
   setup_binaries \
     https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz \
     starship

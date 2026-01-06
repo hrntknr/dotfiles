@@ -24,21 +24,21 @@ function sync_history {
 
 add-zsh-hook precmd sync_history
 
-if type peco >/dev/null 2>&1; then
-  function peco-history-selection {
+if type fzf >/dev/null 2>&1; then
+  function fzf-history-selection {
     case ${OSTYPE} in
     darwin*)
-      BUFFER=$(history -n 1 | tail -r | awk '!a[$0]++' | peco)
+      BUFFER=$(history -n 1 | tail -r | awk '!a[$0]++' | fzf --layout=reverse --cycle --tiebreak=index --exact)
       ;;
     linux*)
-      BUFFER=$(history -n 1 | tac | awk '!a[$0]++' | peco)
+      BUFFER=$(history -n 1 | tac | awk '!a[$0]++' | fzf --layout=reverse --cycle --tiebreak=index --exact)
       ;;
     esac
     CURSOR=$#BUFFER
     zle reset-prompt
   }
-  zle -N peco-history-selection
-  bindkey '^R' peco-history-selection
+  zle -N fzf-history-selection
+  bindkey '^R' fzf-history-selection
 fi
 
 ## completion
@@ -134,7 +134,7 @@ fi
 if type kubectl >/dev/null 2>&1; then
   alias k=kubectl
   alias kns='kubectl config set-context $(kubectl config current-context) --namespace'
-  alias ksw='kubectl config use-context $(kubectl config get-contexts -o name | peco)'
+  alias ksw='kubectl config use-context $(kubectl config get-contexts -o name | fzf --layout=reverse --cycle --tiebreak=index --exact)'
   alias knet='kubectl debug -it --image nicolaka/netshoot'
   function krl {
     if [ -z "$1" ]; then
@@ -154,7 +154,7 @@ function ignore {
 }
 
 function ssh-kill {
-  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | sort | peco)
+  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | sort | fzf --layout=reverse --cycle --tiebreak=index --exact)
   if [ -z "$mux" ]; then
     return
   fi
