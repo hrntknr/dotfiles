@@ -1,5 +1,7 @@
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
+autoload -Uz add-zsh-hook
+
 # zsh settings
 export GPG_TTY=$(tty)
 export HISTFILE="${ZDOTDIR}/.zsh_history"
@@ -7,15 +9,22 @@ export HISTSIZE=1000000
 export SAVEHIST=1000000
 export KEYTIMEOUT=1
 setopt share_history
+setopt hist_fcntl_lock
 setopt hist_ignore_dups
+setopt hist_ignore_space
 setopt nolistbeep
 setopt extended_glob
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 
-if type atuin >/dev/null 2>&1; then
-  eval "$(atuin init zsh)"
-elif type peco >/dev/null 2>&1; then
+function sync_history {
+  history -a >/dev/null 2>&1
+  history -n >/dev/null 2>&1
+}
+
+add-zsh-hook precmd sync_history
+
+if type peco >/dev/null 2>&1; then
   function peco-history-selection {
     case ${OSTYPE} in
     darwin*)
