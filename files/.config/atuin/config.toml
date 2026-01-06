@@ -1,0 +1,10 @@
+inline_height = 16
+show_preview = false
+secrets_filter = false
+enter_accept = true
+
+[sync]
+records = false
+
+[dotfiles]
+enabled = false
