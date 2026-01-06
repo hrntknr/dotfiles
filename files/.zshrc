@@ -12,7 +12,10 @@ setopt nolistbeep
 setopt extended_glob
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
-if type peco >/dev/null 2>&1; then
+
+if type atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+elif type peco >/dev/null 2>&1; then
   function peco-history-selection {
     case ${OSTYPE} in
     darwin*)
@@ -169,8 +172,74 @@ function copy {
   printf "\033]52;;$(cat | base64)\033\\"
 }
 
-# starship prompt
-eval "$(starship init zsh)"
+# prompt
+if type starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+else
+  function gitStatus {
+    local branch_name st branch_status
+
+    if [ ! -e ".git" ]; then
+      return
+    fi
+    branch_name=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    st=$(git status 2>/dev/null)
+    if [[ -n $(echo "$st" | grep "^nothing to") ]]; then
+      branch_status="\e[38;5;2m"
+    elif [[ -n $(echo "$st" | grep "^Untracked files") ]]; then
+      branch_status="\e[38;5;1m?"
+    elif [[ -n $(echo "$st" | grep "^Changes not staged for commit") ]]; then
+      branch_status="\e[38;5;1m+"
+    elif [[ -n $(echo "$st" | grep "^Changes to be committed") ]]; then
+      branch_status="\e[38;5;3m!"
+    elif [[ -n $(echo "$st" | grep "^rebase in progress") ]]; then
+      echo "\e[38;5;1m!(no branch)"
+      return
+    else
+      branch_status="\e[38;5;4m"
+    fi
+    echo "${branch_status}[$branch_name]\e[m"
+  }
+
+  function spwd {
+    prefix="/"
+    if [[ $PWD == $HOME ]]; then
+      prefix="~"
+    elif [[ $PWD == $HOME* ]]; then
+      prefix="~/"
+    fi
+    path="${PWD/$HOME/}"
+    IFS="/" paths=($path)
+    if [ ${#paths[@]} = 0 ]; then
+      echo $prefix
+      return
+    fi
+    exclude_last=(${paths:1:-1})
+    cur_short_path=''
+    for cur_dir in $exclude_last; do
+      cur_short_path+="${cur_dir:0:1}/"
+    done
+    cur_short_path+="${paths[-1]}"
+
+    echo "$prefix$cur_short_path"
+  }
+
+  function precmd {
+    if [ -z "$SHELL_COLOR" ]; then
+      if type md5sum >/dev/null 2>&1; then
+        local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname | md5sum | md5sum | cut -c1-2))"'m'
+      else
+        local HOSTCOLOR=$'\e[0m'
+      fi
+    else
+      local HOSTCOLOR=$'\e[38;05;'"$SHELL_COLOR"'m'
+    fi
+    print -P "\n%n@$HOSTCOLOR$(hostname)\e[m $(spwd) $(gitStatus)"
+  }
+
+  export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
+  export PROMPT2="> "
+fi
 
 # override
 if [ -e "$ZDOTDIR/.zshrc.local" ]; then

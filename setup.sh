@@ -98,6 +98,9 @@ darwin-arm64)
   setup_binaries \
     https://github.com/starship/starship/releases/latest/download/starship-aarch64-apple-darwin.tar.gz \
     starship
+  setup_binaries \
+    https://github.com/atuinsh/atuin/releases/download/v18.10.0/atuin-aarch64-apple-darwin.tar.gz \
+    'atuin-*/atuin'
   ;;
 linux-x86_64)
   setup_binaries \
@@ -106,6 +109,9 @@ linux-x86_64)
   setup_binaries \
     https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz \
     starship
+  setup_binaries \
+    https://github.com/atuinsh/atuin/releases/download/v18.10.0/atuin-x86_64-unknown-linux-musl.tar.gz \
+    'atuin-*/atuin'
   ;;
 *)
   echo "Unsupported platform: $platform-$arch"
