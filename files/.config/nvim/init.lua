@@ -24,11 +24,24 @@ vim.cmd("nnoremap <C-a> ggVG")
 vim.cmd("nnoremap <C-d> :below vsplit \\| terminal <CR>i")
 vim.cmd("nnoremap <Leader>b <C-^>")
 vim.cmd("nnoremap <Leader>sync :below split \\| resize 15 \\| terminal git sync<CR>i")
+vim.cmd("nnoremap <Leader>diff :DiffviewOpen<CR>")
 vim.cmd("autocmd BufWinEnter,WinEnter term://* startinsert")
 vim.cmd("ab sync below split \\| resize 15 \\| terminal git sync<CR>i")
 vim.keymap.set("n", "<Leader>f", function()
   vim.lsp.buf.format({ timeout_ms = 2000 })
 end, { silent = true, desc = "Format buffer" })
+vim.api.nvim_create_autocmd("WinClosed", {
+  callback = function(args)
+    local winid = tonumber(args.match)
+    if not winid then return end
+    local ok, buf = pcall(vim.api.nvim_win_get_buf, winid)
+    if not ok or not buf then return end
+    local ft = vim.bo[buf].filetype
+    if ft == "DiffviewFiles" or ft == "DiffviewFileHistory" then
+      pcall(vim.cmd, "DiffviewClose")
+    end
+  end,
+})
 if vim.fn.has('unnamedplus') then
   vim.opt.clipboard = "unnamedplus"
 end
@@ -58,6 +71,7 @@ require("lazy").setup({
     dependencies = {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons",
     },
     config = function()
       local neotree = require("neo-tree")
@@ -251,4 +265,10 @@ require("lazy").setup({
     end,
   },
   "editorconfig/editorconfig-vim",
+  {
+    "sindrets/diffview.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+  },
 })
