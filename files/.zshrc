@@ -62,11 +62,11 @@ zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
 
 ## plugins
-if [ -e "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-  . "$ZDOTDIR/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [ -e "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+  . "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
-if [ -e "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
-  . "$ZDOTDIR/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if [ -e "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+  . "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
 # agents
@@ -77,7 +77,7 @@ if [ -z "$SSH_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
   fi
 fi
 if [ "$SSH_AGENT_ENABLED" = "1" ]; then
-  env_agent=$ZDOTDIR/.local/ssh-agent.env
+  env_agent=$HOME/.local/ssh-agent.env
   SSH_AGENT_ARGS=""
   if [ -n "$SSH_AGENT_TIMEOUT" ]; then
     SSH_AGENT_ARGS="-t $SSH_AGENT_TIMEOUT"

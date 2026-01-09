@@ -34,11 +34,43 @@ vim.api.nvim_create_autocmd("WinClosed", {
   callback = function(args)
     local winid = tonumber(args.match)
     if not winid then return end
+
     local ok, buf = pcall(vim.api.nvim_win_get_buf, winid)
     if not ok or not buf then return end
+
     local ft = vim.bo[buf].filetype
+
     if ft == "DiffviewFiles" or ft == "DiffviewFileHistory" then
-      pcall(vim.cmd, "DiffviewClose")
+      vim.schedule(function()
+        pcall(vim.cmd, "DiffviewClose")
+      end)
+    end
+
+    if ft == "neo-tree" then
+      vim.schedule(function()
+        local wins = vim.api.nvim_list_wins()
+
+        for _, w in ipairs(wins) do
+          local b = vim.api.nvim_win_get_buf(w)
+          local bt = vim.bo[b].buftype
+          local ft = vim.bo[b].filetype
+          local name = vim.api.nvim_buf_get_name(b)
+          local modified = vim.bo[b].modified
+
+          local is_empty_noname =
+            bt == "" and
+            name == "" and
+            not modified and
+            vim.api.nvim_buf_line_count(b) == 1 and
+            vim.api.nvim_buf_get_lines(b, 0, 1, false)[1] == ""
+
+          if not is_empty_noname then
+            return
+          end
+        end
+
+        pcall(vim.cmd, "qa")
+      end)
     end
   end,
 })

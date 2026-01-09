@@ -12,7 +12,13 @@ case "$#" in
   fi
   cat <<EOS >$basedir/zsh
 #!/bin/bash
-ZDOTDIR=$(realpath $basedir) zsh
+export HOME=$(realpath $basedir)
+export ZDOTDIR=\$HOME
+export XDG_CONFIG_HOME="\$HOME/.config"
+export XDG_DATA_HOME="\$HOME/.local/share"
+export XDG_CACHE_HOME="\$HOME/.cache"
+export XDG_STATE_HOME="\$HOME/.local/state"
+exec zsh -l
 EOS
   chmod +x $basedir/zsh
   ;;
@@ -67,8 +73,10 @@ if type git-crypt >/dev/null 2>&1; then
   fi
 fi
 
-function setup_binaries {
-  url="$1"; pat="$2"
+function download_files {
+  url="$1"
+  dst="$2"
+  pat="$3"
   tmp="$(mktemp -d)"
   trap 'rm -rf "$tmp"' RETURN
   f="$tmp/${url##*/}"
@@ -80,11 +88,20 @@ function setup_binaries {
     *.tar.gz|*.tgz) tar -xzf "$f" -C "$tmp" ;;
     *) echo "unsupported: $f" >&2; return 1 ;;
   esac
+  mkdir -p "$dst"
   for src in "$tmp"/$pat; do
-    [[ -f "$src" ]] || continue
-    dst="$basedir/.local/bin/$(basename "$src")"
-    echo "installing $dst"
-    install -m 0755 "$src" "$dst"
+    if [ ! -e "$src" ]; then
+      continue
+    fi
+    target="$dst/$(basename "$src")"
+    echo "Installing $target"
+    if [ -d "$src" ]; then
+      mkdir -p "$target"
+      cp -R "$src"/. "$target"/
+    else
+      mkdir -p "$(dirname "$target")"
+      cp -f "$src" "$target"
+    fi
   done
 }
 
@@ -92,24 +109,35 @@ platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 arch="$(uname -m | tr '[:upper:]' '[:lower:]')"
 case "$platform-$arch" in
 darwin-arm64)
-  setup_binaries \
+  download_files \
     https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-darwin_arm64.tar.gz \
+    "$basedir/.local/bin" \
     fzf
-  setup_binaries \
+  download_files \
     https://github.com/starship/starship/releases/latest/download/starship-aarch64-apple-darwin.tar.gz \
+    "$basedir/.local/bin" \
     starship
+  download_files \
+    https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz \
+    "$basedir/.local" \
+    'nvim-macos-arm64/*'
   ;;
 linux-x86_64)
-  setup_binaries \
+  download_files \
     https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz \
+    "$basedir/.local/bin" \
     fzf
-  setup_binaries \
+  download_files \
     https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz \
+    "$basedir/.local/bin" \
     starship
+  download_files \
+    https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
+    "$basedir/.local" \
+    'nvim-linux-x86_64/*'
   ;;
 *)
   echo "Unsupported platform: $platform-$arch"
-  exit 1
   ;;
 esac
 
