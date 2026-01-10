@@ -118,7 +118,8 @@ alias man='env LANGUAGE=ja_JP.utf8 man'
 alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
-alias c='codex'
+alias c='claude'
+alias cx='codex'
 
 case ${OSTYPE} in
 linux*)
