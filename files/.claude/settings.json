@@ -1,0 +1,11 @@
+{
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [],
+    "deny": []
+  },
+  "hooks": {
+    "Notification": [],
+    "Stop": []
+  }
+}
