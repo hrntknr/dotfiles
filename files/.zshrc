@@ -119,6 +119,7 @@ alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='claude'
+alias cyolo='claude --dangerously-skip-permissions'
 alias cx='codex'
 
 case ${OSTYPE} in
