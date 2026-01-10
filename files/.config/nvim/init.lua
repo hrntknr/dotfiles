@@ -101,11 +101,11 @@ end
 
 local lsp_ensure = {
   "lua_ls",
-  "bashls",
-  "yamlls",
 }
 if has_node_npm() then
   vim.list_extend(lsp_ensure, {
+    "bashls",
+    "yamlls",
     "eslint",
     "html",
     "cssls",
