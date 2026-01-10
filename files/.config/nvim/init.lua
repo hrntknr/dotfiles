@@ -89,6 +89,36 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local function has_node()
+  return vim.fn.executable("node") == 1
+end
+local function has_npm()
+  return vim.fn.executable("npm") == 1
+end
+local function has_node_npm()
+  return has_node() and has_npm()
+end
+
+local lsp_ensure = {
+  "lua_ls",
+  "bashls",
+  "yamlls",
+}
+if has_node_npm() then
+  vim.list_extend(lsp_ensure, {
+    "eslint",
+    "html",
+    "cssls",
+    "tailwindcss",
+    "jsonls",
+  })
+end
+
+local null_ls_ensure = {}
+if has_node_npm() then
+  null_ls_ensure = { "prettier" }
+end
+
 require("lazy").setup({
   {
     "navarasu/onedark.nvim",
@@ -157,16 +187,7 @@ require("lazy").setup({
       "neovim/nvim-lspconfig"
     },
     opts = {
-      ensure_installed = {
-        "eslint",
-        "lua_ls",
-        "html",
-        "cssls",
-        "tailwindcss",
-        "jsonls",
-        "bashls",
-        "yamlls",
-      },
+      ensure_installed = lsp_ensure,
     },
   },
   {
@@ -234,9 +255,7 @@ require("lazy").setup({
     opts = {
       automatic_installation = true,
       automatic_setup = true,
-      ensure_installed = {
-        "prettier",
-      },
+      ensure_installed = null_ls_ensure,
     },
   },
   {
@@ -250,11 +269,11 @@ require("lazy").setup({
     },
     config = function()
       local null_ls = require("null-ls")
-      null_ls.setup({
-        sources = {
-          null_ls.builtins.formatting.prettier,
-        },
-      })
+      local sources = {}
+      if has_node_npm() then
+        table.insert(sources, null_ls.builtins.formatting.prettier)
+      end
+      null_ls.setup({ sources = sources })
     end,
   },
   {
