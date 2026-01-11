@@ -1,5 +1,6 @@
 {
   "includeCoAuthoredBy": false,
+  "spinnerTipsEnabled": false,
   "permissions": {
     "allow": [],
     "deny": []
@@ -7,5 +8,6 @@
   "hooks": {
     "Notification": [],
     "Stop": []
-  }
+  },
+  "language": "日本語"
 }
