@@ -19,7 +19,6 @@ vim.cmd("tnoremap <C-w><Right> <C-\\><C-n><C-w><Right>")
 vim.cmd("tnoremap <C-w>\" <C-\\><C-n><C-w>s")
 vim.cmd("tnoremap <C-w>@ <C-\\><C-n><C-w>s")
 vim.cmd("tnoremap <C-w>% <C-\\><C-n><C-w>v")
-vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
 vim.cmd("nnoremap <C-a> ggVG")
 vim.cmd("nnoremap <C-d> :below vsplit \\| terminal <CR>i")
 vim.cmd("nnoremap <Leader>b <C-^>")
@@ -27,9 +26,11 @@ vim.cmd("nnoremap <Leader>sync :below split \\| resize 15 \\| terminal git sync<
 vim.cmd("nnoremap <Leader>diff :DiffviewOpen<CR>")
 vim.cmd("autocmd BufWinEnter,WinEnter term://* startinsert")
 vim.cmd("ab sync below split \\| resize 15 \\| terminal git sync<CR>i")
+
 vim.keymap.set("n", "<Leader>f", function()
   vim.lsp.buf.format({ timeout_ms = 2000 })
 end, { silent = true, desc = "Format buffer" })
+
 vim.api.nvim_create_autocmd("WinClosed", {
   callback = function(args)
     local winid = tonumber(args.match)
@@ -53,7 +54,7 @@ vim.api.nvim_create_autocmd("WinClosed", {
         for _, w in ipairs(wins) do
           local b = vim.api.nvim_win_get_buf(w)
           local bt = vim.bo[b].buftype
-          local ft = vim.bo[b].filetype
+          local ft2 = vim.bo[b].filetype
           local name = vim.api.nvim_buf_get_name(b)
           local modified = vim.bo[b].modified
 
@@ -74,6 +75,7 @@ vim.api.nvim_create_autocmd("WinClosed", {
     end
   end,
 })
+
 if vim.fn.has('unnamedplus') then
   vim.opt.clipboard = "unnamedplus"
 end
@@ -99,6 +101,10 @@ local function has_node_npm()
   return has_node() and has_npm()
 end
 
+if has_node_npm() then
+  vim.cmd("nnoremap <C-l> :Copilot panel<CR>")
+end
+
 local lsp_ensure = {
   "lua_ls",
 }
@@ -119,7 +125,7 @@ if has_node_npm() then
   null_ls_ensure = { "prettier" }
 end
 
-require("lazy").setup({
+local plugins = {
   {
     "navarasu/onedark.nvim",
     config = function()
@@ -192,13 +198,8 @@ require("lazy").setup({
   },
   {
     "neovim/nvim-lspconfig",
-    event = {
-      "BufReadPre",
-      "BufNewFile",
-    },
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-    },
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = { "hrsh7th/cmp-nvim-lsp" },
     config = function()
       local lsp_common = require("config.lsp")
       vim.lsp.config("*", {
@@ -220,7 +221,8 @@ require("lazy").setup({
     },
     config = function()
       local cmp = require("cmp")
-      local copilot_suggestion = require("copilot.suggestion")
+      local ok_copilot, copilot_suggestion = pcall(require, "copilot.suggestion")
+
       cmp.setup({
         mapping = cmp.mapping.preset.insert({
           ['<C-e>'] = cmp.mapping.abort(),
@@ -229,7 +231,7 @@ require("lazy").setup({
             if cmp.visible() and cmp.get_active_entry() then
               cmp.select_next_item()
             else
-              if copilot_suggestion.is_visible() then
+              if ok_copilot and copilot_suggestion.is_visible() then
                 copilot_suggestion.accept()
               else
                 fallback()
@@ -260,13 +262,8 @@ require("lazy").setup({
   },
   {
     "nvimtools/none-ls.nvim",
-    event = {
-      "BufReadPre",
-      "BufNewFile",
-    },
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local null_ls = require("null-ls")
       local sources = {}
@@ -291,21 +288,25 @@ require("lazy").setup({
     config = function()
       local lualine = require('lualine')
       lualine.setup({
-        options = {
-          icons_enabled = false,
-        },
+        options = { icons_enabled = false },
       })
     end,
   },
+  "editorconfig/editorconfig-vim",
   {
+    "sindrets/diffview.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
+}
+
+if has_node_npm() then
+  table.insert(plugins, {
     "zbirenbaum/copilot.lua",
     event = "InsertEnter",
     config = function()
       local copilot = require("copilot")
       copilot.setup({
-        suggestion = {
-          auto_trigger = true,
-        },
+        suggestion = { auto_trigger = true },
         filetypes = {
           yaml = true,
           markdown = true,
@@ -314,12 +315,7 @@ require("lazy").setup({
         },
       })
     end,
-  },
-  "editorconfig/editorconfig-vim",
-  {
-    "sindrets/diffview.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-  },
-})
+  })
+end
+
+require("lazy").setup(plugins)
