@@ -121,6 +121,7 @@ alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='claude'
 alias cyolo='claude --dangerously-skip-permissions'
 alias cx='codex'
+alias dev='devcontainer up --workspace-folder .'
 
 case ${OSTYPE} in
 linux*)
