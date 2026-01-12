@@ -197,11 +197,21 @@ function wt {
 }
 
 function repo {
-  local r=$(ghq list | fzf --layout=reverse --cycle --tiebreak=index --exact)
-  if [ -z "$r" ]; then
-    return
-  fi
-  cd $(ghq root)/${r}
+  local action="${1:-cd}"
+  local r root p
+  r=$(ghq list | fzf --layout=reverse --cycle --tiebreak=index --exact)
+  [[ -z "$r" ]] && return 0
+  root="$(ghq root)"
+  p="${root}/${r}"
+
+  case "$action" in
+  cd)
+    cd -- "$p"
+    ;;
+  del)
+    rm -rf -- "$p"
+    ;;
+  esac
 }
 
 # prompt
