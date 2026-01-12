@@ -121,7 +121,6 @@ alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='claude'
 alias cyolo='claude --dangerously-skip-permissions'
 alias cx='codex'
-alias dev='devcontainer --workspace-folder .'
 
 case ${OSTYPE} in
 linux*)
@@ -213,6 +212,16 @@ function repo {
     rm -rf -- "$p"
     ;;
   esac
+}
+
+function dev {
+  if [ -z "$1" ]; then
+    echo "Usage: dev <command> arguments..."
+    return 1
+  fi
+  cmd="$1"
+  shift
+  devcontainer "$cmd" --workspace-folder . "$@"
 }
 
 # prompt
