@@ -183,6 +183,27 @@ function copy {
   printf "\033]52;;$(cat | base64)\033\\"
 }
 
+function wt {
+  if [ -z "$1" ]; then
+    echo "Usage: wt <worktree-name>"
+    return 1
+  fi
+  if [ ! -e ".git" ] && [ ! -e "$(git rev-parse --git-dir 2>/dev/null)" ]; then
+    echo "Not a git repository"
+    return 1
+  fi
+  local cur="$(basename $(pwd))"
+  git worktree add "../$cur.$1" -b "$1"
+}
+
+function repo {
+  local r=$(ghq list | fzf --layout=reverse --cycle --tiebreak=index --exact)
+  if [ -z "$r" ]; then
+    return
+  fi
+  cd $(ghq root)/${r}
+}
+
 # prompt
 if type starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"

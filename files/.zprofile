@@ -6,11 +6,6 @@ fi
 
 # set environment variables
 
-## set PATH
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-
 ## homebrew
 if [ -e "/opt/homebrew/bin/brew" ]; then
   eval $(/opt/homebrew/bin/brew shellenv)
@@ -77,6 +72,11 @@ if [ -e "/usr/libexec/java_home" ]; then
     export PATH=${JAVA_HOME}/bin:${PATH}
   fi
 fi
+
+## set PATH
+export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # override
 if [ -e "$ZDOTDIR/.zprofile.local" ]; then

@@ -12,3 +12,5 @@
   sync = "!sh -c 'git add -A;git commit --allow-empty-message -m \"\";git pull;git push'"
 [include]
   path = "~/.gitconfig.local"
+[ghq]
+  root = "~/work/r"

@@ -121,6 +121,14 @@ darwin-arm64)
     https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz \
     "$basedir/.local" \
     'nvim-macos-arm64/*'
+  download_files \
+    https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-macos-arm64.tar.gz \
+    "$basedir/.local/bin" \
+    tmux
+  download_files \
+    https://github.com/x-motemen/ghq/releases/latest/download/ghq_darwin_arm64.zip \
+    "$basedir/.local/bin" \
+    ghq_darwin_arm64/ghq
   ;;
 linux-x86_64)
   download_files \
@@ -135,6 +143,14 @@ linux-x86_64)
     https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
     "$basedir/.local" \
     'nvim-linux-x86_64/*'
+  download_files \
+    https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-linux-x86_64.tar.gz \
+    "$basedir/.local/bin" \
+    tmux
+  download_files \
+    https://github.com/x-motemen/ghq/releases/latest/download/ghq_linux_amd64.zip \
+    "$basedir/.local/bin" \
+    ghq_linux_amd64/ghq
   ;;
 *)
   echo "Unsupported platform: $platform-$arch"
