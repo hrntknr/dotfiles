@@ -1,61 +1,77 @@
 ---
 name: impl
-description: Implement changes from a provided Markdown issue/requirements file, then review the implementation for major issues and iterate until the review passes. Use when the user wants a workflow that takes an .md file path as input, applies code changes based on the file contents, and performs a self-review loop.
+description: "要件を適切なスコープに分割し、開発とレビューのサイクルを繰り返し実行するスキル。"
+user-invocable: true
 ---
 
-# Impl
+# 実装サイクルスキル
 
-## Overview
+要件を分割し、developer と reviewer エージェントを交互に使用して、高品質な実装を完成させます。
 
-Implement based on a Markdown file (issue/requirements) and run a self-review loop that blocks on major issues until the review is clean.
+## 実行プロセス
 
-## Workflow
+### フェーズ1: 要件分析とスコープ分割
 
-1. **Read the Markdown input**
+1. ユーザーの要件を分析する
+2. 要件を適切なスコープ（実装単位）に分割する
+3. 各スコープの依存関係を特定し、実装順序を決定する
+4. TodoWrite ツールでタスクリストを作成する
 
-   - Open the file path the user provides.
-   - Extract: problem statement, expected vs actual behavior, repro steps, acceptance criteria, constraints, and affected components.
-   - If critical details are missing, ask focused questions before coding.
+### フェーズ2: 実装サイクル（各スコープに対して繰り返し）
 
-2. **Interview for missing requirements (if needed)**
+各スコープに対して以下を実行：
 
-   - Ask only what is necessary to proceed safely.
-   - Prefer short, targeted questions; avoid long questionnaires.
-   - Example questions:
-     - "What is the expected behavior in this edge case?"
-     - "Which environment/versions should this support?"
-     - "Are there constraints on dependencies or configs?"
-     - "Is there an acceptance test or repro script to use?"
+#### ステップA: 開発フェーズ
+- Task ツールで `developer` エージェントを起動
+- 現在のスコープの要件を明確に伝える
+- 最小限の変更で要件を満たす実装を行う
+- テストも含めて実装する
 
-3. **Implement the change**
+#### ステップB: レビューフェーズ
+- Task ツールで `reviewer` エージェントを起動
+- 実装されたコードをレビューする
+- 問題点、改善点を特定する
 
-   - Identify the minimal set of files to touch.
-   - Apply changes that directly satisfy the Markdown requirements.
-   - Prefer small, safe diffs; add tests if the change warrants it.
-   - Keep edits aligned with the repo's conventions.
+#### ステップC: 改善サイクル
+- レビューで指摘された問題がある場合：
+  - 再度 `developer` エージェントで修正を実施
+  - 再度 `reviewer` エージェントでレビュー
+  - 指摘事項がなくなるまで繰り返す
+- 指摘事項がなくなったら、次のスコープへ進む
 
-4. **Run a review pass (major issues only)**
+### フェーズ3: 完了確認
 
-   - Check for correctness, edge cases, regressions, and missing requirements.
-   - Validate error handling and failure modes.
-   - Flag missing tests only if they create real risk.
-   - Do not nitpick style; focus on impactful issues.
+1. すべてのスコープの実装が完了したことを確認
+2. 全体のテストを実行して動作確認
+3. 実装内容のサマリーをユーザーに報告
 
-5. **Iterate until review passes**
-   - If review finds major issues, implement fixes and re-review.
-   - Repeat until the review has no major findings.
-   - Summarize the final changes and any remaining risks.
+## 重要なルール
 
-## Review Checklist (Major Issues)
+- 各スコープは独立して実装・テスト可能な単位にする
+- レビューで 🔴（重大）または 🟠（重要）の指摘がある場合は必ず修正する
+- 🟡（提案）や 🟢（軽微）は、明確なメリットがある場合のみ対応
+- 各フェーズの進捗は TodoWrite ツールで管理する
 
-- Requirement mismatch or missing acceptance criteria
-- Incorrect control flow or logic errors
-- Broken error handling, resource leaks, or unsafe behavior
-- Incomplete integration (e.g., feature added but not wired up)
-- Tests needed to prevent regressions in critical paths
+## エージェント起動時のプロンプト例
 
-## Output Expectations
+### developer 起動時
+```
+以下の要件を実装してください：
+[要件の詳細]
 
-- Provide a concise change summary.
-- List any tests run or suggest tests if none were run.
-- If clarifications are needed, ask targeted questions.
+コンテキスト：
+- 対象ファイル: [ファイルパス]
+- 関連する既存コード: [関連情報]
+- テスト要件: [テストの期待]
+```
+
+### reviewer 起動時
+```
+以下の実装をレビューしてください：
+[変更されたファイルのリスト]
+
+レビュー観点：
+- 要件を満たしているか
+- コード品質は適切か
+- テストは十分か
+```
