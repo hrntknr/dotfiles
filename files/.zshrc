@@ -198,18 +198,24 @@ function wt {
 
 function repo {
   local action="${1:-cd}"
-  local r root p
-  r=$(ghq list | fzf --layout=reverse --cycle --tiebreak=index --exact)
-  [[ -z "$r" ]] && return 0
-  root="$(ghq root)"
-  p="${root}/${r}"
+  local hist="$HOME/.repo_history"
+  local repos=$(ghq list)
+
+  local sorted=$( (grep -Fxf <(echo "$repos") "$hist" 2>/dev/null; echo "$repos") | awk '!a[$0]++' )
+  local r=$(echo "$sorted" | fzf --layout=reverse --cycle --tiebreak=index --exact)
+  [[ -z "$r" ]] && return
+
+  local p="$(ghq root)/$r"
+  local rest=$(grep -Fxf <(echo "$repos") "$hist" 2>/dev/null | grep -Fxv "$r")
 
   case "$action" in
   cd)
+    echo "$r"$'\n'"$rest" > "$hist"
     cd -- "$p"
     ;;
   del)
-    rm -rf -- "$p"
+    rm -rf "$p"
+    echo "$rest" > "$hist"
     ;;
   esac
 }
