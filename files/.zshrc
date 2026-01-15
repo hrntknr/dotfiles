@@ -230,6 +230,14 @@ function dev {
   devcontainer "$cmd" --workspace-folder . "$@"
 }
 
+function rdns {
+  if [ -z "$1" ]; then
+    echo "Usage: rdns <ip-address>"
+    return 1
+  fi
+  curl "https://ip.thc.org/$1"
+}
+
 # prompt
 if type starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
