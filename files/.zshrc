@@ -111,16 +111,14 @@ alias l='ls -ltrG'
 alias ls='ls -G'
 alias la='ls -laG'
 alias ll='ls -lG'
-alias mdig='dig @224.0.0.251 -p 5353'
-alias mdig6='dig @ff02::fb -p 5353'
 alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
-alias timestamp="date +%Y%m%d%H%M%S"
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='claude'
 alias cyolo='claude --dangerously-skip-permissions'
 alias cx='codex'
+alias rgg="rg --hidden --glob '!.git/*' -n"
 
 case ${OSTYPE} in
 linux*)
@@ -236,6 +234,18 @@ function rdns {
     return 1
   fi
   curl "https://ip.thc.org/$1"
+}
+
+function ts {
+  local format="${@:-YYYYMMDDhhmmss}"
+  if [ "$format" = "unix" ]; then
+    date +%s
+    return
+  fi
+  format=$(echo "$format" | sed \
+    -e 's/YYYY/%Y/g' -e 's/MM/%m/g' -e 's/DD/%d/g' \
+    -e 's/hh/%H/g'  -e 's/mm/%M/g' -e 's/ss/%S/g')
+  date +"$format"
 }
 
 # prompt
