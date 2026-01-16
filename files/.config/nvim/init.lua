@@ -59,11 +59,11 @@ vim.api.nvim_create_autocmd("WinClosed", {
           local modified = vim.bo[b].modified
 
           local is_empty_noname =
-            bt == "" and
-            name == "" and
-            not modified and
-            vim.api.nvim_buf_line_count(b) == 1 and
-            vim.api.nvim_buf_get_lines(b, 0, 1, false)[1] == ""
+              bt == "" and
+              name == "" and
+              not modified and
+              vim.api.nvim_buf_line_count(b) == 1 and
+              vim.api.nvim_buf_get_lines(b, 0, 1, false)[1] == ""
 
           if not is_empty_noname then
             return
@@ -87,7 +87,7 @@ if not vim.loop.fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
+      { out,                            "WarningMsg" },
       { "\nPress any key to exit..." },
     }, true, {})
     vim.fn.getchar()
@@ -301,6 +301,41 @@ local plugins = {
   {
     "sindrets/diffview.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
+  },
+  {
+    "pwntester/octo.nvim",
+    cmd = { "Octo" },
+    opts = {
+      picker = "telescope",
+      enable_builtin = true,
+    },
+    keys = {
+      {
+        "<leader>gi",
+        "<CMD>Octo issue list<CR>",
+        desc = "List GitHub Issues",
+      },
+      {
+        "<leader>gp",
+        "<CMD>Octo pr list<CR>",
+        desc = "List GitHub PullRequests",
+      },
+      {
+        "<leader>gd",
+        "<CMD>Octo discussion list<CR>",
+        desc = "List GitHub Discussions",
+      },
+      {
+        "<leader>gn",
+        "<CMD>Octo notification list<CR>",
+        desc = "List GitHub Notifications",
+      },
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
   },
 }
 
