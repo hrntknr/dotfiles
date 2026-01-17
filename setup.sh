@@ -109,48 +109,68 @@ platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 arch="$(uname -m | tr '[:upper:]' '[:lower:]')"
 case "$platform-$arch" in
 darwin-arm64)
-  download_files \
-    https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-darwin_arm64.tar.gz \
-    "$basedir/.local/bin" \
-    fzf
-  download_files \
-    https://github.com/starship/starship/releases/latest/download/starship-aarch64-apple-darwin.tar.gz \
-    "$basedir/.local/bin" \
-    starship
-  download_files \
-    https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz \
-    "$basedir/.local" \
-    'nvim-macos-arm64/*'
-  download_files \
-    https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-macos-arm64.tar.gz \
-    "$basedir/.local/bin" \
-    tmux
-  download_files \
-    https://github.com/x-motemen/ghq/releases/latest/download/ghq_darwin_arm64.zip \
-    "$basedir/.local/bin" \
-    ghq_darwin_arm64/ghq
+  if [ ! -f "$basedir/.local/bin/fzf" ]; then
+    download_files \
+      https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-darwin_arm64.tar.gz \
+      "$basedir/.local/bin" \
+      fzf
+  fi
+  if [ ! -f "$basedir/.local/bin/starship" ]; then
+    download_files \
+      https://github.com/starship/starship/releases/latest/download/starship-aarch64-apple-darwin.tar.gz \
+      "$basedir/.local/bin" \
+      starship
+  fi
+  if [ ! -f "$basedir/.local/bin/nvim" ]; then
+    download_files \
+      https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz \
+      "$basedir/.local" \
+      'nvim-macos-arm64/*'
+  fi
+  if [ ! -f "$basedir/.local/bin/tmux" ]; then
+    download_files \
+      https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-macos-arm64.tar.gz \
+      "$basedir/.local/bin" \
+      tmux
+  fi
+  if [ ! -f "$basedir/.local/bin/ghq" ]; then
+    download_files \
+      https://github.com/x-motemen/ghq/releases/latest/download/ghq_darwin_arm64.zip \
+      "$basedir/.local/bin" \
+      ghq_darwin_arm64/ghq
+  fi
   ;;
 linux-x86_64)
-  download_files \
-    https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz \
-    "$basedir/.local/bin" \
-    fzf
-  download_files \
-    https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz \
-    "$basedir/.local/bin" \
-    starship
-  download_files \
-    https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
-    "$basedir/.local" \
-    'nvim-linux-x86_64/*'
-  download_files \
-    https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-linux-x86_64.tar.gz \
-    "$basedir/.local/bin" \
-    tmux
-  download_files \
-    https://github.com/x-motemen/ghq/releases/latest/download/ghq_linux_amd64.zip \
-    "$basedir/.local/bin" \
-    ghq_linux_amd64/ghq
+  if [ ! -f "$basedir/.local/bin/fzf" ]; then
+    download_files \
+      https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz \
+      "$basedir/.local/bin" \
+      fzf
+  fi
+  if [ ! -f "$basedir/.local/bin/starship" ]; then
+    download_files \
+      https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz \
+      "$basedir/.local/bin" \
+      starship
+  fi
+  if [ ! -f "$basedir/.local/bin/nvim" ]; then
+    download_files \
+      https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz \
+      "$basedir/.local" \
+      'nvim-linux-x86_64/*'
+  fi
+  if [ ! -f "$basedir/.local/bin/tmux" ]; then
+    download_files \
+      https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-linux-x86_64.tar.gz \
+      "$basedir/.local/bin" \
+      tmux
+  fi
+  if [ ! -f "$basedir/.local/bin/ghq" ]; then
+    download_files \
+      https://github.com/x-motemen/ghq/releases/latest/download/ghq_linux_amd64.zip \
+      "$basedir/.local/bin" \
+      ghq_linux_amd64/ghq
+  fi
   ;;
 *)
   echo "Unsupported platform: $platform-$arch"
