@@ -35,9 +35,6 @@ function setup_files {
     file="${file#$cur/$1/}"
     target="$basedir/$file"
     dir=$(dirname "$target")
-    if [ ! -d "$dir" ]; then
-      mkdir -p "$dir"
-    fi
     name=$(basename "$file")
     case "$name" in
     *.darwin)
@@ -53,6 +50,9 @@ function setup_files {
       name=${name%.linux}
       ;;
     esac
+    if [ ! -d "$dir" ]; then
+      mkdir -p "$dir"
+    fi
     cp -v "$cur/$1/$file" "$dir/$name"
   done
 }
