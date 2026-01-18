@@ -31,6 +31,34 @@ vim.keymap.set("n", "<Leader>f", function()
   vim.lsp.buf.format({ timeout_ms = 2000 })
 end, { silent = true, desc = "Format buffer" })
 
+local function cursor_in_comment()
+  local syn = vim.fn.synIDattr(vim.fn.synID(vim.fn.line("."), vim.fn.col("."), 1), "name")
+  return type(syn) == "string" and syn:lower():find("comment") ~= nil
+end
+
+local function in_visual_selection()
+  local m = vim.fn.mode()
+  return m == "v" or m == "V" or m == "\22"
+end
+
+local function translate_smart(target_lang)
+  target_lang = target_lang or "JA"
+  if in_visual_selection() then
+    vim.cmd(("Translate %s -output=vsplit"):format(target_lang))
+    return
+  end
+  if cursor_in_comment() then
+    vim.cmd(("Translate %s -comment"):format(target_lang))
+    return
+  end
+  vim.cmd("normal! ggVG")
+  vim.cmd(("Translate %s -output=vsplit"):format(target_lang))
+end
+
+vim.keymap.set({ "n", "x" }, "<leader>tr", function()
+  translate_smart("JA")
+end, { desc = "Translate (selection > comment > whole buffer)" })
+
 vim.api.nvim_create_autocmd("WinClosed", {
   callback = function(args)
     local winid = tonumber(args.match)
@@ -59,11 +87,11 @@ vim.api.nvim_create_autocmd("WinClosed", {
           local modified = vim.bo[b].modified
 
           local is_empty_noname =
-            bt == "" and
-            name == "" and
-            not modified and
-            vim.api.nvim_buf_line_count(b) == 1 and
-            vim.api.nvim_buf_get_lines(b, 0, 1, false)[1] == ""
+              bt == "" and
+              name == "" and
+              not modified and
+              vim.api.nvim_buf_line_count(b) == 1 and
+              vim.api.nvim_buf_get_lines(b, 0, 1, false)[1] == ""
 
           if not is_empty_noname then
             return
@@ -87,7 +115,7 @@ if not vim.loop.fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
+      { out,                            "WarningMsg" },
       { "\nPress any key to exit..." },
     }, true, {})
     vim.fn.getchar()
@@ -302,6 +330,17 @@ local plugins = {
     "sindrets/diffview.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
   },
+  {
+    "uga-rosa/translate.nvim",
+    config = function()
+      local vsplit = require("translate.preset.output.vsplit")
+      require("translate").setup({
+        output = {
+          vsplit = vsplit,
+        },
+      })
+    end,
+  }
 }
 
 if has_node_npm() then
