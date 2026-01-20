@@ -1,5 +1,5 @@
 ---
-description: Build agent that implements code changes based on given requirements with minimal, focused modifications and appropriate tests.
+description: Develop agent that implements code changes based on given requirements with minimal, focused modifications and appropriate tests.
 mode: subagent
 permission:
   edit: allow
