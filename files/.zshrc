@@ -117,6 +117,7 @@ alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias c='claude'
 alias cyolo='claude --dangerously-skip-permissions'
+alias oc='opencode'
 alias cx='codex'
 alias rgg="rg --hidden --glob '!.git/*' -n"
 
