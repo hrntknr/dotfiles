@@ -150,11 +150,11 @@ if type openstack >/dev/null 2>&1; then
   alias os=openstack
 fi
 
-function ignore {
+function ignore() {
   curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1 | awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >>.gitignore
 }
 
-function ssh-kill {
+function ssh-kill() {
   mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | sort | fzf --layout=reverse --cycle --tiebreak=index --exact)
   if [ -z "$mux" ]; then
     return
@@ -162,7 +162,7 @@ function ssh-kill {
   ps aux | grep "ssh[:]" | grep "$mux" | tr -s ' ' | cut -d ' ' -f 2 | xargs kill
 }
 
-function ga { (
+function ga() { (
   set -e
   sha=$(git rev-parse HEAD)
   if [ -z "$1" ]; then
@@ -172,30 +172,74 @@ function ga { (
   fi
 ); }
 
-function rand {
+function rand() {
   local len="${1:-8}"
   base64 < /dev/urandom | tr -dc 'A-Za-z0-9' | head -c "$len"
   echo
 }
 
-function copy {
+function copy() {
   printf "\033]52;;$(cat | base64)\033\\"
 }
 
-function wt {
-  if [ -z "$1" ]; then
-    echo "Usage: wt <worktree-name>"
-    return 1
-  fi
-  if [ ! -e ".git" ] && [ ! -e "$(git rev-parse --git-dir 2>/dev/null)" ]; then
+function wt() {
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
     echo "Not a git repository"
     return 1
   fi
-  local cur="$(basename $(pwd))"
-  git worktree add "../$cur.$1" -b "$1"
+
+  local cur base name wtpath gitdir parent branch
+  cur="$(basename "$(pwd)")"
+  base="$(cd .. >/dev/null 2>&1 && pwd -P)"
+
+  case "${1-}" in
+    ""|"new")
+      if [ -n "${2-}" ]; then
+        name="$2"
+      else
+        read "name?worktree name: " || return 1
+      fi
+      wtpath="$base/$cur.$name"
+      if [ -e "$wtpath" ]; then
+        echo "Already exists: $wtpath"
+        return 1
+      fi
+      git worktree add "$wtpath" -b "$name"
+      cd "$wtpath"
+      ;;
+    "del")
+      if [ ! -e ".git" ]; then
+        echo "Not a git repository"
+        return 1
+      fi
+
+      gitdir="$(git rev-parse --path-format=absolute --git-path gitdir)"
+      if [[ "$gitdir" == *".git/worktrees/"* ]]; then
+        parent="${gitdir%%/.git/worktrees/*}"
+        wtpath="$(pwd)"
+        branch=$(git rev-parse --abbrev-ref HEAD)
+        cd "$parent"
+        git worktree remove "$wtpath"
+        git branch -D "$branch"
+      else
+        wtpath="$(git worktree list | awk -v p="$(pwd)" '$1 != p' | fzf --layout=reverse --cycle --tiebreak=index --exact | cut -f1 -d' ')"
+        branch="$(git -C "$wtpath" rev-parse --abbrev-ref HEAD)"
+        git worktree remove "$wtpath"
+        git branch -D "$branch"
+      fi
+      ;;
+    *)
+      echo "Usage:"
+      echo "  wt            # prompt and create worktree"
+      echo "  wt new        # prompt and create worktree"
+      echo "  wt new <name> # create worktree"
+      echo "  wt del        # remove current worktree (cd .. then remove)"
+      return 1
+      ;;
+  esac
 }
 
-function repo {
+function repo() {
   local action="${1:-cd}"
   local hist="$HOME/.repo_history"
   local repos=$(ghq list)
@@ -212,21 +256,78 @@ function repo {
     echo "$r"$'\n'"$rest" > "$hist"
     cd -- "$p"
     ;;
-  del)
-    rm -rf "$p"
-    echo "$rest" > "$hist"
-    ;;
   esac
 }
 
-function dev {
+function dev() {
   if [ -z "$1" ]; then
-    echo "Usage: dev <command> arguments..."
-    return 1
+    dev-up
+    dev exec zsh
+    return
   fi
   cmd="$1"
   shift
   devcontainer "$cmd" --workspace-folder . "$@"
+}
+
+function dev-claude() {
+  FILE=".devcontainer/devcontainer.json"
+  if [ -e "$FILE" ]; then
+    echo "Devcontainer already exists in this directory."
+    return 1
+  fi
+  list="$(
+    curl -s -H "Accept: application/vnd.github+json" \
+      "https://api.github.com/repos/devcontainers/templates/contents/src?ref=main" |
+      jq -r '.[].name'
+  )"
+  target="$(
+    echo "$list" |
+      fzf --layout=reverse --cycle --tiebreak=index --exact \
+          --prompt="Select a devcontainer template: "
+  )"
+  [ -n "${target:-}" ] || { echo "No template selected"; return 1; }
+  devcontainer templates apply --workspace-folder . \
+    --template-id "ghcr.io/devcontainers/templates/${target}:latest" \
+    --features '[
+      { "id": "ghcr.io/devcontainers-extra/features/claude-code:1" },
+    ]'
+
+  deno eval --ext=js '
+    import { parse } from "jsr:@std/jsonc";
+
+    const o = parse(await Deno.readTextFile(Deno.args[0]));
+    const mounts = [
+      `source=\${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json,type=bind,consistency=cached`,
+      `source=\${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached`,
+    ]
+    o.mounts = [
+      ...(o.mounts || []),
+      ...mounts,
+    ];
+    await Deno.writeTextFile(Deno.args[0], JSON.stringify(o, null, 2) + "\n");
+  ' "$FILE"
+}
+
+function dev-up() {
+  devcontainer up --workspace-folder .
+  devcontainer exec --workspace-folder . -- sh -c "
+    test -e ~/.dotfiles || {
+      git clone https://github.com/hrntknr/dotfiles.git ~/.dotfiles &&
+      ~/.dotfiles/setup.sh
+    }"
+}
+
+function dev-clean() {
+  local all=0
+  [ "$1" = "-a" ] && all=1
+
+  for id in $(docker ps -aq); do
+    dir=$(docker inspect "$id" --format '{{ index .Config.Labels "devcontainer.local_folder" }}' 2>/dev/null)
+    [ -z "$dir" ] || [ "$dir" = "<no value>" ] && continue
+    [ "$all" -eq 0 ] && [ -d "$dir" ] && continue
+    docker rm -f "$id"
+  done
 }
 
 function rdns {

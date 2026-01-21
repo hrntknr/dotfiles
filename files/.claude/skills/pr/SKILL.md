@@ -1,9 +1,9 @@
 ---
 name: pr
-description: Create pull requests via git and GitHub CLI while following repo templates and Conventional Commits. Use when a user asks to make a PR, push a branch, or open a GitHub PR, and when explicit confirmation is required before sending the PR.
+description: Create pull requests via git and GitHub CLI while following repo templates and Conventional Commits. Use when a user asks to make a PR, push a branch, open a GitHub PR.
 ---
 
-# Pr
+# PR
 
 ## Overview
 
@@ -22,4 +22,4 @@ Create a PR end-to-end: stage and commit changes, push the branch, fill the PR t
 ## Notes
 
 - Follow repo conventions for templates, required sections, and Conventional Commits.
-- If running in a sandboxed environment, request approval for network operations like `git push` or `gh pr create`.
+- Require explicit confirmation before any network operations: `git push` or `gh pr create`

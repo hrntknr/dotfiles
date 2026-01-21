@@ -14,3 +14,9 @@
 
 ## Language
 - User-facing responses must use the same language as the instructions used.
+
+### Libraries
+- Prefer using well-known, widely adopted libraries when they simplify the solution, reduce risk, or improve maintainability.
+- Do not re-implement common, well-solved functionality that a major library already provides (e.g., parsing, validation, date/time handling, HTTP clients), unless there is a clear constraint (performance, bundle size, security policy, dependency restrictions).
+- Keep dependencies minimal: introduce a new library only when it provides clear value over standard library or existing dependencies.
+- When adding a library, choose a stable option with strong community support and maintenance; document the reason briefly (e.g., in a comment, PR description, or dependency note).

@@ -1,6 +1,7 @@
 ---
-name: developer
-description: "Use this agent when you need to implement code changes based on given requirements. This includes adding new features, modifying existing functionality, or fixing bugs. The agent will make minimal, focused changes and include appropriate tests.\\n\\nExamples:\\n\\n<example>\\nContext: User wants to add a new utility function to the codebase.\\nuser: \"getUserFullName関数を実装してください。firstNameとlastNameを受け取って、スペースで結合した文字列を返す関数です。\"\\nassistant: \"Task toolを使用してdeveloper agentを起動し、要件に基づいた最小限の実装とテストを行います。\"\\n</example>\\n\\n<example>\\nContext: User wants to fix a bug in existing code.\\nuser: \"calculateTotal関数で、空の配列を渡すとエラーになるバグを修正してください。\"\\nassistant: \"バグ修正のためにdeveloper agentを起動します。まず失敗するテストを書いてから修正を行います。\"\\n</example>\\n\\n<example>\\nContext: User requests a feature enhancement.\\nuser: \"ユーザー認証機能にパスワードリセット機能を追加してください。\"\\nassistant: \"developer agentを使用して、パスワードリセット機能の最小限の実装とテストを行います。\"\\n</example>"
+name: develop
+description: |
+  Use this agent when you need to implement code changes based on given requirements. This includes adding new features, modifying existing functionality, or fixing bugs. The agent will make minimal, focused changes and include appropriate tests.
 model: opus
 color: cyan
 ---

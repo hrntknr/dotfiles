@@ -139,6 +139,12 @@ darwin-arm64)
       "$basedir/.local/bin" \
       ghq_darwin_arm64/ghq
   fi
+  if [ ! -f "$basedir/.local/bin/deno" ]; then
+    download_files \
+      https://github.com/denoland/deno/releases/latest/download/deno-aarch64-apple-darwin.zip \
+      "$basedir/.local/bin" \
+      deno
+  fi
   ;;
 linux-x86_64)
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
@@ -170,6 +176,12 @@ linux-x86_64)
       https://github.com/x-motemen/ghq/releases/latest/download/ghq_linux_amd64.zip \
       "$basedir/.local/bin" \
       ghq_linux_amd64/ghq
+  fi
+  if [ ! -f "$basedir/.local/bin/deno" ]; then
+    download_files \
+    https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip \
+      "$basedir/.local/bin" \
+      deno
   fi
   ;;
 *)
