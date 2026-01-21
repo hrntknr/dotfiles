@@ -18,10 +18,10 @@ Create a PR end-to-end: stage and commit changes, push the branch, fill the PR t
 5. Build PR body: read `.github/pull_request_template.md` if present and fill required sections (Summary, Type of Change, Related Issues). Keep checkboxes accurate.
 6. Ask for confirmation before creating the PR. Do not run `gh pr create` until the user says OK.
 7. Create PR: `gh pr create --base <base> --head <branch> --title "<title>" --body "<body>"`, then return the PR URL.
-8. If requested, ask for confirmation before merging. Then merge with `gh pr merge <pr> --<method> [--auto] --delete-branch` and return the final PR state/URL.
+8. If requested, ask for confirmation before merging. Then merge with `gh pr merge <pr> --squash` and return the final PR state/URL.
 
 ## Notes
 
 - Follow repo conventions for templates and Conventional Commits.
-- Require explicit confirmation before any network operations: `git push`, `gh pr create`, `gh pr merge` (including `--auto`).
+- Require explicit confirmation before any network operations: `git push`, `gh pr create`, `gh pr merge`.
 - Prefer not to merge if required reviews/checks are missing or failing; if blocked, report status and ask for next steps.
