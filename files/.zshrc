@@ -115,8 +115,8 @@ alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
-alias c='claude'
-alias cyolo='claude --dangerously-skip-permissions'
+alias c='claude --dangerously-skip-permissions'
+alias cs='claude --dangerously-skip-permissions --settings '\''{"sandbox":{"enabled":true,"allowUnsandboxedCommands":false}}'\'''
 alias oc='opencode'
 alias cx='codex'
 alias rgg="rg --hidden --glob '!.git/*' -n"
