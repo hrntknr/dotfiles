@@ -9,5 +9,9 @@
     "Notification": [],
     "Stop": []
   },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
   "language": "日本語"
 }
