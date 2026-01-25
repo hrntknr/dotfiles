@@ -77,6 +77,7 @@ fi
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.npm-global/bin/:$PATH"
 
 # override
 if [ -e "$ZDOTDIR/.zprofile.local" ]; then
