@@ -1,5 +1,10 @@
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
+# auto tmux
+if [ -n "$AUTO_TMUX" ] && [ -z "$TMUX" ]; then
+  tmux attach || tmux new
+fi
+
 autoload -Uz add-zsh-hook
 
 # zsh settings
