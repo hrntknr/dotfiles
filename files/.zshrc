@@ -178,8 +178,62 @@ function rand() {
   echo
 }
 
+function rand_lower() {
+  local len="${1:-8}"
+  base64 < /dev/urandom | tr -dc 'a-z0-9' | head -c "$len"
+  echo
+}
+
 function copy() {
   printf "\033]52;;$(cat | base64)\033\\"
+}
+
+function mssh() {
+  if [ $# != 1 ]; then
+    echo "Usage: mssh [file]"
+    return 1
+  fi
+  local hosts=("${(@f)$(cat "$1")}")
+  tmux new-window "ssh ${hosts[1]}"
+  for ((i = 2; i <= ${#hosts[@]}; i++)); do
+    tmux split-window "ssh ${hosts[i]}"
+    tmux select-layout even-horizontal > /dev/null
+  done
+  tmux set-window-option synchronize-panes on
+  tmux select-layout tiled
+}
+
+function msh() {
+  if [ $# -lt 1 ]; then
+    echo "Usage: msh [file|number] [command... {}]"
+    return 1
+  fi
+  local src=$1
+  shift
+  local cmd=("$@")
+  if [ ${#cmd[@]} -eq 0 ]; then
+    cmd=("zsh")
+  fi
+  local items=()
+  if [[ "$src" =~ ^[0-9]+$ ]]; then
+    for ((i = 1; i <= src; i++)); do
+      items+=("$i")
+    done
+  else
+    items=("${(@f)$(cat "$src")}")
+  fi
+  local item_cmd cmd_str
+  item_cmd=("${cmd[@]//\{\}/${items[1]}}")
+  cmd_str="${(j: :)${(@q)item_cmd}}"
+  tmux new-window "MSH_INDEX=1 MSH_ITEM=${(qq)items[1]} zsh -ic ${(qq)cmd_str}"
+  for ((i = 2; i <= ${#items[@]}; i++)); do
+    item_cmd=("${cmd[@]//\{\}/${items[i]}}")
+    cmd_str="${(j: :)${(@q)item_cmd}}"
+    tmux split-window "MSH_INDEX=$i MSH_ITEM=${(qq)items[i]} zsh -ic ${(qq)cmd_str}"
+    tmux select-layout even-horizontal > /dev/null
+  done
+  tmux set-window-option synchronize-panes on
+  tmux select-layout tiled
 }
 
 function wt() {
@@ -199,6 +253,16 @@ function wt() {
       else
         read "name?worktree name: " || return 1
       fi
+      wtpath="$base/$cur.$name"
+      if [ -e "$wtpath" ]; then
+        echo "Already exists: $wtpath"
+        return 1
+      fi
+      git worktree add "$wtpath" -b "$name"
+      cd "$wtpath"
+      ;;
+    "rand")
+      name="$(rand_lower 4)"
       wtpath="$base/$cur.$name"
       if [ -e "$wtpath" ]; then
         echo "Already exists: $wtpath"
@@ -233,6 +297,7 @@ function wt() {
       echo "  wt            # prompt and create worktree"
       echo "  wt new        # prompt and create worktree"
       echo "  wt new <name> # create worktree"
+      echo "  wt rand       # create worktree with random name"
       echo "  wt del        # remove current worktree (cd .. then remove)"
       return 1
       ;;
