@@ -16,9 +16,8 @@ Create a PR end-to-end: stage and commit changes, push the branch, fill the PR t
 3. Commit: generate a Conventional Commit message when requested and run `git commit -m "<message>"`.
 4. Push branch: `git push origin <branch>` or `git push -u origin <branch>` if needed. If push fails due to auth/remote issues, ask for next steps.
 5. Build PR body: read `.github/pull_request_template.md` if present and fill required sections (Summary, Type of Change, Related Issues). Keep checkboxes accurate.
-6. Ask for confirmation before creating the PR. Do not run `gh pr create` until the user says OK.
-7. Create PR: `gh pr create --base <base> --head <branch> --title "<title>" --body "<body>"`, then return the PR URL.
-8. If requested, ask for confirmation before merging. Then merge with `gh pr merge <pr> --squash` and return the final PR state/URL.
+6. Create PR: `gh pr create --base <base> --head <branch> --title "<title>" --body "<body>"`, then return the PR URL.
+7. Then merge with `gh pr merge <pr> --squash` and return the final PR state/URL.
 
 ## Notes
 
