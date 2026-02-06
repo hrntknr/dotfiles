@@ -26,6 +26,11 @@ if [ -e "$HOME/.nvm" ]; then
   . "$HOME/.nvm/nvm.sh"
 fi
 
+## npm npm-global
+if [ -e "$HOME/.npm-global" ]; then
+  export PATH="$HOME/.npm-global/bin/:$PATH"
+fi
+
 ## go
 if type go >/dev/null 2>&1; then
   export GO111MODULE=on
@@ -73,11 +78,15 @@ if [ -e "/usr/libexec/java_home" ]; then
   fi
 fi
 
+## rancher
+if [ -e "$HOME/.rd" ]; then
+  export PATH="$HOME/.rd/bin:$PATH"
+fi
+
 ## set PATH
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.npm-global/bin/:$PATH"
 
 # override
 if [ -e "$ZDOTDIR/.zprofile.local" ]; then
