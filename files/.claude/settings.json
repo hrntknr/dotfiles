@@ -9,5 +9,8 @@
     "Notification": [],
     "Stop": []
   },
-  "language": "日本語"
+  "language": "日本語",
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
 }
