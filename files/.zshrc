@@ -358,34 +358,19 @@ function dev-claude() {
   )"
   [ -n "${target:-}" ] || { echo "No template selected"; return 1; }
   devcontainer templates apply --workspace-folder . \
-    --template-id "ghcr.io/devcontainers/templates/${target}:latest" \
-    --features '[
-      { "id": "ghcr.io/devcontainers-extra/features/claude-code:1" },
-    ]'
-
-  deno eval --ext=js '
-    import { parse } from "jsr:@std/jsonc";
-
-    const o = parse(await Deno.readTextFile(Deno.args[0]));
-    const mounts = [
-      `source=\${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json,type=bind,consistency=cached`,
-      `source=\${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached`,
-    ]
-    o.mounts = [
-      ...(o.mounts || []),
-      ...mounts,
-    ];
-    await Deno.writeTextFile(Deno.args[0], JSON.stringify(o, null, 2) + "\n");
-  ' "$FILE"
+    --template-id "ghcr.io/devcontainers/templates/${target}:latest"
 }
 
 function dev-up() {
-  devcontainer up --workspace-folder .
-  devcontainer exec --workspace-folder . -- sh -c "
-    test -e ~/.dotfiles || {
-      git clone https://github.com/hrntknr/dotfiles.git ~/.dotfiles &&
-      ~/.dotfiles/setup.sh
-    }"
+  devcontainer up --workspace-folder . \
+    --dotfiles-repository 'https://github.com/hrntknr/dotfiles.git' \
+    --additional-features '{
+      "ghcr.io/devcontainers/features/node:1": {},
+      "ghcr.io/devcontainers-extra/features/claude-code:1": {},
+      "ghcr.io/devcontainers/features/github-cli:1": {}
+    }' \
+    --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude" \
+    --mount "type=bind,source=$HOME/.claude.json,target=/home/vscode/.claude.json"
 }
 
 function dev-clean() {
