@@ -365,7 +365,6 @@ function dev-up() {
   devcontainer up --workspace-folder . \
     --dotfiles-repository 'https://github.com/hrntknr/dotfiles.git' \
     --additional-features '{
-      "ghcr.io/devcontainers-extra/features/claude-code:1": {},
       "ghcr.io/devcontainers/features/github-cli:1": {}
     }' \
     --mount "type=bind,source=$HOME/.claude,target=/.devcontainer/.claude" \
@@ -376,6 +375,7 @@ function dev-up() {
   ln -sf /.devcontainer/.claude $HOME/.claude
   ln -sf /.devcontainer/.claude.json $HOME/.claude.json
   ln -sf /.devcontainer/gh $HOME/.config/gh
+  curl -fsSL https://claude.ai/install.sh | bash
   '
 }
 
