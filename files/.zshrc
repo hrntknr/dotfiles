@@ -365,12 +365,18 @@ function dev-up() {
   devcontainer up --workspace-folder . \
     --dotfiles-repository 'https://github.com/hrntknr/dotfiles.git' \
     --additional-features '{
-      "ghcr.io/devcontainers/features/node:1": {},
       "ghcr.io/devcontainers-extra/features/claude-code:1": {},
       "ghcr.io/devcontainers/features/github-cli:1": {}
     }' \
-    --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude" \
-    --mount "type=bind,source=$HOME/.claude.json,target=/home/vscode/.claude.json"
+    --mount "type=bind,source=$HOME/.claude,target=/.devcontainer/.claude" \
+    --mount "type=bind,source=$HOME/.claude.json,target=/.devcontainer/.claude.json" \
+    --mount "type=bind,source=$HOME/.config/gh,target=/.devcontainer/gh"
+  devcontainer exec --workspace-folder . -- bash -lc '
+  rm -r $HOME/.claude $HOME/.claude.json $HOME/.config/gh 2>/dev/null || true
+  ln -sf /.devcontainer/.claude $HOME/.claude
+  ln -sf /.devcontainer/.claude.json $HOME/.claude.json
+  ln -sf /.devcontainer/gh $HOME/.config/gh
+  '
 }
 
 function dev-clean() {
