@@ -375,7 +375,9 @@ function dev-up() {
   ln -sf /.devcontainer/.claude $HOME/.claude
   ln -sf /.devcontainer/.claude.json $HOME/.claude.json
   ln -sf /.devcontainer/gh $HOME/.config/gh
-  curl -fsSL https://claude.ai/install.sh | bash
+  if ! type claude >/dev/null 2>&1; then
+    curl -fsSL https://claude.ai/install.sh | bash
+  fi
   '
 }
 
