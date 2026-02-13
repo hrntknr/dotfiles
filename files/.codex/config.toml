@@ -3,8 +3,3 @@ sandbox_mode = "workspace-write"
 
 [sandbox_workspace_write]
 network_access = true
-
-[features]
-web_search_request = true
-view_image_tool = true
-skills = true

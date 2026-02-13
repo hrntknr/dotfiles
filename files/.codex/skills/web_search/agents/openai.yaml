@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Search"
+  short_description: "Fast, evidence-aware web search for current facts"
+  default_prompt: "Use $web_search to verify the latest facts, compare sources, and answer with dated links."
