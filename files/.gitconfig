@@ -18,4 +18,4 @@
 [url "https://github.com/"]
   insteadOf = git@github.com:
 [credential "https://github.com"]
-  helper = !/usr/bin/gh auth git-credential
+  helper = !gh auth git-credential
