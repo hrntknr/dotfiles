@@ -95,6 +95,15 @@ if [ "$SSH_AGENT_ENABLED" = "1" ]; then
   fi
 fi
 
+## ssh key fingerprint
+if [ -n "$SSH_CLIENT" ] && type journalctl >/dev/null 2>&1; then
+  export SSH_KEY_FINGERPRINT="$(
+    ip="${SSH_CLIENT%% *}"
+    port="$(echo "$SSH_CLIENT" | awk '{print $2}')"
+    journalctl -u ssh -u sshd --no-pager -n 300 2>/dev/null | grep "Accepted publickey.*$ip port $port" | tail -1 | grep -oP 'SHA256:\S+'
+  )"
+fi
+
 # gpg
 if [ -z "$GPG_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
   if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
