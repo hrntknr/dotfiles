@@ -1,16 +1,30 @@
 {
-  "includeCoAuthoredBy": false,
-  "spinnerTipsEnabled": false,
-  "permissions": {
-    "allow": [],
-    "deny": []
-  },
   "hooks": {
-    "Notification": [],
-    "Stop": []
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "permission_prompt|idle_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh"
+          }
+        ]
+      }
+    ]
   },
   "language": "日本語",
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
+  "skipDangerousModePermissionPrompt": true,
+  "includeCoAuthoredBy": false,
+  "spinnerTipsEnabled": false
 }
