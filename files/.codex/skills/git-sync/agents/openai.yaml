@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Sync"
+  short_description: "Stage, commit, and push with a concise auto message"
+  default_prompt: "Use $git-sync to stage all changes, write a short commit message, commit, and push."

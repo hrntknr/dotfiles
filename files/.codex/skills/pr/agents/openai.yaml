@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR"
+  short_description: "Create a pull request with git and GitHub CLI"
+  default_prompt: "Use $pr to prepare a branch, fill the PR template, and open a GitHub pull request."

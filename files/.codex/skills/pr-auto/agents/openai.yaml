@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR Auto"
+  short_description: "Create and merge a pull request with GitHub CLI"
+  default_prompt: "Use $pr-auto to prepare a branch, open a PR, and merge it safely."

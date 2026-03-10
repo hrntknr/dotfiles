@@ -1,0 +1,4 @@
+interface:
+  display_name: "Impl"
+  short_description: "Incremental implementation workflow for non-trivial coding tasks"
+  default_prompt: "Use $impl to plan, implement, verify, and refine a non-trivial code change in small testable scopes."

@@ -4,6 +4,8 @@
 [core]
   editor = vim
   excludesfile = ~/.gitignore_global
+[init]
+  defaultBranch = main
 [submodule]
   recurse = true
 [pull]

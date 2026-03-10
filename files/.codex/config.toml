@@ -1,9 +1,20 @@
 approval_policy = "never"
-sandbox_mode = "workspace-write"
-model = "gpt-5.3-codex"
+sandbox_mode = "danger-full-access"
+model = "gpt-5.4"
+
+[features]
+multi_agent = true
 
 [sandbox_workspace_write]
 network_access = true
 
-[profiles.nosandbox]
-sandbox_mode = "danger-full-access"
+[profiles.sandbox]
+sandbox_mode = "workspace-write"
+
+[agents.developer]
+description = "Implements requested changes."
+config_file = "agents/developer.toml"
+
+[agents.reviewer]
+description = "Reviews code for issues."
+config_file = "agents/reviewer.toml"

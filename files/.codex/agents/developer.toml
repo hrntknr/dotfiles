@@ -1,0 +1,2 @@
+model = "gpt-5.4"
+instructions_file = "../instructions/developer.md"
