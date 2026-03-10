@@ -5,6 +5,7 @@
 - Prefer the simplest solution that satisfies the requirements and existing constraints.
 - Complexity is allowed only when it reduces overall risk or improves maintainability (e.g., removes duplication, clarifies invariants, improves testability).
 - Match the complexity to the task: small tasks should use small, straightforward changes.
+- Separate modules with appropriate granularity.
 - Optimize for readability: clear naming, small functions, and predictable control flow.
 
 ## Testing

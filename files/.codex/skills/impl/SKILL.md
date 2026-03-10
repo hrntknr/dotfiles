@@ -38,6 +38,7 @@ Use this workflow to execute implementation tasks in small, verifiable steps.
 
 ## Rules
 
+- Complete exactly what the user asked for at 100% completion; do not stop partway through the requested work.
 - Prefer direct code inspection over assumptions.
 - Preserve existing code patterns and style unless the task requires a deliberate change.
 - Use test-driven development when practical.
