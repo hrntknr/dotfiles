@@ -1,60 +1,49 @@
 ---
 name: impl
-description: Implementation cycle skill to iteratively develop, review, and refine code in small scopes until completion.
+description: Incremental implementation workflow for non-trivial code changes. Use when a feature or fix needs planning, verification, and review.
 user-invocable: true
 ---
 
 # impl
 
-このスキルは、ユーザーの要件を満たすためにコードを段階的に実装、レビュー、改善するプロセスを管理します。大きな変更を小さなスコープに分割し、各スコープごとに開発とレビューを繰り返すことで、高品質な実装を目指します。
+Use this workflow to execute implementation tasks in small, verifiable steps.
 
-## 実行プロセス
+## Workflow
 
-### フェーズ1: 要件分析とスコープ分割
+1. Understand the request and inspect the relevant code first.
+   - Confirm the exact behavior to change.
+   - Identify constraints, risks, and affected files.
+   - Ask the user only when a missing detail would make a reasonable implementation risky.
+2. Break the work into small, independently verifiable scopes.
+   - Prefer scopes that can be implemented and tested in isolation.
+   - Order scopes by dependency and risk.
+   - For substantial tasks, keep the active plan updated.
+3. Use a `developer` subagent to implement one scope at a time.
+   - Give the subagent a concrete scope, affected files, constraints, and expected tests.
+   - Keep ownership clear when delegating parallel work.
+   - Ask the subagent to follow existing patterns, avoid unnecessary complexity, use test-driven development, and add sufficient test coverage.
+4. Verify the implemented scope locally.
+   - Review the returned changes before accepting them.
+   - Run the most relevant tests and checks for the changed behavior.
+   - Fix failures before expanding scope.
+5. Use a `reviewer` subagent for non-trivial scopes or final review.
+   - Ask for review focused on concrete bugs, regressions, unnecessary complexity, pattern/style deviations, and missing tests.
+   - Treat `🔴 Normal` findings as blocking and address them before continuing.
+   - Address `🟡 Nit` findings when the fix is low-cost and clearly improves the change.
+   - Do not treat `🟣 Pre-existing` findings as blockers for the current scope, but surface them in the final summary when relevant.
+6. Repeat the develop -> verify -> review cycle for each remaining scope.
+   - Keep scopes small enough that failures and review findings stay easy to localize.
+7. Finish with full validation and a concise summary.
+   - Ensure the final test/check set relevant to the request passes.
+   - Summarize what changed, how it was verified, and any remaining risk.
 
-1. 要件を「独立して実装・テストできる単位」に分ける
-2. 依存関係を整理して実装順を決める
-3. Todo に並べる
+## Rules
 
-- このフェーズでは必要に応じてコードベースの探索・検索・理解を行い、要件を正確に把握する
-- 不確定な仕様、要件などがある場合は必ずユーザーに確認する
-- 破壊的変更がある場合は機能ごとに下位互換性を保つかどうかを確認する
-
-### フェーズ2: 実装サイクル（各スコープに対して繰り返し）
-
-各スコープに対して以下を実行：
-
-#### ステップ2-1: Plan
-- `Plan`エージェントを利用し、スコープの実装計画を立てる
-- 変更箇所、影響範囲、テスト要件を明確にする
-- TodoWriteツールでタスクを管理する
-
-#### ステップ2-2: Develop
-- `developer`エージェントを利用し、実装を行う
-- 現在のスコープの要件を明確に伝える
-- 最小限の変更で要件を満たす実装を行う
-- テストも含めて実装する
-
-#### ステップ2-3: Review
-- `reviewer`エージェントを利用し、コードレビューを行う
-- 要件を満たしているか、コード品質、テストの十分性を評価する
-
-#### ステップ2-3: 改善サイクル
-- レビューで指摘された問題がある場合：
-  - 再度`developer`エージェントで修正
-  - 再度`reviewer`エージェントでレビュー
-  - 指摘事項がなくなるまで繰り返す
-- 指摘事項がなくなったら、次のスコープへ進む
-
-### フェーズ3: 完了確認
-
-1. すべてのスコープの実装が完了したことを確認
-2. 全体のテストを実行して動作確認
-3. 実装内容のサマリーをユーザーに報告
-
-## ルール
-
-- 各スコープは独立して実装・テスト可能な単位にする
-- レビューで🔴（重大）または🟠（重要）の指摘がある場合は必ず修正する
-- 🟡（提案）や🟢（軽微）は、明確なメリットがある場合のみ対応
-- 各フェーズの進捗はTodoWriteツールで管理する
+- Prefer direct code inspection over assumptions.
+- Preserve existing code patterns and style unless the task requires a deliberate change.
+- Use test-driven development when practical.
+- Add sufficient coverage for changed behavior, including regression tests when applicable.
+- Use subagents for implementation and review when the task is large enough to benefit from delegation.
+- Do not delegate the immediate blocking task if you need the answer locally to make the next decision.
+- Do not leave the task half-finished if you can complete it within the turn.
+- Escalate to the user when requirements conflict, unexpected local changes block the work, or the safe next step is unclear.

@@ -1,82 +1,38 @@
 ---
 name: pr-review
-description: Review GitHub pull requests by inspecting changes locally and via GitHub CLI, then report only critical merge-blocking issues (bugs, performance, security, correctness) or approve.
+description: Review a GitHub pull request by inspecting the diff locally and with GitHub CLI, then use the reviewer subagent to identify merge-blocking issues or approve the change.
 ---
 
 # PR Review
 
 ## Overview
-This skill reviews a GitHub Pull Request (PR) using GitHub CLI (`gh`) and local git. It focuses strictly on **critical** issues that must be addressed before merging:
-- Potential bugs or issues
-- Performance
-- Security
-- Correctness
 
-The final response must be concise:
-- If critical issues exist: list them in a few short bullet points, then sign off with **☑️ (issues found)**.
-- If none: provide a simple approval, then sign off with **☑️ (approved)**.
-
-Do **not** include minor style/nit suggestions unless they materially affect performance, security, or correctness.
-
----
-
-## Preconditions
-- `gh` is authenticated and has access to the repo.
-- You are in the correct repository working directory.
-
----
+Review a GitHub pull request with `gh`, local git, and the `reviewer` subagent. Focus on concrete issues that materially affect correctness, performance, security, or maintainability.
 
 ## Workflow
 
-### 1) Identify the PR number (if not provided)
-If the user did **not** provide a PR number:
-1. Run:
-   ```bash
-   gh pr list --assignee @me --state open
-   ```
+1. Identify the target PR.
+   - If the user did not provide a PR number, run `gh pr list --assignee @me --state open`.
+   - Ask the user which PR to review if multiple plausible PRs are returned.
+2. Prepare the local branch safely.
+   - Run `git status --short` first.
+   - If there are local changes that would be disturbed by checkout, stop and ask the user how to proceed.
+   - Check out the PR branch with `gh pr checkout <pr_number>` or an equivalent safe command.
+3. Inspect the PR context.
+   - Run `gh pr view <pr_number> --json number,title,body,baseRefName,headRefName`.
+   - Review the diff with `gh pr diff <pr_number>`.
+   - Read any local files needed to understand the changed behavior.
+4. Use the `reviewer` subagent to review the change.
+   - Provide the PR number, title, summary, diff context, and any relevant local code context.
+   - Ask it to apply the local `reviewer` instructions.
+5. Return the review result.
+   - Surface every `🔴 Normal` issue as merge-blocking.
+   - Include `🟡 Nit` issues only when they are worth fixing but not blocking.
+   - Mention `🟣 Pre-existing` issues separately from newly introduced issues.
+   - If there are no qualifying issues, approve the change clearly.
 
-2. Present the user with clear options (PR number + title + branch), and ask which PR to review.
+## Notes
 
-If the user provided a PR number already, skip this step.
-
----
-
-### 2) Check out the target branch
-
-Before checking out the PR branch, verify there are no uncommitted changes:
-
-```bash
-git status
-```
-
-Determine the PR’s head branch (via `gh pr view` or the PR list output), then:
-
-```bash
-git checkout {branch}
-```
-
-* If checkout fails, report the failure and stop.
-
----
-
-### 3) Inspect the PR diff
-
-Review the full diff using:
-
-```bash
-gh pr diff {pr_number}
-```
-
-If necessary, you can refer to the code and check parts that are not included in the diff.
-
-Please analyze the changes in this PR and focus on identifying critical issues related to:
-
-- Potential bugs or issues
-- Performance
-- Security
-- Correctness
-
-If critical issues are found, list them in a few short bullet points. If no critical issues are found, provide a simple approval.
-Sign off with a checkbox emoji: ✅ or ⚠️.
-
-Keep your response concise. Only highlight critical issues that must be addressed before merging. Skip detailed style or minor suggestions unless they impact performance, security, or correctness.
+- Do not report speculative issues.
+- Prefer no findings over weak findings.
+- Keep the final review concise and focused on issues the author would likely fix.

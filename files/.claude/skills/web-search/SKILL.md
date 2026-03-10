@@ -1,8 +1,6 @@
 ---
-name: web_search
+name: web-search
 description: Research and fact-check current information with concise, evidence-aware outputs. Use when tasks require latest updates, comparisons, recommendations, policy or pricing checks, statistics, schedules, or any claim that should be verified with concrete dates and selective source citation.
-context: fork
-agent: web
 ---
 
 # Research
