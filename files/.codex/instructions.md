@@ -8,6 +8,12 @@
 - Separate modules with appropriate granularity.
 - Optimize for readability: clear naming, small functions, and predictable control flow.
 
+## Comments
+- Minimize code comments. Code should be self-explanatory through clear naming and structure.
+- Comments are acceptable only when:
+  - The logic is inherently complex and not self-evident from the code.
+  - The comment is externally visible (e.g., doc comments for public APIs, docstrings).
+
 ## Testing
 - Bug fixes must include a regression test:
   - Add a test that fails before the fix and passes after the fix.
