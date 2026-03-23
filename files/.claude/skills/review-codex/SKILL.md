@@ -14,7 +14,8 @@ Review code changes by delegating to `codex review`.
    - If reviewing against a base branch: use `--base <branch>`.
    - If reviewing a specific commit: use `--commit <sha>`.
 2. Run `codex review` with the appropriate flags.
-   - Pass custom review instructions as the prompt argument when additional context is needed.
+   - The `[PROMPT]` positional argument is **mutually exclusive** with `--base`, `--uncommitted`, and `--commit`. When using any of those flags, do NOT pass a prompt argument.
+   - When additional review context is needed and a flag is already in use, omit the prompt — Codex uses its own reviewer instructions from `.codex/`.
 3. Return the review output to the user.
    - Surface `🔴 Normal` findings as blocking.
    - Include `🟡 Nit` findings when worth fixing but not blocking.
