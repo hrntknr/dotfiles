@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+title="ntf"
+url=""
+group=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --title) title="$2"; shift 2 ;;
+    --url) url="$2"; shift 2 ;;
+    --group) group="$2"; shift 2 ;;
+    *) break ;;
+  esac
+done
+
+msg="$*"
+
+[ -z "$msg" ] && exit 0
+
+idle_threshold=60000000000
+
+is_idle() {
+  [[ "$(uname)" == "Darwin" ]] || return 0
+  idle_ns=$(ioreg -c IOHIDSystem | awk '/HIDIdleTime/ {print $NF; exit}')
+  [[ "${idle_ns:-0}" -ge "$idle_threshold" ]]
+}
+
+notify_local() {
+  args=(-title "$title" -message "$msg")
+  [ -n "$url" ] && args+=(-open "$url")
+  [ -n "$group" ] && args+=(-group "$group")
+  terminal-notifier "${args[@]}"
+}
+
+notify_remote() {
+  if [ -n "${BARK_DEVICE:-}" ] && [ -n "${BARK_KEY:-}" ] && [ -n "${BARK_IV:-}" ]; then
+    json=$(jq -n --arg title "$title" --arg body "$msg" --arg url "$url" --arg group "$group" \
+      '{title: $title, body: $body, url: $url, group: $group}')
+    key=$(printf '%s' "$BARK_KEY" | xxd -ps -c 200)
+    iv=$(printf '%s' "$BARK_IV" | xxd -ps -c 200)
+    ciphertext=$(echo -n "$json" | openssl enc -aes-128-cbc -K "$key" -iv "$iv" | base64)
+    curl -sf --data-urlencode "ciphertext=$ciphertext" "https://api.day.app/$BARK_DEVICE/" -o /dev/null
+  elif [ -n "${SLACK_WEBHOOK_URL:-}" ]; then
+    text="*${title}*: ${msg}"
+    [ -n "$url" ] && text="${text} (<${url}|link>)"
+    payload=$(jq -n --arg text "$text" '{text: $text}')
+    curl -sf -H "Content-Type: application/json" -d "$payload" "$SLACK_WEBHOOK_URL" -o /dev/null
+  fi
+}
+
+if is_idle; then
+  notify_remote
+else
+  notify_local
+fi
