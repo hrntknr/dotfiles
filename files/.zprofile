@@ -66,8 +66,8 @@ if type python3 >/dev/null 2>&1; then
 fi
 
 ## rust
-if [ -e "$HOME/.cargo" ]; then
-  export PATH="$HOME/.cargo/bin:$PATH"
+if [ -e "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
 fi
 
 ## java
