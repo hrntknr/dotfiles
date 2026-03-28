@@ -14,6 +14,9 @@ case "$file_path" in
   *.py)
     command -v ruff >/dev/null && ruff format "$file_path"
     ;;
+  *.swift)
+    command -v xcrun >/dev/null && xcrun swift-format format -i "$file_path"
+    ;;
   *.js|*.jsx|*.ts|*.tsx|*.json|*.md|*.css|*.scss|*.html|*.yml|*.yaml)
     command -v prettier >/dev/null && prettier --write "$file_path"
     ;;
