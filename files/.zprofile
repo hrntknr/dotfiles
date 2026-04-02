@@ -83,6 +83,11 @@ if [ -e "$HOME/.rd" ]; then
   export PATH="$HOME/.rd/bin:$PATH"
 fi
 
+## krew
+if [ -e "$HOME/.krew" ]; then
+  export PATH="$HOME/.krew/bin:$PATH"
+fi
+
 ## set PATH
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
