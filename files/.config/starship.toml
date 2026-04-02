@@ -7,7 +7,6 @@ $directory\
 $git_branch\
 $git_commit\
 $git_state\
-$git_metrics\
 $git_status\
 $kubernetes\
 $line_break\
@@ -47,7 +46,19 @@ fish_style_pwd_dir_length = 1
 truncation_length = 1
 style = "white"
 
+[git_branch]
+format = '[$symbol$branch(:$remote_branch)]($style) '
+
+[git_commit]
+format = '[\($hash$tag\)]($style) '
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+
 [kubernetes]
 disabled = false
-format = '[$cluster]($style)'
+format = '[$symbol$context]($style) '
 style = "dimmed cyan"
