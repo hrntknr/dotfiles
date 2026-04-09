@@ -422,6 +422,10 @@ function ts {
   date +"$format"
 }
 
+if type mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
 # prompt
 if type starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
