@@ -31,7 +31,7 @@ esac
 cur=$(dirname $0)
 
 function setup_files {
-  find "$cur/$1" -type f -print0 | while IFS= read -r -d '' file; do
+  find -L "$cur/$1" -type f -print0 | while IFS= read -r -d '' file; do
     file="${file#$cur/$1/}"
     target="$basedir/$file"
     dir=$(dirname "$target")
