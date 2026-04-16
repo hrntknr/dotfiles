@@ -512,11 +512,11 @@ _git_status() {
 
   local color mark=""
   case $state in
-    clean)     color="%F{2}" ;;
-    untracked) color="%F{1}"; mark="?" ;;
-    unstaged)  color="%F{1}"; mark="+" ;;
-    staged)    color="%F{3}"; mark="!" ;;
-    *)         color="%F{4}" ;;
+    clean)     color="%F{82}" ;;
+    untracked) color="%F{203}"; mark="?" ;;
+    unstaged)  color="%F{203}"; mark="+" ;;
+    staged)    color="%F{220}"; mark="!" ;;
+    *)         color="%F{75}" ;;
   esac
 
   print -r -- " ${color}${branch}${mark}%{\e[0m%}"
@@ -529,7 +529,7 @@ _kube_context() {
   ctx="$(command kubectl config current-context 2>/dev/null)" || return
   [[ -n "$ctx" ]] || return 1
 
-  print -r -- " %F{110}☸ $ctx%f"
+  print -r -- " %F{117}☸ $ctx%f"
 }
 
 precmd() {
