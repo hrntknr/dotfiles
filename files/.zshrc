@@ -512,11 +512,11 @@ _git_status() {
 
   local color mark=""
   case $state in
-    clean)     color="%F{82}" ;;
+    clean)     color="%F{40}" ;;
     untracked) color="%F{203}"; mark="?" ;;
     unstaged)  color="%F{203}"; mark="+" ;;
     staged)    color="%F{220}"; mark="!" ;;
-    *)         color="%F{75}" ;;
+    *)         color="%F{33}" ;;
   esac
 
   print -r -- " ${color}${branch}${mark}%{\e[0m%}"
