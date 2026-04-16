@@ -526,7 +526,7 @@ _kube_context() {
   (( $+commands[kubectl] )) || return 1
 
   local ctx
-  ctx="$(command kubectl config current-context 2>/dev/null)" || return 1
+  ctx="$(command kubectl config current-context 2>/dev/null)" || return
   [[ -n "$ctx" ]] || return 1
 
   print -r -- " %F{110}☸ $ctx%f"
