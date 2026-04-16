@@ -29,7 +29,7 @@ function sync_history {
 
 add-zsh-hook precmd sync_history
 
-if type fzf >/dev/null 2>&1; then
+if (( $+commands[fzf] )); then
   function fzf-history-selection {
     case ${OSTYPE} in
     darwin*)
@@ -96,7 +96,7 @@ if [ "$SSH_AGENT_ENABLED" = "1" ]; then
 fi
 
 ## ssh key fingerprint
-if [ -n "$SSH_CLIENT" ] && type journalctl >/dev/null 2>&1; then
+if [[ -n $SSH_CLIENT ]] && (( $+commands[journalctl] )); then
   export SSH_KEY_FINGERPRINT="$(
     ip="${SSH_CLIENT%% *}"
     port="$(echo "$SSH_CLIENT" | awk '{print $2}')"
@@ -141,12 +141,12 @@ linux*)
   ;;
 esac
 
-if type nvim >/dev/null 2>&1; then
+if (( $+commands[nvim] )); then
   alias vim='nvim'
   alias vi='nvim'
 fi
 
-if type kubectl >/dev/null 2>&1; then
+if (( $+commands[kubectl] )); then
   alias k=kubectl
   alias kns='kubectl config set-context $(kubectl config current-context) --namespace'
   alias ksw='kubectl config use-context $(kubectl config get-contexts -o name | fzf --layout=reverse --cycle --tiebreak=index --exact)'
@@ -160,7 +160,7 @@ if type kubectl >/dev/null 2>&1; then
   }
 fi
 
-if type openstack >/dev/null 2>&1; then
+if (( $+commands[openstack] )); then
   alias os=openstack
 fi
 
@@ -422,78 +422,129 @@ function ts {
   date +"$format"
 }
 
-if type mise >/dev/null 2>&1; then
+if (( $+commands[mise] )); then
   eval "$(mise activate zsh)"
 fi
 
-# prompt
-if type starship >/dev/null 2>&1; then
-  eval "$(starship init zsh)"
-else
-  function gitStatus {
-    local branch_name st branch_status
+_host_color() {
+  local s=${HOST:-unknown}
+  local i code sum=0
 
-    if [ ! -e ".git" ]; then
-      return
-    fi
-    branch_name=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-    st=$(git status 2>/dev/null)
-    if [[ -n $(echo "$st" | grep "^nothing to") ]]; then
-      branch_status="\e[38;5;2m"
-    elif [[ -n $(echo "$st" | grep "^Untracked files") ]]; then
-      branch_status="\e[38;5;1m?"
-    elif [[ -n $(echo "$st" | grep "^Changes not staged for commit") ]]; then
-      branch_status="\e[38;5;1m+"
-    elif [[ -n $(echo "$st" | grep "^Changes to be committed") ]]; then
-      branch_status="\e[38;5;3m!"
-    elif [[ -n $(echo "$st" | grep "^rebase in progress") ]]; then
-      echo "\e[38;5;1m!(no branch)"
-      return
-    else
-      branch_status="\e[38;5;4m"
-    fi
-    echo "${branch_status}[$branch_name]\e[m"
-  }
+  for (( i = 1; i <= ${#s}; ++i )); do
+    printf -v code '%d' "'${s[i]}"
+    (( sum = (sum * 33 + code) % 256 ))
+  done
 
-  function spwd {
+  print -r -- "%F{${sum}}"
+}
+
+_short_pwd() {
+  local prefix path
+  local -a parts
+  local out=""
+  local i
+
+  if [[ $PWD == $HOME ]]; then
+    print -r -- "~"
+    return
+  elif [[ $PWD == $HOME/* ]]; then
+    prefix="~/"
+    path=${PWD#$HOME/}
+  else
     prefix="/"
-    if [[ $PWD == $HOME ]]; then
-      prefix="~"
-    elif [[ $PWD == $HOME* ]]; then
-      prefix="~/"
-    fi
-    path="${PWD/$HOME/}"
-    IFS="/" paths=($path)
-    if [ ${#paths[@]} = 0 ]; then
-      echo $prefix
-      return
-    fi
-    exclude_last=(${paths:1:-1})
-    cur_short_path=''
-    for cur_dir in $exclude_last; do
-      cur_short_path+="${cur_dir:0:1}/"
-    done
-    cur_short_path+="${paths[-1]}"
+    path=${PWD#/}
+  fi
 
-    echo "$prefix$cur_short_path"
-  }
+  parts=("${(@s:/:)path}")
 
-  function precmd {
-    if [ -z "$SHELL_COLOR" ]; then
-      if type md5sum >/dev/null 2>&1; then
-        local HOSTCOLOR=$'\e[38;05;'"$(printf "%d\n" 0x$(hostname | md5sum | md5sum | cut -c1-2))"'m'
-      else
-        local HOSTCOLOR=$'\e[0m'
-      fi
-    else
-      local HOSTCOLOR=$'\e[38;05;'"$SHELL_COLOR"'m'
-    fi
-    print -P "\n%n@$HOSTCOLOR$(hostname)\e[m $(spwd) $(gitStatus)"
-  }
+  if (( ${#parts[@]} == 0 )); then
+    print -r -- "$prefix"
+    return
+  fi
 
-  export PROMPT="%(?,,%F{red}%?%f)> %F{green}$%f "
-  export PROMPT2="> "
-fi
+  if (( ${#parts[@]} == 1 )); then
+    print -r -- "${prefix}${parts[1]}"
+    return
+  fi
+
+  for (( i = 1; i < ${#parts[@]}; ++i )); do
+    [[ -n ${parts[i]} ]] && out+="${parts[i][1]}/"
+  done
+  out+="${parts[-1]}"
+
+  print -r -- "${prefix}${out}"
+}
+
+_git_status() {
+  local line
+  local branch=""
+  local state="clean"
+  local status_output xy
+
+  status_output=$(git status --porcelain=2 --branch 2>/dev/null) || return
+
+  while IFS= read -r line; do
+    case $line in
+      '# branch.head '*)
+        branch=${line#'# branch.head '}
+        [[ $branch == '(detached)' ]] && branch='detached'
+        ;;
+      '# branch.oid '*)
+        [[ -z $branch ]] && branch='detached'
+        ;;
+      '?'*)
+        [[ $state != rebase ]] && state='untracked'
+        ;;
+      '1 '*|'2 '*|'u '*)
+        if [[ $state != rebase && $state != untracked ]]; then
+          xy=${line[3,4]}
+          if [[ ${xy[1]} != '.' ]]; then
+            state='staged'
+          elif [[ ${xy[2]} != '.' ]]; then
+            state='unstaged'
+          fi
+        fi
+        ;;
+    esac
+  done <<< "$status_output"
+
+  [[ -z $branch ]] && branch='unknown'
+
+  local color mark=""
+  case $state in
+    clean)     color="%F{2}" ;;
+    untracked) color="%F{1}"; mark="?" ;;
+    unstaged)  color="%F{1}"; mark="+" ;;
+    staged)    color="%F{3}"; mark="!" ;;
+    *)         color="%F{4}" ;;
+  esac
+
+  print -r -- " ${color}${branch}${mark}%{\e[0m%}"
+}
+
+_kube_context() {
+  (( $+commands[kubectl] )) || return 1
+
+  local ctx
+  ctx="$(command kubectl config current-context 2>/dev/null)" || return 1
+  [[ -n "$ctx" ]] || return 1
+
+  print -r -- " %F{110}☸ $ctx%f"
+}
+
+precmd() {
+  local host_color
+
+  if [[ -n $SHELL_COLOR ]]; then
+    host_color="%F{${SHELL_COLOR}}"
+  else
+    host_color=$(_host_color)
+  fi
+
+  print -P -- "\n%n@${host_color}${HOST}%f $(_short_pwd)$(_git_status)$(_kube_context)"
+}
+
+PROMPT='%(?..%F{red})❯%f '
 
 # override
 if [ -e "$ZDOTDIR/.zshrc.local" ]; then

@@ -17,7 +17,7 @@ if [ -e "/snap" ]; then
 fi
 
 ## direnv
-if type direnv >/dev/null 2>&1; then
+if (( $+commands[direnv] )); then
   eval "$(direnv hook zsh)"
 fi
 
@@ -32,7 +32,7 @@ if [ -e "$HOME/.npm-global" ]; then
 fi
 
 ## go
-if type go >/dev/null 2>&1; then
+if (( $+commands[go] )); then
   export GO111MODULE=on
   if [ -e "$HOME/work" ]; then
     export GOPATH="$HOME/work/go"
@@ -58,7 +58,7 @@ if [ -e "$HOME/.pyenv" ]; then
 fi
 
 ## python
-if type python3 >/dev/null 2>&1; then
+if (( $+commands[python3] )); then
   base=$(python3 -m site --user-base)
   if [ -e "$base/bin" ]; then
     export PATH="$base/bin:$PATH"

@@ -115,12 +115,6 @@ darwin-arm64)
       "$basedir/.local/bin" \
       fzf
   fi
-  if [ ! -f "$basedir/.local/bin/starship" ]; then
-    download_files \
-      https://github.com/starship/starship/releases/latest/download/starship-aarch64-apple-darwin.tar.gz \
-      "$basedir/.local/bin" \
-      starship
-  fi
   if [ ! -f "$basedir/.local/bin/nvim" ]; then
     download_files \
       https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz \
@@ -152,12 +146,6 @@ linux-x86_64)
       https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz \
       "$basedir/.local/bin" \
       fzf
-  fi
-  if [ ! -f "$basedir/.local/bin/starship" ]; then
-    download_files \
-      https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz \
-      "$basedir/.local/bin" \
-      starship
   fi
   if [ ! -f "$basedir/.local/bin/nvim" ]; then
     download_files \
