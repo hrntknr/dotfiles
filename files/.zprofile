@@ -88,6 +88,11 @@ if [ -e "$HOME/.krew" ]; then
   export PATH="$HOME/.krew/bin:$PATH"
 fi
 
+## bun
+if [ -e "$HOME/.bun" ]; then
+  export PATH="$HOME/.bun/bin:$PATH"
+fi
+
 ## set PATH
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
