@@ -39,7 +39,18 @@
   "skipAutoPermissionPrompt": true,
   "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "auto"
+    "defaultMode": "auto",
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(~/.kube/**)",
+      "Edit(~/.ssh/**)",
+      "Edit(~/.kube/**)",
+      "Write(~/.ssh/**)",
+      "Write(~/.kube/**)"
+    ],
+    "ask": [
+      "Bash(ssh:*)"
+    ]
   },
   "model": "opus[1m]",
   "extraKnownMarketplaces": {
