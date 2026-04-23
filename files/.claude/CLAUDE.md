@@ -22,6 +22,11 @@
 ## Language
 - User-facing responses must use the same language as the instructions used.
 
+## Sandbox permissions
+- When a command fails due to sandbox restrictions, do not look for workarounds to execute it anyway (e.g., rewriting paths, piping through other tools, or disabling the sandbox).
+- Instead, stop and propose to the user that they relax the sandbox requirements (e.g., by updating `settings.json` permissions or adjusting the sandbox configuration).
+- Explain which operation was blocked and what permission change would allow it, then wait for the user's decision.
+
 ## Libraries
 - Prefer using well-known, widely adopted libraries when they simplify the solution, reduce risk, or improve maintainability.
 - Do not re-implement common, well-solved functionality that a major library already provides (e.g., parsing, validation, date/time handling, HTTP clients), unless there is a clear constraint (performance, bundle size, security policy, dependency restrictions).
