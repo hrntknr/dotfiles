@@ -52,8 +52,12 @@
       "allowRead": [
         "~/Library/Caches/go-build"
       ],
-      "denyRead": ["~/.*"],
-      "denyWrite": ["~/.*"]
+      "denyRead": [
+        "~/.*"
+      ],
+      "denyWrite": [
+        "~/.*"
+      ]
     },
     "excludedCommands": [
       "git *",
