@@ -50,13 +50,14 @@
     "enableWeakerNetworkIsolation": true,
     "filesystem": {
       "allowRead": [
-        "~/.gitconfig",
         "~/Library/Caches/go-build"
       ],
       "denyRead": ["~/.*"],
       "denyWrite": ["~/.*"]
     },
     "excludedCommands": [
+      "git *",
+      "gh *",
       "kubectl get *",
       "kubectl describe *",
       "kubectl logs *",
