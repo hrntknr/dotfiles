@@ -40,7 +40,7 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "defaultMode": "auto",
-    "deny": [],
+    "deny": ["Bash(gh auth *)"],
     "allow": []
   },
   "model": "opus[1m]",
@@ -49,15 +49,9 @@
     "allowUnsandboxedCommands": false,
     "enableWeakerNetworkIsolation": true,
     "filesystem": {
-      "allowRead": [
-        "~/Library/Caches/go-build"
-      ],
-      "denyRead": [
-        "~/.*"
-      ],
-      "denyWrite": [
-        "~/.*"
-      ]
+      "allowRead": ["~/Library/Caches/go-build"],
+      "denyRead": ["~/.*"],
+      "denyWrite": ["~/.*"]
     },
     "excludedCommands": [
       "git *",
