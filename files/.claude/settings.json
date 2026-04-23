@@ -49,7 +49,10 @@
     "allowUnsandboxedCommands": false,
     "enableWeakerNetworkIsolation": true,
     "filesystem": {
-      "allowRead": ["~/.gitconfig"],
+      "allowRead": [
+        "~/.gitconfig",
+        "~/Library/Caches/go-build"
+      ],
       "denyRead": ["~/.*"],
       "denyWrite": ["~/.*"]
     },
