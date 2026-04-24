@@ -129,8 +129,10 @@ alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
-alias c='claude --dangerously-skip-permissions --enable-auto-mode'
-alias cs='claude --dangerously-skip-permissions --enable-auto-mode --settings '\''{"sandbox":{"enabled":false}}'\'''
+# alias c='claude --dangerously-skip-permissions --enable-auto-mode'
+# alias cs='claude --dangerously-skip-permissions --enable-auto-mode --settings '\''{"sandbox":{"enabled":false}}'\'''
+alias c='claude'
+alias cs='claude --settings '\''{"sandbox":{"enabled":false}}'\'''
 alias oc='opencode'
 alias cx='codex'
 alias rgg="rg --hidden --glob '!.git/*' -n"

@@ -1,15 +1,12 @@
 approval_policy = "never"
-sandbox_mode = "danger-full-access"
-model = "gpt-5.4"
+sandbox_mode = "workspace-write"
+model = "gpt-5.5"
 
 [features]
 multi_agent = true
 
 [sandbox_workspace_write]
 network_access = true
-
-[profiles.sandbox]
-sandbox_mode = "workspace-write"
 
 [agents.developer]
 description = "Implements requested changes."
