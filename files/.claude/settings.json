@@ -40,7 +40,7 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "defaultMode": "auto",
-    "deny": ["Bash(gh auth *)"],
+    "deny": ["Read(.env)", "Read(.vault_password)", "Bash(gh auth *)"],
     "allow": []
   },
   "model": "opus[1m]",
@@ -49,9 +49,20 @@
     "allowUnsandboxedCommands": false,
     "enableWeakerNetworkIsolation": true,
     "filesystem": {
-      "allowRead": ["~/Library/Caches/go-build"],
+      "allowRead": [
+        "~/.claude/**",
+        "~/.codex/**",
+        "~/Library/Caches/go-build",
+        "~/.gitconfig"
+      ],
+      "allowWrite": ["~/.claude/**", "~/.codex/**"],
       "denyRead": ["~/.*"],
       "denyWrite": ["~/.*"]
+    },
+    "network": {
+      "allowedDomains": [],
+      "deniedDomains": [],
+      "allowLocalBinding": true
     },
     "excludedCommands": [
       "git *",
@@ -78,7 +89,9 @@
       "ansible-lint *",
       "ansible-inventory *",
       "ansible-config *",
-      "ansible-doc *"
+      "ansible-doc *",
+      "xcodegen *",
+      "xcodebuild *"
     ]
   },
   "extraKnownMarketplaces": {

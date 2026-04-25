@@ -160,6 +160,9 @@ if (( $+commands[kubectl] )); then
     fi
     kubectl get deployment -l $1 -o "jsonpath={.items[*].metadata.name}" | xargs -n1 kubectl rollout restart deployment
   }
+  function kn {
+    kubectl get pods --field-selector spec.nodeName=$1 -A "${@:2}"
+  }
 fi
 
 if (( $+commands[openstack] )); then
