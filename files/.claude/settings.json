@@ -40,7 +40,7 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "defaultMode": "auto",
-    "deny": ["Read(.env)", "Read(.vault_password)", "Bash(gh auth *)"],
+    "deny": ["Read(.env)", "Read(.vault_password)"],
     "allow": []
   },
   "model": "opus[1m]",
@@ -53,9 +53,15 @@
         "~/.claude/**",
         "~/.codex/**",
         "~/Library/Caches/go-build",
+        "~/work/go/pkg",
         "~/.gitconfig"
       ],
-      "allowWrite": ["~/.claude/**", "~/.codex/**"],
+      "allowWrite": [
+        "~/.claude/**",
+        "~/.codex/**",
+        "~/Library/Caches/go-build",
+        "~/work/go/pkg"
+      ],
       "denyRead": ["~/.*"],
       "denyWrite": ["~/.*"]
     },
