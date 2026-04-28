@@ -22,6 +22,11 @@
 ## Language
 - User-facing responses must use the same language as the instructions used.
 
+## Git operations
+- Do not run `git commit` or `git push` unless the user has explicitly instructed you to in the current context.
+- This applies even when changes appear complete or when commits/pushes seem like the natural next step.
+- If you believe a commit or push is appropriate, propose it and wait for the user's confirmation before executing.
+
 ## Sandbox permissions
 - When a command fails due to sandbox restrictions, do not look for workarounds to execute it anyway (e.g., rewriting paths, piping through other tools, or disabling the sandbox).
 - Instead, stop and propose to the user that they relax the sandbox requirements (e.g., by updating `settings.json` permissions or adjusting the sandbox configuration).
