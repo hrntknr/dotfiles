@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+  echo "ns-tree: Linux only (requires network namespaces)" >&2
+  exit 1
+fi
+
+if [[ $EUID -ne 0 ]]; then
+  exec sudo -E "$0" "$@"
+fi
+
+for cmd in ip jq; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "ns-tree: required command not found: $cmd" >&2
+    exit 1
+  fi
+done
+
+ROOT_NAME="default"
+
+ns_list=("$ROOT_NAME")
+if names=$(ip -j netns list 2>/dev/null) && [[ -n "$names" && "$names" != "[]" ]]; then
+  while IFS= read -r n; do
+    [[ -n "$n" && "$n" != "null" ]] && ns_list+=("$n")
+  done < <(echo "$names" | jq -r '.[].name')
+fi
+
+collect_iflinks() {
+  local script='
+    parts=""
+    sep=""
+    for n in /sys/class/net/*; do
+      [ -e "$n/iflink" ] || continue
+      name=$(basename "$n")
+      iflink=$(cat "$n/iflink" 2>/dev/null) || continue
+      parts="$parts$sep\"$name\":$iflink"
+      sep=,
+    done
+    printf "{%s}\n" "$parts"
+  '
+  if [[ "$1" == "$ROOT_NAME" ]]; then
+    sh -c "$script"
+  else
+    ip netns exec "$1" sh -c "$script"
+  fi
+}
+
+collect_one() {
+  local ns="$1"
+  local addr link ids iflinks
+  if [[ "$ns" == "$ROOT_NAME" ]]; then
+    addr=$(ip -j addr show)
+    link=$(ip -d -j link show)
+    ids=$(ip -j netns list-id 2>/dev/null || echo "[]")
+  else
+    addr=$(ip -n "$ns" -j addr show)
+    link=$(ip -n "$ns" -d -j link show)
+    ids=$(ip -n "$ns" -j netns list-id 2>/dev/null || echo "[]")
+  fi
+  iflinks=$(collect_iflinks "$ns")
+  jq -n \
+    --arg ns "$ns" \
+    --argjson addr "$addr" \
+    --argjson link "$link" \
+    --argjson ids "$ids" \
+    --argjson iflinks "$iflinks" \
+    '{ns: $ns, addr: $addr, link: $link, ids: $ids, iflinks: $iflinks}'
+}
+
+all_json=$(for ns in "${ns_list[@]}"; do collect_one "$ns"; done | jq -s '.')
+
+echo "$all_json" | jq -r '
+  def t_branch: "├── ";
+  def t_last:   "└── ";
+  def t_vert:   "│   ";
+  def t_space:  "    ";
+
+  . as $all
+
+  # ifindex -> {ns, ifname} (per ns)
+  | ( [ $all[] | . as $n | ($n.link[] | {key: ($n.ns + "/" + (.ifindex|tostring)), value: {ns: $n.ns, ifname: .ifname}}) ] | from_entries ) as $ifmap
+
+  # nsid map per ns: ns -> { (nsid|tostring): name }
+  | ( [ $all[] | { key: .ns, value: ( [ .ids[] | select(.name) | {key: (.nsid|tostring), value: .name} ] | from_entries ) } ] | from_entries ) as $nsidmap
+
+  # iflinks per ns: ns -> { ifname: peer_ifindex }
+  | ( [ $all[] | { key: .ns, value: .iflinks } ] | from_entries ) as $iflinkmap
+
+  # find peer ns name for a veth: prefer nsid->name resolution; fall back to cross-ns ifindex search
+  | def peer_ns($cur_ns; $link; $peer_ifindex):
+      ($nsidmap[$cur_ns][($link.link_netnsid|tostring)] // null) as $named
+      | if $named then $named
+        elif $link.link_netnsid == null and $peer_ifindex != null then
+          # Same-ns peer (link_netnsid is null when peer is in current ns)
+          $cur_ns
+        else
+          ( [ $all[] | select(.ns != $cur_ns) | . as $n | $n.link[] | select(.ifindex == $peer_ifindex) | $n.ns ] ) as $cands
+          | if ($cands | length) == 1 then $cands[0]
+            elif ($link.link_netnsid != null) then "nsid:" + ($link.link_netnsid|tostring)
+            else "?"
+            end
+        end;
+
+  def peer_ifindex_of($cur_ns; $link):
+      if $link.link_index != null then $link.link_index
+      else ($iflinkmap[$cur_ns][$link.ifname] // null)
+      end;
+
+  def peer_name($peer_ns_name; $peer_ifindex):
+      if $peer_ifindex == null then "?"
+      else ($ifmap[$peer_ns_name + "/" + ($peer_ifindex|tostring)].ifname // ("ifindex:" + ($peer_ifindex|tostring)))
+      end;
+
+  def render_addr($a):
+      ($a.local + "/" + ($a.prefixlen|tostring));
+
+  def render_iface($ns; $link):
+      (($link.linkinfo // {}) | .info_kind) as $kind
+      | if $kind == "veth" then
+          peer_ifindex_of($ns; $link) as $pidx
+          | peer_ns($ns; $link; $pidx) as $pns
+          | $link.ifname + " <> " + peer_name($pns; $pidx) + " (ns: " + $pns + ")"
+        else
+          $link.ifname
+        end;
+
+  def render_lines($ns; $link; $is_last_iface; $parent_prefix):
+      ($parent_prefix + (if $is_last_iface then t_last else t_branch end) + render_iface($ns; $link)),
+      ( ($link.addr_info // [] | map(select(.scope != "link"))) as $addrs
+        | ($addrs | length) as $alen
+        | range(0; $alen) as $i
+        | ($addrs[$i]) as $a
+        | ($parent_prefix + (if $is_last_iface then t_space else t_vert end)
+           + (if ($i == $alen - 1) then t_last else t_branch end)
+           + render_addr($a)
+        )
+      );
+
+  def render_ns($ns_obj; $is_last_ns):
+      ($ns_obj.ns) as $name
+      # Join link with addr_info using ifindex
+      | ( [ $ns_obj.link[] as $l
+            | ($ns_obj.addr | map(select(.ifindex == $l.ifindex)) | .[0]) as $a
+            | $l + {addr_info: ($a.addr_info // [])}
+          ] ) as $ifaces
+      | ($ifaces | length) as $ilen
+      | ((if $is_last_ns then t_last else t_branch end) + $name),
+        ( range(0; $ilen) as $i
+          | render_lines($name; $ifaces[$i]; ($i == $ilen - 1); (if $is_last_ns then t_space else t_vert end))
+        );
+
+  ( . | length ) as $nlen
+  | range(0; $nlen) as $i
+  | render_ns(.[$i]; ($i == $nlen - 1))
+'
