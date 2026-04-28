@@ -51,6 +51,7 @@
     "filesystem": {
       "allowRead": [
         "~/.claude/**",
+        "~/.claude-pfn/**",
         "~/.codex/**",
         "~/Library/Caches/go-build",
         "~/work/go/pkg",
@@ -58,6 +59,7 @@
       ],
       "allowWrite": [
         "~/.claude/**",
+        "~/.claude-pfn/**",
         "~/.codex/**",
         "~/Library/Caches/go-build",
         "~/work/go/pkg"

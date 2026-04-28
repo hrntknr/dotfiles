@@ -528,11 +528,15 @@ _git_status() {
 }
 
 _kube_context() {
-  (( $+commands[kubectl] )) || return 1
+  (( $+commands[yq] )) || return 1
+
+  local config="${KUBECONFIG:-$HOME/.kube/config}"
+  config="${config%%:*}"
+  [[ -f "$config" ]] || return 1
 
   local ctx
-  ctx="$(command kubectl config current-context 2>/dev/null)" || return
-  [[ -n "$ctx" ]] || return 1
+  ctx="$(command yq '.current-context' "$config" 2>/dev/null)"
+  [[ -n "$ctx" && "$ctx" != "null" ]] || return 1
 
   print -r -- " %F{117}☸ $ctx%f"
 }

@@ -139,6 +139,12 @@ darwin-arm64)
       "$basedir/.local/bin" \
       deno
   fi
+  if [ ! -f "$basedir/.local/bin/yq" ]; then
+    mkdir -p "$basedir/.local/bin"
+    curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_darwin_arm64 \
+      -o "$basedir/.local/bin/yq"
+    chmod +x "$basedir/.local/bin/yq"
+  fi
   ;;
 linux-x86_64)
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
@@ -170,6 +176,12 @@ linux-x86_64)
     https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip \
       "$basedir/.local/bin" \
       deno
+  fi
+  if [ ! -f "$basedir/.local/bin/yq" ]; then
+    mkdir -p "$basedir/.local/bin"
+    curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+      -o "$basedir/.local/bin/yq"
+    chmod +x "$basedir/.local/bin/yq"
   fi
   ;;
 *)
