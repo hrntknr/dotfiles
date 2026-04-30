@@ -109,7 +109,7 @@
         "repo": "openai/codex-plugin-cc"
       }
     },
-    "frontend-design": {
+    "claude-plugins-official": {
       "source": {
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
@@ -117,6 +117,7 @@
     }
   },
   "enabledPlugins": {
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "frontend-design@claude-plugins-official": true
   }
 }
