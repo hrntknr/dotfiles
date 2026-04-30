@@ -163,6 +163,22 @@ if (( $+commands[kubectl] )); then
   function kn {
     kubectl get pods --field-selector spec.nodeName=$1 -A "${@:2}"
   }
+  function kconfig {
+    local choice file
+    choice=$({
+      [[ -f "$HOME/.kube/config" ]] && print -- default
+      for f in "$HOME"/.kube/config-*(N); do
+        print -- "${f##*/config-}"
+      done
+    } | fzf --layout=reverse --cycle --tiebreak=index --exact)
+    [[ -z "$choice" ]] && return
+    if [[ "$choice" == default ]]; then
+      file="$HOME/.kube/config"
+    else
+      file="$HOME/.kube/config-$choice"
+    fi
+    export KUBECONFIG="$file"
+  }
 fi
 
 if (( $+commands[openstack] )); then

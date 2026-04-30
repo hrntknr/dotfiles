@@ -108,6 +108,12 @@
         "source": "github",
         "repo": "openai/codex-plugin-cc"
       }
+    },
+    "frontend-design": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
     }
   },
   "enabledPlugins": {
