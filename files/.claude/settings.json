@@ -68,7 +68,7 @@
       "denyWrite": ["~/.*"]
     },
     "network": {
-      "allowedDomains": [],
+      "allowedDomains": ["*"],
       "deniedDomains": [],
       "allowLocalBinding": true
     },
