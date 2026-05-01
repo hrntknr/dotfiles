@@ -6,11 +6,6 @@ fi
 
 # set environment variables
 
-## homebrew
-if [ -e "/opt/homebrew/bin/brew" ]; then
-  eval $(/opt/homebrew/bin/brew shellenv)
-fi
-
 ## snap
 if [ -e "/snap" ]; then
   export PATH="/snap/bin:$PATH"
@@ -97,6 +92,11 @@ fi
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+## homebrew
+if [ -e "/opt/homebrew/bin/brew" ]; then
+  eval $(/opt/homebrew/bin/brew shellenv)
+fi
 
 # override
 if [ -e "$ZDOTDIR/.zprofile.local" ]; then
