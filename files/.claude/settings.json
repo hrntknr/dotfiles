@@ -39,9 +39,7 @@
   "skipAutoPermissionPrompt": true,
   "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "auto",
-    "deny": ["Read(.env)", "Read(.vault_password)"],
-    "allow": []
+    "defaultMode": "auto"
   },
   "model": "opus[1m]",
   "sandbox": {

@@ -8,7 +8,7 @@ service_tier = "fast"
 multi_agent = true
 
 [sandbox_workspace_write]
-network_access = false
+network_access = true
 
 [agents.developer]
 description = "Implements requested changes."

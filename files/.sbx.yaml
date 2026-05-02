@@ -10,7 +10,7 @@ rules:
   - allow(rw, ~/.claude-pfn)
   - allow(rw, ~/.claude.json)
   - allow(rw, ~/.codex)
-  - allow(r, ~/.nvm)
+  - allow(rw, ~/.nvm)
   - allow(rw, ~/work/go/pkg/mod)
   - allow(rw, ~/.dotfiles)
   - deny(rw, ~/.*)
