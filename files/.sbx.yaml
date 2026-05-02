@@ -1,15 +1,17 @@
 name: default
 k8s: true
 rules:
-  - allow(rw, ${WORK_DIR})
-  - allow(rw, ~/work/go/pkg/mod)
   - allow(r, ~/.local)
   - allow(r, ~/.gitconfig)
   - allow(r, ~/.config/gh)
+  - allow(r, ~/.kube/kuberc)
   - allow(rw, ~/.ssh/known_hosts)
   - allow(rw, ~/.claude)
   - allow(rw, ~/.claude-pfn)
   - allow(rw, ~/.claude.json)
   - allow(rw, ~/.codex)
+  - allow(rw, ~/work/go/pkg/mod)
+  - allow(rw, ~/.dotfiles)
   - deny(rw, ~/.*)
+  - allow(rw, ${WORK_DIR})
   - allow(r, /)
