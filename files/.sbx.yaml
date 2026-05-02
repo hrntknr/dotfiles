@@ -2,6 +2,7 @@ name: default
 k8s: true
 rules:
   - allow(rw, ${WORK_DIR})
+  - allow(rw, ~/work/go/pkg/mod)
   - allow(r, ~/.local)
   - allow(r, ~/.gitconfig)
   - allow(rw, ~/.ssh/known_hosts)
@@ -9,6 +10,5 @@ rules:
   - allow(rw, ~/.claude-pfn)
   - allow(rw, ~/.claude.json)
   - allow(rw, ~/.codex)
-  - allow(rw, ~/work/go/pkg/mod)
   - deny(rw, ~/.*)
   - allow(r, /)
