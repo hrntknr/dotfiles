@@ -1,5 +1,6 @@
 name: default
-k8s: true
+k8s:
+  mode: ro
 rules:
   - allow(r, ~/.local)
   - allow(r, ~/.gitconfig)
