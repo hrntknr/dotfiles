@@ -5,6 +5,7 @@ rules:
   - allow(rw, ~/.claude)
   - allow(rw, ~/.claude.json)
   - allow(rw, ~/.codex)
+  - allow(rw, ~/.ssh/known_hosts)
   - allow(r, ~/.gitconfig)
   - deny(rw, ~/.*)
   - allow(r, /)
