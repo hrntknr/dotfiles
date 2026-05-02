@@ -5,6 +5,7 @@ rules:
   - allow(rw, ~/work/go/pkg/mod)
   - allow(r, ~/.local)
   - allow(r, ~/.gitconfig)
+  - allow(r, ~/.config/gh)
   - allow(rw, ~/.ssh/known_hosts)
   - allow(rw, ~/.claude)
   - allow(rw, ~/.claude-pfn)
