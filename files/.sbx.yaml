@@ -13,6 +13,7 @@ rules:
   - allow(rw, ~/.codex)
   - allow(rw, ~/.nvm)
   - allow(rw, ~/work/go/pkg/mod)
+  - allow(rw, ~/Library/Caches/go-build)
   - allow(rw, ~/.dotfiles)
   - deny(rw, ~/.*)
   - allow(rw, ${WORK_DIR})
