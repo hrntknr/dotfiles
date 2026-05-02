@@ -131,7 +131,7 @@ alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 # alias c='claude --dangerously-skip-permissions --enable-auto-mode'
 # alias cs='claude --dangerously-skip-permissions --enable-auto-mode --settings '\''{"sandbox":{"enabled":false}}'\'''
-alias c='claude'
+# alias c='claude'
 alias cs='claude --settings '\''{"sandbox":{"enabled":false}}'\'''
 alias oc='opencode'
 alias cx='codex'
@@ -184,6 +184,23 @@ fi
 if (( $+commands[openstack] )); then
   alias os=openstack
 fi
+
+function c() {
+  local -a sbx_args claude_args
+  local after_dash=0
+  for arg in "$@"; do
+    if (( ! after_dash )) && [[ "$arg" == "--" ]]; then
+      after_dash=1
+      continue
+    fi
+    if (( after_dash )); then
+      claude_args+=("$arg")
+    else
+      sbx_args+=("$arg")
+    fi
+  done
+  sbx "${sbx_args[@]}" claude --settings '{"sandbox":{"enabled":false}}' "${claude_args[@]}"
+}
 
 function ignore() {
   curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1 | awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >>.gitignore

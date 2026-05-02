@@ -1,0 +1,10 @@
+name: default
+k8s: true
+rules:
+  - allow(rw, ${WORK_DIR})
+  - allow(rw, ~/.claude)
+  - allow(rw, ~/.claude.json)
+  - allow(rw, ~/.codex)
+  - allow(r, ~/.gitconfig)
+  - deny(rw, ~/.*)
+  - allow(r, /)

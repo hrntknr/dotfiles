@@ -145,6 +145,12 @@ darwin-arm64)
       -o "$basedir/.local/bin/yq"
     chmod +x "$basedir/.local/bin/yq"
   fi
+  if [ ! -f "$basedir/.local/bin/sbx" ]; then
+    download_files \
+      https://github.com/hrntknr/sbx/releases/latest/download/sbx_darwin_arm64.zip \
+      "$basedir/.local/bin" \
+      sbx_darwin_arm64/sbx
+  fi
   ;;
 linux-x86_64)
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
@@ -182,6 +188,12 @@ linux-x86_64)
     curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
       -o "$basedir/.local/bin/yq"
     chmod +x "$basedir/.local/bin/yq"
+  fi
+  if [ ! -f "$basedir/.local/bin/sbx" ]; then
+    download_files \
+      https://github.com/hrntknr/sbx/releases/latest/download/sbx_linux_amd64.tar.gz \
+      "$basedir/.local/bin" \
+      sbx_linux_amd64/sbx
   fi
   ;;
 *)
