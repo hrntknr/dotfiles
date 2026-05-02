@@ -3,6 +3,7 @@ k8s: true
 rules:
   - allow(r, ~/.local)
   - allow(r, ~/.gitconfig)
+  - allow(r, ~/.gitignore_global)
   - allow(r, ~/.config/gh)
   - allow(rw, ~/.ssh/known_hosts)
   - allow(r, ~/.kube/kuberc)

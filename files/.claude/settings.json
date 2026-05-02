@@ -43,7 +43,7 @@
   },
   "model": "opus[1m]",
   "sandbox": {
-    "enabled": true,
+    "enabled": false,
     "allowUnsandboxedCommands": false,
     "enableWeakerNetworkIsolation": true,
     "filesystem": {

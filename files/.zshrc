@@ -129,8 +129,9 @@ alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
-alias c='sbx claude --allow-dangerously-skip-permissions --settings '\''{"sandbox":{"enabled":false}}'\'''
-alias cs='claude --allow-dangerously-skip-permissions --settings '\''{"sandbox":{"enabled":false}}'\'''
+alias c='sbx claude --allow-dangerously-skip-permissions'
+alias cs='claude --allow-dangerously-skip-permissions'
+alias cr='sbx claude remote-control --spawn worktree'
 alias cx='sbx codex --sandbox danger-full-access'
 alias cxs='codex --sandbox danger-full-access'
 alias rgg="rg --hidden --glob '!.git/*' -n"
