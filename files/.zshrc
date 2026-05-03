@@ -133,8 +133,8 @@ alias c='sbx claude --allow-dangerously-skip-permissions --settings '\''{"sandbo
 alias cs='claude --allow-dangerously-skip-permissions --settings '\''{"sandbox":{"enabled":false}}'\'''
 alias cx='sbx codex --sandbox danger-full-access'
 alias cxs='codex --sandbox danger-full-access'
-alias oc='sbx opencode'
-alias ocs='opencode'
+alias oc='opencode'
+alias ocs='OPENCODE_CONFIG_CONTENT='\''{"shell":null}'\'' opencode'
 alias rgg="rg --hidden --glob '!.git/*' -n"
 
 case ${OSTYPE} in
