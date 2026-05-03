@@ -1,4 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "disabled_providers": ["opencode"],
+  "model": "openai/gpt-5.5-fast",
+  "small_model": "openai/gpt-5.5-fast",
   "shell": "sbx",
 }

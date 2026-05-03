@@ -1,7 +1,6 @@
 ---
 description: Implements requested changes.
 mode: subagent
-model: openai/gpt-5.4
 color: info
 ---
 

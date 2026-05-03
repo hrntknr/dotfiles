@@ -1,7 +1,6 @@
 ---
 description: Reviews code for issues.
 mode: subagent
-model: openai/gpt-5.4
 color: accent
 permission:
   edit: deny
