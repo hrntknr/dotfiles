@@ -88,6 +88,11 @@ if [ -e "$HOME/.bun" ]; then
   export PATH="$HOME/.bun/bin:$PATH"
 fi
 
+## opencode
+if [ -e "$HOME/.opencode" ]; then
+  export PATH="$HOME/.opencode/bin:$PATH"
+fi
+
 ## set PATH
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"

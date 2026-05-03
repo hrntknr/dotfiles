@@ -16,3 +16,6 @@ config_file = "agents/developer.toml"
 [agents.reviewer]
 description = "Reviews code for issues."
 config_file = "agents/reviewer.toml"
+
+[notice]
+fast_default_opt_out = true
