@@ -134,7 +134,6 @@ alias cs='claude --allow-dangerously-skip-permissions --settings '\''{"sandbox":
 alias cx='sbx codex --sandbox danger-full-access'
 alias cxs='codex --sandbox danger-full-access'
 alias oc='sbx opencode'
-alias ocw='sbx -c ~/.sbx.work.yaml opencode web --hostname 0.0.0.0'
 alias ocs='opencode'
 alias rgg="rg --hidden --glob '!.git/*' -n"
 
