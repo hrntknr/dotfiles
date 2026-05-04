@@ -30,5 +30,5 @@ rules:
   - allow(r, ~/.zprofile.local)
 
   - deny(rw, ~/.*)
-  - allow(rw, ${WORK_DIR})
+  - allow(rw, ~/work)
   - allow(r, /)
