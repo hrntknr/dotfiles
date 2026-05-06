@@ -1,4 +1,5 @@
-#!/bin/bash -euo pipefail
+#!/bin/bash
+set -euo pipefail
 
 region="ap-northeast-1"
 targets=(
