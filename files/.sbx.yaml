@@ -6,6 +6,8 @@ rules:
   - allow(rw, ~/.claude-pfn)
   - allow(rw, ~/.claude.json)
   - allow(rw, ~/.codex)
+  - allow(rw, ~/.opencode)
+  - allow(rw, ~/.cache/opencode)
   - allow(rw, ~/.local/share/opencode)
   - allow(rw, ~/.local/state/opencode)
   - allow(rw, ~/.nvm)
@@ -14,9 +16,7 @@ rules:
   - allow(rw, ~/.dotfiles)
   - allow(rw, ~/.ssh/known_hosts)
 
-  - allow(r, ~/.opencode)
   - allow(r, ~/.config/opencode)
-  - allow(r, ~/.cache/opencode)
 
   - allow(r, ~/.local)
   - allow(r, ~/.gitconfig)
