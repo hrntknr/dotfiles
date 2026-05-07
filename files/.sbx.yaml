@@ -16,7 +16,7 @@ rules:
   - allow(rw, ~/.dotfiles)
   - allow(rw, ~/.ssh/known_hosts)
   - allow(rw, ~/.docker)
-  - allow(rw, /run/user/1000)
+  - allow(rw, /run/user/${UID})
 
   - allow(r, ~/.config/opencode)
 
