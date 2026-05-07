@@ -15,6 +15,8 @@ rules:
   - allow(rw, ~/Library/Caches/go-build)
   - allow(rw, ~/.dotfiles)
   - allow(rw, ~/.ssh/known_hosts)
+  - allow(rw, ~/.docker)
+  - allow(rw, /run/user/1000)
 
   - allow(r, ~/.config/opencode)
 
