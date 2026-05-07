@@ -22,6 +22,11 @@
 ## Language
 - User-facing responses must use the same language as the instructions used.
 
+## Git operations
+- Do not run `git commit`, `git push`, create pull requests, merge pull requests, enable auto-merge, create tags/releases, or otherwise change remote repository state unless the user has explicitly instructed you to in the current context.
+- This applies even when changes appear complete or when commit/push/PR operations seem like the natural next step.
+- If you believe a Git operation is appropriate, propose it and wait for the user's confirmation before executing.
+
 ## Libraries
 - Prefer using well-known, widely adopted libraries when they simplify the solution, reduce risk, or improve maintainability.
 - Do not re-implement common, well-solved functionality that a major library already provides (e.g., parsing, validation, date/time handling, HTTP clients), unless there is a clear constraint (performance, bundle size, security policy, dependency restrictions).
