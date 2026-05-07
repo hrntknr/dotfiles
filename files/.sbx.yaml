@@ -1,6 +1,11 @@
 name: default
+ssh:
+  - allow(github.com)
+  - allow(*.hrntknr.net)
 k8s:
-  mode: ro
+  - allow(rw, pear)
+  - allow(rw, test)
+  - allow(r, *)
 rules:
   - allow(rw, ~/.claude)
   - allow(rw, ~/.claude-pfn)
@@ -14,10 +19,7 @@ rules:
   - allow(rw, ~/work/go/pkg/mod)
   - allow(rw, ~/Library/Caches/go-build)
   - allow(rw, ~/.dotfiles)
-  - allow(rw, ~/.ssh/known_hosts)
-  - allow(rw, ~/.ssh/agent)
   - allow(rw, ~/.docker)
-  - allow(rw, /run/user/${UID})
 
   - allow(r, ~/.config/opencode)
 
@@ -26,7 +28,6 @@ rules:
   - allow(r, ~/.gitignore_global)
   - allow(r, ~/.config/gh)
   - allow(r, ~/.kube/kuberc)
-  - allow(r, ~/.ssh/config)
 
   - allow(r, ~/.zshrc)
   - allow(r, ~/.zshrc.local)
