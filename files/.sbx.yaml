@@ -26,6 +26,7 @@ rules:
   - allow(r, ~/.gitignore_global)
   - allow(r, ~/.config/gh)
   - allow(r, ~/.kube/kuberc)
+  - allow(r, ~/.ssh/config)
 
   - allow(r, ~/.zshrc)
   - allow(r, ~/.zshrc.local)
