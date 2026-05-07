@@ -4,6 +4,43 @@ if locale -a | grep en_US.UTF-8 >/dev/null; then
   export LANG=en_US.UTF-8
 fi
 
+# agents
+## ssh
+if [ -z "$SSH_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
+  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
+    SSH_AGENT_ENABLED=${SSH_AGENT_ENABLED:-1}
+  fi
+fi
+if [ "$SSH_AGENT_ENABLED" = "1" ] && (( $+commands[ssh-agent] )); then
+  env_agent=$HOME/.local/ssh-agent.env
+  SSH_AGENT_ARGS=""
+  if [ -n "$SSH_AGENT_TIMEOUT" ]; then
+    SSH_AGENT_ARGS="-t $SSH_AGENT_TIMEOUT"
+  fi
+  if ! pgrep ssh-agent -U $USER &>/dev/null; then
+    sh -c "ssh-agent -s $SSH_AGENT_ARGS > $env_agent"
+  fi
+  if [ -e "$env_agent" ]; then
+    source $env_agent &>/dev/null
+  fi
+fi
+
+# gpg
+if [ -z "$GPG_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
+  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
+    GPG_AGENT_ENABLED=${GPG_AGENT_ENABLED:-1}
+  fi
+fi
+if [ "$GPG_AGENT_ENABLED" = "1" ] && (( $+commands[gpg-agent] )); then
+  GPG_AGENT_ARGS=""
+  if [ -n "$GPG_AGENT_TIMEOUT" ]; then
+    GPG_AGENT_ARGS="--default-cache-ttl $GPG_AGENT_TIMEOUT"
+  fi
+  if ! pgrep gpg-agent -U $USER &>/dev/null; then
+    sh -c "gpg-agent -q --daemon $GPG_AGENT_ARGS"
+  fi
+fi
+
 # set environment variables
 
 ## snap

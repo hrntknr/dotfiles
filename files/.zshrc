@@ -74,52 +74,6 @@ if [ -e "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
   . "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
-# agents
-## ssh
-if [ -z "$SSH_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
-  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
-    SSH_AGENT_ENABLED=${SSH_AGENT_ENABLED:-1}
-  fi
-fi
-if [ "$SSH_AGENT_ENABLED" = "1" ] && (( $+commands[ssh-agent] )); then
-  env_agent=$HOME/.local/ssh-agent.env
-  SSH_AGENT_ARGS=""
-  if [ -n "$SSH_AGENT_TIMEOUT" ]; then
-    SSH_AGENT_ARGS="-t $SSH_AGENT_TIMEOUT"
-  fi
-  if ! pgrep ssh-agent -U $USER &>/dev/null; then
-    sh -c "ssh-agent -s $SSH_AGENT_ARGS > $env_agent"
-  fi
-  if [ -e "$env_agent" ]; then
-    source $env_agent &>/dev/null
-  fi
-fi
-
-## ssh key fingerprint
-if [[ -n $SSH_CLIENT ]] && (( $+commands[journalctl] )); then
-  export SSH_KEY_FINGERPRINT="$(
-    ip="${SSH_CLIENT%% *}"
-    port="$(echo "$SSH_CLIENT" | awk '{print $2}')"
-    journalctl -u ssh -u sshd --no-pager -n 300 2>/dev/null | grep "Accepted publickey.*$ip port $port" | tail -1 | grep -oP 'SHA256:\S+'
-  )"
-fi
-
-# gpg
-if [ -z "$GPG_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
-  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
-    GPG_AGENT_ENABLED=${GPG_AGENT_ENABLED:-1}
-  fi
-fi
-if [ "$GPG_AGENT_ENABLED" = "1" ] && (( $+commands[gpg-agent] )); then
-  GPG_AGENT_ARGS=""
-  if [ -n "$GPG_AGENT_TIMEOUT" ]; then
-    GPG_AGENT_ARGS="--default-cache-ttl $GPG_AGENT_TIMEOUT"
-  fi
-  if ! pgrep gpg-agent -U $USER &>/dev/null; then
-    sh -c "gpg-agent -q --daemon $GPG_AGENT_ARGS"
-  fi
-fi
-
 # utils and aliases
 alias l='ls -ltrG'
 alias ls='ls -G'
