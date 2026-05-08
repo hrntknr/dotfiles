@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-
-if [ -z "$OPENCODE_SERVER_PASSWORD" ]; then
-  echo "OPENCODE_SERVER_PASSWORD is not set"
-  exit 1
-fi
-
 (
   cd ~/work
   sbx opencode web --hostname 127.0.0.1 --port 4096
