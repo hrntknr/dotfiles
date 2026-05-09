@@ -5,29 +5,17 @@
   ],
   "model": "openai/gpt-5.5-fast",
   "small_model": "openai/gpt-5.4-mini",
-  "provider": {
-    "plamo": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Preferred Networks",
-      "options": {
-        "baseURL": "https://api.platform.preferredai.jp/v1",
-      },
-      "models": {
-        "plamo-3.0-prime-beta": {
-          "name": "PLaMo 3.0 Prime β",
-          "limit": {
-            "context": 65536,
-            "output": 20000,
-          },
-        },
-        "plamo-2.2-prime": {
-          "name": "PLaMo 2.2 Prime",
-          "limit": {
-            "context": 32768,
-            "output": 4096,
-          },
-        },
-      },
+  "permission": {
+    "external_directory": "allow",
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.vault_password": "deny",
+    },
+    "edit": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.vault_password": "deny",
     },
   },
 }
