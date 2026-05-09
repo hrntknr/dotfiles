@@ -91,11 +91,64 @@ alias oc='sbx opencode'
 alias ocs='opencode'
 alias rgg="rg --hidden --glob '!.git/*' -n"
 
-case ${OSTYPE} in
-linux*)
-  alias open='xdg-open'
-  ;;
-esac
+function _is_ssh_session() {
+  [[ -n "$SSH_CONNECTION$SSH_CLIENT$SSH_TTY" ]]
+}
+
+function _wezterm_open_uri() {
+  local encoded
+  encoded=$(printf '%s' "$1" | base64 | tr -d '\n')
+
+  if [[ -n "$TMUX" ]]; then
+    printf '\033Ptmux;\033\033]1337;SetUserVar=open-uri=%s\a\033\\' "$encoded"
+  else
+    printf '\033]1337;SetUserVar=open-uri=%s\a' "$encoded"
+  fi
+}
+
+function _vscode_remote_uri() {
+  local host path
+  host=${VSCODE_SSH_HOST:-${HOST%%.*}}
+  path=$1
+  [[ $path == /* ]] || path=$PWD/$path
+  print -r -- "vscode://vscode-remote/ssh-remote+${host}${path}"
+}
+
+if _is_ssh_session; then
+  function open() {
+    local uri
+    for uri in "$@"; do
+      if [[ $uri =~ '^[[:alpha:]][[:alnum:]+.-]*:' ]]; then
+        _wezterm_open_uri "$uri"
+      else
+        _wezterm_open_uri "$(_vscode_remote_uri "$uri")"
+      fi
+    done
+  }
+
+  function xdg-open() {
+    open "$@"
+  }
+
+  function code() {
+    local target
+    if [[ $# -eq 0 ]]; then
+      _wezterm_open_uri "$(_vscode_remote_uri "$PWD")"
+      return
+    fi
+
+    for target in "$@"; do
+      [[ $target == -* ]] && continue
+      _wezterm_open_uri "$(_vscode_remote_uri "$target")"
+    done
+  }
+else
+  case ${OSTYPE} in
+  linux*)
+    alias open='xdg-open'
+    ;;
+  esac
+fi
 
 if (( $+commands[nvim] )); then
   alias vim='nvim'
