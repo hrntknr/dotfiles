@@ -1,4 +1,7 @@
 name: default
+docker:
+  - allow(rw, rootless)
+  - allow(r, *)
 ssh:
   - allow(github.com)
   - allow(*.hrntknr.net)
@@ -19,7 +22,6 @@ rules:
   - allow(rw, ~/work/go/pkg/mod)
   - allow(rw, ~/Library/Caches/go-build)
   - allow(rw, ~/.dotfiles)
-  - allow(rw, ~/.docker)
 
   - allow(r, ~/.config/opencode)
 
@@ -34,6 +36,7 @@ rules:
   - allow(r, ~/.zprofile)
   - allow(r, ~/.zprofile.local)
 
+  - deny(rw, /var/run/docker.sock)
   - deny(rw, ~/.*)
   - allow(rw, ${WORK_DIR})
   - allow(r, /)
