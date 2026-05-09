@@ -75,6 +75,12 @@ return {
       "#56b6c2",
       "#abb2bf",
     },
+    tab_bar = {
+      active_tab = {
+        bg_color = "#3a4152",
+        fg_color = "#f1f5f9",
+      },
+    },
   },
   font = wezterm.font_with_fallback({
     "Fira Mono for Powerline",
