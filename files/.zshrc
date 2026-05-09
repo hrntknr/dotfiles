@@ -99,10 +99,7 @@ function _wezterm_open_uri() {
   local encoded
   encoded=$(printf '%s' "$1" | base64 | tr -d '\n')
 
-  if _is_ssh_session; then
-    printf '\033]1337;SetUserVar=open-uri=%s\a' "$encoded"
-    printf '\033Ptmux;\033\033]1337;SetUserVar=open-uri=%s\a\033\\' "$encoded"
-  elif [[ -n "$TMUX" ]]; then
+  if [[ -n "$TMUX" ]]; then
     printf '\033Ptmux;\033\033]1337;SetUserVar=open-uri=%s\a\033\\' "$encoded"
   else
     printf '\033]1337;SetUserVar=open-uri=%s\a' "$encoded"
