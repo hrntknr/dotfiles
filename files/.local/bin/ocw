@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-(
-  cd ~/work
-  sbx opencode web --hostname 127.0.0.1 --port 4096
-)
