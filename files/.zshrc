@@ -87,8 +87,8 @@ alias c='sbx claude --allow-dangerously-skip-permissions --settings '\''{"sandbo
 alias cs='claude --allow-dangerously-skip-permissions --settings '\''{"sandbox":{"enabled":false}}'\'''
 alias cx='sbx codex --sandbox danger-full-access'
 alias cxs='codex --sandbox danger-full-access'
-alias oc='sbx opencode'
-alias ocs='opencode'
+alias oc='OPENCODE_ENABLE_EXA=1 sbx opencode'
+alias ocs='OPENCODE_ENABLE_EXA=1 opencode'
 alias rgg="rg --hidden --glob '!.git/*' -n"
 
 function _is_ssh_session() {
