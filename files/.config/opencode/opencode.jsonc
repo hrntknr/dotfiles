@@ -38,5 +38,6 @@
   },
   "plugin": [
     "@tarquinen/opencode-dcp@latest",
+    "@spoons-and-mirrors/subtask2@latest",
   ],
 }
