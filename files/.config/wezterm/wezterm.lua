@@ -100,9 +100,9 @@ return {
   window_decorations = "INTEGRATED_BUTTONS|RESIZE",
 
   window_padding = {
-    left = 14,
-    right = 14,
-    top = 6,
-    bottom = 6,
+    left = 10,
+    right = 10,
+    top = 4,
+    bottom = 4,
   },
 }
