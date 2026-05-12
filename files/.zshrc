@@ -21,6 +21,8 @@ setopt nolistbeep
 setopt extended_glob
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
+bindkey '^[[1;3D' backward-word
+bindkey '^[[1;3C' forward-word
 
 function sync_history {
   history -a >/dev/null 2>&1
