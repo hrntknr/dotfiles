@@ -1,8 +1,6 @@
 ---
 description: review changes [commit|branch|pr], defaults to uncommitted
 subtask: true
-return:
-  - Directly provide task tool output results to users. No verification or confirmation required. Do not make unauthorized modifications without user permission.
 ---
 # Review guidelines
 
