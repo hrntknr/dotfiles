@@ -19,6 +19,8 @@ rules:
   - allow(rw, ~/.local/share/opencode)
   - allow(rw, ~/.local/state/opencode)
   - allow(rw, ~/.nvm)
+  - allow(rw, ~/.npm)
+  - allow(rw, ~/.mcp-auth)
   - allow(rw, ~/work/go/pkg/mod)
   - allow(rw, ~/Library/Caches/go-build)
   - allow(rw, ~/.dotfiles)
