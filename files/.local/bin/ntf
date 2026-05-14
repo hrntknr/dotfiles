@@ -29,7 +29,7 @@ notify_local() {
   args=(-title "$title" -message "$msg")
   [ -n "$url" ] && args+=(-open "$url")
   [ -n "$group" ] && args+=(-group "$group")
-  terminal-notifier "${args[@]}"
+  terminal-notifier "${args[@]}" >/dev/null 2>&1
 }
 
 notify_remote() {
