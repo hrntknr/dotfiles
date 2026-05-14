@@ -95,6 +95,14 @@ return {
 
   default_cursor_style = "SteadyBlock",
 
+  keys = {
+    {
+      key = "¥",
+      mods = "ALT",
+      action = act.SendString("\\"),
+    },
+  },
+
   use_fancy_tab_bar = true,
   hide_tab_bar_if_only_one_tab = false,
   window_decorations = "INTEGRATED_BUTTONS|RESIZE",
