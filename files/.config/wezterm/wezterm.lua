@@ -150,17 +150,6 @@ return {
     },
   },
 
-  ssh_domains = {
-    {
-      name = "pm1",
-      remote_address = "pm1.hrntknr.net:9443",
-      ssh_option = {
-        proxycommand = "qrelay nc --connect pm1.hrntknr.net:9443 --fingerprint 3d:d9:c1:f9:33:03:db:10:86:78:8e:58:0e:82:95:4c:2e:ed:d3:14:7e:c1:a1:4c:62:10:a6:dd:a6:64:96:f7",
-      },
-    },
-  },
-  ssh_backend = "Ssh2",
-
   use_fancy_tab_bar = true,
   hide_tab_bar_if_only_one_tab = false,
   window_decorations = "INTEGRATED_BUTTONS|RESIZE",
