@@ -2,24 +2,24 @@
 set -euo pipefail
 
 if [[ "$(uname -s)" != "Linux" ]]; then
-  echo "ns-tree: Linux only (requires network namespaces)" >&2
+  echo "nn: Linux only (requires network namespaces)" >&2
   exit 1
 fi
 
 if [[ $EUID -ne 0 ]]; then
-  exec sudo -E "$0" "$@"
+  exec sudo "$0" "$@"
 fi
 
 for cmd in ip jq; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
-    echo "ns-tree: required command not found: $cmd" >&2
+    echo "nn: required command not found: $cmd" >&2
     exit 1
   fi
 done
 
-ROOT_NAME="default"
+DEFAULT_NS="default"
 
-ns_list=("$ROOT_NAME")
+ns_list=("$DEFAULT_NS")
 if names=$(ip -j netns list 2>/dev/null) && [[ -n "$names" && "$names" != "[]" ]]; then
   while IFS= read -r n; do
     [[ -n "$n" && "$n" != "null" ]] && ns_list+=("$n")
@@ -39,7 +39,7 @@ collect_iflinks() {
     done
     printf "{%s}\n" "$parts"
   '
-  if [[ "$1" == "$ROOT_NAME" ]]; then
+  if [[ "$1" == "$DEFAULT_NS" ]]; then
     sh -c "$script"
   else
     ip netns exec "$1" sh -c "$script"
@@ -49,7 +49,7 @@ collect_iflinks() {
 collect_one() {
   local ns="$1"
   local addr link ids iflinks
-  if [[ "$ns" == "$ROOT_NAME" ]]; then
+  if [[ "$ns" == "$DEFAULT_NS" ]]; then
     addr=$(ip -j addr show)
     link=$(ip -d -j link show)
     ids=$(ip -j netns list-id 2>/dev/null || echo "[]")
@@ -117,12 +117,13 @@ echo "$all_json" | jq -r '
 
   def render_iface($ns; $link):
       (($link.linkinfo // {}) | .info_kind) as $kind
+      | (if ($link.operstate // "") == "DOWN" then " (down)" else "" end) as $state
       | if $kind == "veth" then
           peer_ifindex_of($ns; $link) as $pidx
           | peer_ns($ns; $link; $pidx) as $pns
-          | $link.ifname + " <> " + peer_name($pns; $pidx) + " (ns: " + $pns + ")"
+          | $link.ifname + $state + " <> " + peer_name($pns; $pidx) + " (ns: " + $pns + ")"
         else
-          $link.ifname
+          $link.ifname + $state
         end;
 
   def render_lines($ns; $link; $is_last_iface; $parent_prefix):
@@ -137,7 +138,7 @@ echo "$all_json" | jq -r '
         )
       );
 
-  def render_ns($ns_obj; $is_last_ns):
+  def render_ns($ns_obj):
       ($ns_obj.ns) as $name
       # Join link with addr_info using ifindex
       | ( [ $ns_obj.link[] as $l
@@ -145,12 +146,14 @@ echo "$all_json" | jq -r '
             | $l + {addr_info: ($a.addr_info // [])}
           ] ) as $ifaces
       | ($ifaces | length) as $ilen
-      | ((if $is_last_ns then t_last else t_branch end) + $name),
+      | $name,
         ( range(0; $ilen) as $i
-          | render_lines($name; $ifaces[$i]; ($i == $ilen - 1); (if $is_last_ns then t_space else t_vert end))
+          | (if $i > 0 then t_vert else empty end),
+            render_lines($name; $ifaces[$i]; ($i == $ilen - 1); "")
         );
 
   ( . | length ) as $nlen
   | range(0; $nlen) as $i
-  | render_ns(.[$i]; ($i == $nlen - 1))
+  | (if $i > 0 then "" else empty end),
+    render_ns(.[$i])
 '
