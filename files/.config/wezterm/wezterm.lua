@@ -95,13 +95,13 @@ return {
 
   default_cursor_style = "SteadyBlock",
 
-  leader = { key = "s", mods = "CTRL", timeout_milliseconds = 1000 },
+  leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 },
 
   keys = {
     {
-      key = "s",
+      key = "a",
       mods = "LEADER|CTRL",
-      action = act.SendKey({ key = "s", mods = "CTRL" }),
+      action = act.SendKey({ key = "a", mods = "CTRL" }),
     },
     {
       key = "c",
