@@ -97,6 +97,14 @@ function _is_ssh_session() {
   [[ -n "$SSH_CONNECTION$SSH_CLIENT$SSH_TTY" ]]
 }
 
+function _is_wezterm_session() {
+  [[ -n "$WEZTERM_PANE" || $TERM_PROGRAM == WezTerm ]]
+}
+
+function _is_wezterm_remote_multiplexer() {
+  [[ -n "$WEZTERM_REMOTE_PANE" || ${WEZTERM_EXECUTABLE:t} == wezterm-mux-server ]]
+}
+
 function _vscode_remote_uri() {
   local host path
   host=${VSCODE_SSH_HOST:-${HOST%%.*}}
@@ -105,7 +113,7 @@ function _vscode_remote_uri() {
   print -r -- "vscode://vscode-remote/ssh-remote+${host}${path}"
 }
 
-if _is_ssh_session; then
+if _is_wezterm_session && { _is_ssh_session || _is_wezterm_remote_multiplexer; }; then
   function code() {
     local target
     if [[ $# -eq 0 ]]; then

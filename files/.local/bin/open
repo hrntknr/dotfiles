@@ -5,6 +5,14 @@ is_ssh_session() {
   [ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ]
 }
 
+is_wezterm_session() {
+  [ -n "${WEZTERM_PANE:-}" ] || [ "${TERM_PROGRAM:-}" = WezTerm ]
+}
+
+is_wezterm_remote_multiplexer() {
+  [ -n "${WEZTERM_REMOTE_PANE:-}" ] || [ "${WEZTERM_EXECUTABLE##*/}" = wezterm-mux-server ]
+}
+
 emit_open_uri() {
   encoded=$(printf '%s' "$1" | base64 | tr -d '\n')
 
@@ -15,7 +23,7 @@ emit_open_uri() {
   fi
 }
 
-if is_ssh_session; then
+if is_wezterm_session && { is_ssh_session || is_wezterm_remote_multiplexer; }; then
   for uri do
     emit_open_uri "$uri"
   done
