@@ -148,6 +148,11 @@ return {
       mods = "ALT",
       action = act.SendString("\\"),
     },
+    {
+      key = "Enter",
+      mods = "ALT",
+      action = act.SendKey({ key = "Enter", mods = "ALT" }),
+    },
   },
 
   use_fancy_tab_bar = true,
