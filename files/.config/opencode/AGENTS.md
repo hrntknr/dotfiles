@@ -1,23 +1,30 @@
 # OpenCode Instructions
 
 ## Complexity & readability
-- Do not increase complexity without a clear reason.
 - Prefer the simplest solution that satisfies the requirements and existing constraints.
-- Complexity is allowed only when it reduces overall risk or improves maintainability (e.g., removes duplication, clarifies invariants, improves testability).
+- Treat excessive lines, moving parts, and incidental complexity as strong negatives.
+- Use abstraction only at the right responsibility and granularity; good abstraction separates concerns and makes the code shorter and clearer.
 - Match the complexity to the task: small tasks should use small, straightforward changes.
-- Separate modules with appropriate granularity.
 - Optimize for readability: clear naming, small functions, and predictable control flow.
 
 ## Comments
 - Minimize code comments. Code should be self-explanatory through clear naming and structure.
-- Comments are acceptable only when:
-  - The logic is inherently complex and not self-evident from the code.
-  - The comment is externally visible (e.g., doc comments for public APIs, docstrings).
+- Comments are acceptable only for inherently complex logic or externally visible documentation.
 
 ## Testing
 - Bug fixes must include a regression test:
   - Add a test that fails before the fix and passes after the fix.
   - Place it in the closest relevant test suite.
+
+## Design & debugging
+- Avoid heuristic fixes when the failure can be addressed by clearer lifecycle, ownership, or error boundaries.
+- Put state and lifecycle logic in the component that semantically owns it; do not duplicate ownership across layers.
+- For bugs, inspect actual logs, current files, generated artifacts, and command output before proposing a fix.
+- Verify the real end state, not just that code was changed.
+
+## Specifications & reviews
+- When important product behavior is ambiguous, ask the smallest necessary clarifying questions before finalizing a specification.
+- For reviews, write findings in Japanese, deduplicate overlapping issues, order by severity, and include concrete file/line references and behavioral risk.
 
 ## Language
 - User-facing responses must use the same language as the instructions used.
@@ -39,13 +46,6 @@
 - When adding a library, choose a stable option with strong community support and maintenance.
 
 ## Slop code
-"Slop code" refers to AI-generated code that is syntactically valid but bloated, vague, or mechanically produced without genuine understanding of the problem. Avoid the following patterns:
-- Unnecessary defensive coding: redundant null checks, try-catch wrapping, or validation for conditions that cannot occur in context.
-- Premature abstraction: introducing helpers, wrappers, factories, or config layers for one-time or straightforward operations.
-- Cargo-cult patterns: applying design patterns (strategy, observer, builder, etc.) without a concrete need, simply because they seem "proper."
-- Verbose boilerplate: generating repetitive code that could be expressed more concisely, or adding layers of indirection that obscure intent.
-- Hollow comments and docstrings: restating what the code already says (e.g., `# increment counter` above `counter += 1`) or adding filler documentation with no informational value.
-- Speculative features: adding error handling, feature flags, configuration options, or extensibility hooks that were not requested and have no foreseeable use.
-- Over-logging and over-typing: inserting excessive log statements or type annotations that add noise without aiding debugging or comprehension.
+- Avoid unnecessary defensive coding, premature abstraction, cargo-cult patterns, verbose boilerplate, hollow comments, speculative features, and over-logging.
 
 When in doubt, write less code. Every line should exist for a reason traceable to the actual requirement.
