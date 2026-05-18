@@ -151,6 +151,12 @@ darwin-arm64)
       "$basedir/.local/bin" \
       sbx_darwin_arm64/sbx
   fi
+  if [ ! -f "$basedir/.local/bin/k9s" ]; then
+    download_files \
+      https://github.com/derailed/k9s/releases/latest/download/k9s_Darwin_arm64.tar.gz \
+      "$basedir/.local/bin" \
+      k9s
+  fi
   ;;
 linux-x86_64)
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
@@ -194,6 +200,12 @@ linux-x86_64)
       https://github.com/hrntknr/sbx/releases/latest/download/sbx_linux_amd64.tar.gz \
       "$basedir/.local/bin" \
       sbx_linux_amd64/sbx
+  fi
+  if [ ! -f "$basedir/.local/bin/k9s" ]; then
+    download_files \
+      https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz \
+      "$basedir/.local/bin" \
+      k9s
   fi
   ;;
 *)
