@@ -167,12 +167,6 @@ platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 arch="$(uname -m | tr '[:upper:]' '[:lower:]')"
 case "$platform-$arch" in
 darwin-arm64)
-  if [ ! -f "$basedir/.local/bin/zsh-static" ]; then
-    download_file_as \
-      "$(github_latest_download_url romkatv/zsh-bin 'zsh-[0-9.]+-darwin-arm64\.tar\.gz')" \
-      "$basedir/.local/bin/zsh-static" \
-      bin/zsh
-  fi
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
     download_files \
       "$(github_latest_download_url junegunn/fzf 'fzf-[0-9.]+-darwin_arm64\.tar\.gz')" \
@@ -223,12 +217,6 @@ darwin-arm64)
   fi
   ;;
 linux-x86_64)
-  if [ ! -f "$basedir/.local/bin/zsh-static" ]; then
-    download_file_as \
-      "$(github_latest_download_url romkatv/zsh-bin 'zsh-[0-9.]+-linux-x86_64\.tar\.gz')" \
-      "$basedir/.local/bin/zsh-static" \
-      bin/zsh
-  fi
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
     download_files \
       "$(github_latest_download_url junegunn/fzf 'fzf-[0-9.]+-linux_amd64\.tar\.gz')" \
