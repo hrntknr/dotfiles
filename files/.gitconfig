@@ -16,5 +16,7 @@
   path = "~/.gitconfig.local"
 [ghq]
   root = "~/work/r"
-[url "git@github.com:"]
-  insteadOf = https://github.com/
+[credential "https://github.com"]
+  helper = !gh auth git-credential
+[url "https://github.com/"]
+  insteadOf = git@github.com:
