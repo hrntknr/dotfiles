@@ -120,6 +120,42 @@ function download_files {
   done
 }
 
+function download_file_as {
+  local url="$1"
+  local dst="$2"
+  local pat="$3"
+  local tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' RETURN
+  local f="$tmp/${url##*/}"
+
+  curl -fsSL "$url" -o "$f"
+
+  case "$f" in
+    *.zip)    extract_zip "$f" "$tmp" ;;
+    *.tar.gz|*.tgz) tar -xzf "$f" -C "$tmp" ;;
+    *) echo "unsupported: $f" >&2; return 1 ;;
+  esac
+  mkdir -p "$(dirname "$dst")"
+  cp -f "$tmp/$pat" "$dst"
+  chmod +x "$dst"
+}
+
+function github_latest_download_url {
+  local repo="$1"
+  local pattern="$2"
+
+  curl -fsSL "https://api.github.com/repos/$repo/releases/latest" |
+    python3 -c 'import json, sys
+import re
+pattern = re.compile(sys.argv[1])
+for asset in json.load(sys.stdin)["assets"]:
+    if pattern.fullmatch(asset["name"]):
+        print(asset["browser_download_url"])
+        break
+else:
+    raise SystemExit(f"asset not found: {pattern.pattern}")' "$pattern"
+}
+
 function git_clone_https {
   local url="$1"
   local dst="$2"
@@ -131,9 +167,15 @@ platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 arch="$(uname -m | tr '[:upper:]' '[:lower:]')"
 case "$platform-$arch" in
 darwin-arm64)
+  if [ ! -f "$basedir/.local/bin/zsh-static" ]; then
+    download_file_as \
+      "$(github_latest_download_url romkatv/zsh-bin 'zsh-[0-9.]+-darwin-arm64\.tar\.gz')" \
+      "$basedir/.local/bin/zsh-static" \
+      bin/zsh
+  fi
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
     download_files \
-      https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-darwin_arm64.tar.gz \
+      "$(github_latest_download_url junegunn/fzf 'fzf-[0-9.]+-darwin_arm64\.tar\.gz')" \
       "$basedir/.local/bin" \
       fzf
   fi
@@ -145,7 +187,7 @@ darwin-arm64)
   fi
   if [ ! -f "$basedir/.local/bin/tmux" ]; then
     download_files \
-      https://github.com/tmux/tmux-builds/releases/download/v3.6b/tmux-3.6b-macos-arm64.tar.gz \
+      "$(github_latest_download_url tmux/tmux-builds 'tmux-[0-9][0-9a-z.]*-macos-arm64\.tar\.gz')" \
       "$basedir/.local/bin" \
       tmux
   fi
@@ -181,9 +223,15 @@ darwin-arm64)
   fi
   ;;
 linux-x86_64)
+  if [ ! -f "$basedir/.local/bin/zsh-static" ]; then
+    download_file_as \
+      "$(github_latest_download_url romkatv/zsh-bin 'zsh-[0-9.]+-linux-x86_64\.tar\.gz')" \
+      "$basedir/.local/bin/zsh-static" \
+      bin/zsh
+  fi
   if [ ! -f "$basedir/.local/bin/fzf" ]; then
     download_files \
-      https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz \
+      "$(github_latest_download_url junegunn/fzf 'fzf-[0-9.]+-linux_amd64\.tar\.gz')" \
       "$basedir/.local/bin" \
       fzf
   fi
@@ -195,7 +243,7 @@ linux-x86_64)
   fi
   if [ ! -f "$basedir/.local/bin/tmux" ]; then
     download_files \
-      https://github.com/tmux/tmux-builds/releases/download/v3.6b/tmux-3.6b-linux-x86_64.tar.gz \
+      "$(github_latest_download_url tmux/tmux-builds 'tmux-[0-9][0-9a-z.]*-linux-x86_64\.tar\.gz')" \
       "$basedir/.local/bin" \
       tmux
   fi
