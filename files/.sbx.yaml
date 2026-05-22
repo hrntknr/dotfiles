@@ -31,6 +31,7 @@ rules:
   - allow(r, ~/.config/gh)
   - allow(r, ~/.config/opencode)
   - allow(r, ~/.local/bin)
+  - allow(r, ~/.local/share/mise)
   - allow(r, ~/.kube/kuberc)
 
   - allow(r, ~/.zshrc)

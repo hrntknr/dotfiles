@@ -1,8 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "disabled_providers": [
-    "opencode",
-  ],
+  "disabled_providers": ["opencode"],
   "model": "openai/gpt-5.5-fast",
   "small_model": "openai/gpt-5.4-mini",
   "permission": {
@@ -18,25 +16,5 @@
       "*.vault_password": "deny",
     },
   },
-  "provider": {
-    "localllm": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Local LLM",
-      "options": {
-        "baseURL": "https://api.llm.pm1.hrntknr.net/v1"
-      },
-      "models": {
-        "local": {
-          "name": "Qwen3.6 35B A3B",
-          "limit": {
-            "context": 131072,
-            "output": 16384,
-          },
-        },
-      },
-    },
-  },
-  "plugin": [
-    "@tarquinen/opencode-dcp@latest",
-  ],
+  "plugin": ["@tarquinen/opencode-dcp@latest"],
 }

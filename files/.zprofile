@@ -115,21 +115,6 @@ if [ -e "$HOME/.rd" ]; then
   export PATH="$HOME/.rd/bin:$PATH"
 fi
 
-## krew
-if [ -e "$HOME/.krew" ]; then
-  export PATH="$HOME/.krew/bin:$PATH"
-fi
-
-## bun
-if [ -e "$HOME/.bun" ]; then
-  export PATH="$HOME/.bun/bin:$PATH"
-fi
-
-## opencode
-if [ -e "$HOME/.opencode" ]; then
-  export PATH="$HOME/.opencode/bin:$PATH"
-fi
-
 ## set PATH
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
