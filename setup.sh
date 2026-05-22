@@ -73,6 +73,20 @@ if type git-crypt >/dev/null 2>&1; then
   fi
 fi
 
+function extract_zip {
+  file="$1"
+  dst="$2"
+
+  if command -v unzip >/dev/null 2>&1; then
+    unzip -q "$file" -d "$dst"
+  elif command -v python3 >/dev/null 2>&1; then
+    python3 -m zipfile -e "$file" "$dst"
+  else
+    echo "unzip or python3 is required to extract: $file" >&2
+    return 1
+  fi
+}
+
 function download_files {
   url="$1"
   dst="$2"
@@ -84,7 +98,7 @@ function download_files {
   curl -fsSL "$url" -o "$f"
 
   case "$f" in
-    *.zip)    unzip -q "$f" -d "$tmp" ;;
+    *.zip)    extract_zip "$f" "$tmp" ;;
     *.tar.gz|*.tgz) tar -xzf "$f" -C "$tmp" ;;
     *) echo "unsupported: $f" >&2; return 1 ;;
   esac
