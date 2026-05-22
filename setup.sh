@@ -74,8 +74,8 @@ if type git-crypt >/dev/null 2>&1; then
 fi
 
 function extract_zip {
-  file="$1"
-  dst="$2"
+  local file="$1"
+  local dst="$2"
 
   if command -v unzip >/dev/null 2>&1; then
     unzip -q "$file" -d "$dst"
@@ -88,12 +88,12 @@ function extract_zip {
 }
 
 function download_files {
-  url="$1"
-  dst="$2"
-  pat="$3"
-  tmp="$(mktemp -d)"
+  local url="$1"
+  local dst="$2"
+  local pat="$3"
+  local tmp="$(mktemp -d)"
   trap 'rm -rf "$tmp"' RETURN
-  f="$tmp/${url##*/}"
+  local f="$tmp/${url##*/}"
 
   curl -fsSL "$url" -o "$f"
 
@@ -103,11 +103,12 @@ function download_files {
     *) echo "unsupported: $f" >&2; return 1 ;;
   esac
   mkdir -p "$dst"
+  local src
   for src in "$tmp"/$pat; do
     if [ ! -e "$src" ]; then
       continue
     fi
-    target="$dst/$(basename "$src")"
+    local target="$dst/$(basename "$src")"
     echo "Installing $target"
     if [ -d "$src" ]; then
       mkdir -p "$target"
