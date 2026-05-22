@@ -120,6 +120,13 @@ function download_files {
   done
 }
 
+function git_clone_https {
+  local url="$1"
+  local dst="$2"
+
+  GIT_CONFIG_GLOBAL=/dev/null git clone "$url" "$dst"
+}
+
 platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 arch="$(uname -m | tr '[:upper:]' '[:lower:]')"
 case "$platform-$arch" in
@@ -229,9 +236,9 @@ linux-x86_64)
 esac
 
 if [ ! -e "$basedir/.zsh/zsh-autosuggestions" ]; then
-  git clone https://github.com/zsh-users/zsh-autosuggestions $basedir/.zsh/zsh-autosuggestions
+  git_clone_https https://github.com/zsh-users/zsh-autosuggestions "$basedir/.zsh/zsh-autosuggestions"
 fi
 
 if [ ! -e "$basedir/.zsh/zsh-syntax-highlighting" ]; then
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting $basedir/.zsh/zsh-syntax-highlighting
+  git_clone_https https://github.com/zsh-users/zsh-syntax-highlighting "$basedir/.zsh/zsh-syntax-highlighting"
 fi
