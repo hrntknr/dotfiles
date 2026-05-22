@@ -2,6 +2,7 @@
 fzf = "latest"
 neovim = "latest"
 tmux = "latest"
+gh = "latest"
 ghq = "latest"
 deno = "latest"
 bun = "latest"
