@@ -123,7 +123,7 @@ darwin-arm64)
   fi
   if [ ! -f "$basedir/.local/bin/tmux" ]; then
     download_files \
-      https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-macos-arm64.tar.gz \
+      https://github.com/tmux/tmux-builds/releases/download/v3.6b/tmux-3.6b-macos-arm64.tar.gz \
       "$basedir/.local/bin" \
       tmux
   fi
@@ -173,7 +173,7 @@ linux-x86_64)
   fi
   if [ ! -f "$basedir/.local/bin/tmux" ]; then
     download_files \
-      https://github.com/tmux/tmux-builds/releases/latest/download/tmux-3.6a-linux-x86_64.tar.gz \
+      https://github.com/tmux/tmux-builds/releases/download/v3.6b/tmux-3.6b-linux-x86_64.tar.gz \
       "$basedir/.local/bin" \
       tmux
   fi
