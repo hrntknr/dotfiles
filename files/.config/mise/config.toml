@@ -1,11 +1,13 @@
 [tools]
 fzf = "latest"
+peco = "latest"
 neovim = "latest"
 tmux = "latest"
 gh = "latest"
 ghq = "latest"
 deno = "latest"
 bun = "latest"
+uv = "latest"
 yq = "latest"
 k9s = "latest"
 kubeseal = "latest"
