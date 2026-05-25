@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+set -eu
+
+usage() {
+  echo "Usage: $0 namespace/name" >&2
+  exit 1
+}
+
+[ "$#" -eq 1 ] || usage
+
+case "$1" in
+  */*)
+    NAMESPACE=${1%%/*}
+    NAME=${1#*/}
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+[ -n "$NAMESPACE" ] && [ -n "$NAME" ] || usage
+
+export NAMESPACE NAME
+
+script_dir=$(dirname "$0")/k8s
+tmp_dir=$(mktemp -d)
+trap 'rm -rf "$tmp_dir"' EXIT INT TERM
+
+cp "$script_dir/deployment.yaml" "$script_dir/kustomization.yaml" "$tmp_dir/"
+ssh-keygen -t ed25519 -N "" -C "" -f "$tmp_dir/ssh_host_ed25519_key" >/dev/null
+
+kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME'

@@ -17,11 +17,13 @@ RUN apt-get update \
 
 COPY . /root/.dotfiles
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY docker/sshd_config.conf /etc/ssh/sshd_config.d/mnwork.conf
+COPY docker/sshd_config.conf /etc/ssh/sshd_config.d/override.conf
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 RUN --mount=type=secret,id=github_token \
     GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
     /root/.dotfiles/setup.sh
+
+WORKDIR /root
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

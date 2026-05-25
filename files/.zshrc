@@ -127,9 +127,27 @@ fi
 
 if (( $+commands[kubectl] )); then
   alias k=kubectl
-  alias kns='kubectl config set-context $(kubectl config current-context) --namespace'
-  alias ksw='kubectl config use-context $(kubectl config get-contexts -o name | fzf --layout=reverse --cycle --tiebreak=index --exact)'
   alias knet='kubectl debug -it --image nicolaka/netshoot'
+  function ksw {
+    local context
+    if [[ $# -gt 0 ]]; then
+      context="$1"
+    else
+      context=$(kubectl config get-contexts -o name | fzf --layout=reverse --cycle --tiebreak=index --exact)
+      [[ -z "$context" ]] && return
+    fi
+    kubectl config use-context "$context"
+  }
+  function kns {
+    local namespace
+    if [[ $# -gt 0 ]]; then
+      namespace="$1"
+    else
+      namespace=$(kubectl get namespaces -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | fzf --layout=reverse --cycle --tiebreak=index --exact)
+      [[ -z "$namespace" ]] && return
+    fi
+    kubectl config set-context "$(kubectl config current-context)" --namespace "$namespace"
+  }
   function krl {
     if [ -z "$1" ]; then
       echo "Usage: krl <label>"

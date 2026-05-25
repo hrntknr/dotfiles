@@ -1,0 +1,10 @@
+resources:
+  - deployment.yaml
+secretGenerator:
+  - name: ${NAME}-host-keys
+    namespace: ${NAMESPACE}
+    files:
+      - ssh_host_ed25519_key
+    type: Opaque
+generatorOptions:
+  disableNameSuffixHash: true

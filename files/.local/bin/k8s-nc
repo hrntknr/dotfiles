@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+target=${1%.k8s}
+deployment=${target%%.*}
+
+if [ "$target" != "$deployment" ]; then
+  context=${target#*.}
+  exec kubectl --context "$context" exec -it "deploy/$deployment" mnwork -- /usr/bin/nc localhost 22
+fi
+
+exec kubectl exec -it "deploy/$deployment" mnwork -- /usr/bin/nc localhost 22

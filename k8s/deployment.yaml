@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${NAME}
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: ${NAME}
+  template:
+    metadata:
+      labels:
+        app: ${NAME}
+    spec:
+      containers:
+        - name: ${NAME}
+          image: ghcr.io/hrntknr/sh:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 22
+              name: ssh
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/ssh/ssh_host_ed25519_key
+              name: host-keys
+              readOnly: true
+              subPath: ssh_host_ed25519_key
+      volumes:
+        - name: host-keys
+          secret:
+            defaultMode: 0600
+            secretName: ${NAME}-host-keys
