@@ -20,6 +20,7 @@ rules:
   - allow(rw, ~/.local/state/opencode)
   - allow(rw, ~/.local/share/claude)
   - allow(rw, ~/.local/state/claude)
+  - allow(rw, ~/.local/share/docker/)
   - allow(rw, ~/.nvm)
   - allow(rw, ~/.npm)
   - allow(rw, ~/.mcp-auth)
