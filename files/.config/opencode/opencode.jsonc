@@ -16,5 +16,5 @@
       "*.vault_password": "deny",
     },
   },
-  "plugin": ["@tarquinen/opencode-dcp@latest"],
+  "plugin": [],
 }

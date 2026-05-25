@@ -420,9 +420,36 @@ function ts {
   date +"$format"
 }
 
-if (( $+commands[mise] )); then
-  eval "$(mise activate zsh)"
-fi
+function rec() {
+  if [[ -n "$REC_LOG" ]]; then
+    echo "Already recording: $REC_LOG"
+    return 1
+  fi
+  if ! (( $+commands[script] )); then
+    echo "script command not found"
+    return 1
+  fi
+
+  local dir="$HOME/.rec"
+  local log="$dir/$(date +%Y%m%d%H%M%S).log"
+
+  mkdir -p "$dir" || return
+  echo "Recording: $log"
+
+  case "$OSTYPE" in
+    darwin*)
+      command script -q "$log" env REC_LOG="$log" zsh -l
+      ;;
+    *)
+      command script -q -f "$log" -c "env REC_LOG=${(q)log} zsh -l"
+      ;;
+  esac
+}
+
+_record_status() {
+  [[ -n "$REC_LOG" ]] || return
+  print -r -- " %F{196}● rec%f"
+}
 
 _host_color() {
   local s=${HOST:-unknown}
@@ -543,7 +570,7 @@ precmd() {
     host_color=$(_host_color)
   fi
 
-  print -P -- "\n%n@${host_color}${HOST}%f $(_short_pwd)$(_git_status)$(_kube_context)"
+  print -P -- "\n%n@${host_color}${HOST}%f $(_short_pwd)$(_git_status)$(_kube_context)$(_record_status)"
 }
 
 PROMPT='%(?..%F{red})❯%f '

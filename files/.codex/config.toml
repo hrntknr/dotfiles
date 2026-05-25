@@ -2,20 +2,13 @@ approval_policy = "never"
 sandbox_mode = "workspace-write"
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
+suppress_unstable_features_warning = true
 
 [features]
 multi_agent = true
 
 [sandbox_workspace_write]
 network_access = true
-
-[agents.developer]
-description = "Implements requested changes."
-config_file = "agents/developer.toml"
-
-[agents.reviewer]
-description = "Reviews code for issues."
-config_file = "agents/reviewer.toml"
 
 [notice]
 fast_default_opt_out = true
