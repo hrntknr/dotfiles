@@ -1,16 +1,39 @@
 #!/bin/bash
 set -euo pipefail
 
-case "$#" in
-0)
-  basedir=$HOME
-  ;;
-1)
-  basedir=${1%/}
+profile=full
+basedir=$HOME
+basedir_set=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+  --full)
+    profile=full
+    ;;
+  --mini)
+    profile=mini
+    ;;
+  -*)
+    echo "Usage: $0 [--full|--mini] [basedir]"
+    exit 1
+    ;;
+  *)
+    if [ "$basedir_set" -eq 1 ]; then
+      echo "Usage: $0 [--full|--mini] [basedir]"
+      exit 1
+    fi
+    basedir=${1%/}
+    basedir_set=1
+    ;;
+  esac
+  shift
+done
+
+if [ "$basedir_set" -eq 1 ]; then
   if [ ! -d "$basedir" ]; then
     mkdir -p "$basedir"
   fi
-  cat <<EOS >$basedir/zsh
+  cat <<EOS >"$basedir/zsh"
 #!/bin/bash
 export HOME=$(realpath $basedir)
 export ZDOTDIR=\$HOME
@@ -23,13 +46,8 @@ if [ -x "\$XDG_DATA_HOME/mise/shims/zsh" ]; then
 fi
 exec zsh -l
 EOS
-  chmod +x $basedir/zsh
-  ;;
-*)
-  echo "Usage: $0 [basedir]"
-  exit 1
-  ;;
-esac
+  chmod +x "$basedir/zsh"
+fi
 
 cur=$(dirname $0)
 
@@ -61,6 +79,7 @@ function setup_files {
 }
 
 setup_files files
+cp -v "$basedir/.config/mise/config.$profile.toml" "$basedir/.config/mise/config.toml"
 if type git-crypt >/dev/null 2>&1; then
   set +e
   (

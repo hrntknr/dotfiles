@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
-ARG BASE_IMAGE=ubuntu:26.04
-FROM ${BASE_IMAGE}
+FROM ubuntu:24.04
+ARG DOTFILES_PROFILE=full
 
 RUN apt-get update \
   && apt-get install -y \
@@ -23,8 +23,13 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . /root/.dotfiles
 RUN --mount=type=secret,id=github_token \
-    GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
-    /root/.dotfiles/setup.sh
+    case "$DOTFILES_PROFILE" in \
+      full) setup_args="--full" ;; \
+      mini) setup_args="--mini" ;; \
+      *) echo "invalid DOTFILES_PROFILE: $DOTFILES_PROFILE" >&2; exit 1 ;; \
+    esac \
+    && GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
+    /root/.dotfiles/setup.sh $setup_args
 
 WORKDIR /root
 

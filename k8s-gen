@@ -2,9 +2,22 @@
 set -eu
 
 usage() {
-  echo "Usage: $0 namespace/name" >&2
+  echo "Usage: $0 [--full|--mini] namespace/name" >&2
   exit 1
 }
+
+IMAGE_TAG=latest
+
+case "${1:-}" in
+  --full)
+    IMAGE_TAG=full
+    shift
+    ;;
+  --mini)
+    IMAGE_TAG=mini
+    shift
+    ;;
+esac
 
 [ "$#" -eq 1 ] || usage
 
@@ -20,7 +33,7 @@ esac
 
 [ -n "$NAMESPACE" ] && [ -n "$NAME" ] || usage
 
-export NAMESPACE NAME
+export NAMESPACE NAME IMAGE_TAG
 
 script_dir=$(dirname "$0")/k8s
 tmp_dir=$(mktemp -d)
@@ -29,4 +42,4 @@ trap 'rm -rf "$tmp_dir"' EXIT INT TERM
 cp "$script_dir/deployment.yaml" "$script_dir/kustomization.yaml" "$tmp_dir/"
 ssh-keygen -t ed25519 -N "" -C "" -f "$tmp_dir/ssh_host_ed25519_key" >/dev/null
 
-kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME'
+kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $IMAGE_TAG'
