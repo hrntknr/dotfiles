@@ -16,11 +16,12 @@ RUN apt-get update \
   && rm /etc/ssh/ssh_host_* \
   && locale-gen en_US.UTF-8
 
-COPY . /root/.dotfiles
+COPY docker/nmcore-setup.sh /opt/nmcore-setup.sh
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY docker/sshd_config.conf /etc/ssh/sshd_config.d/override.conf
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+COPY . /root/.dotfiles
 RUN --mount=type=secret,id=github_token \
     GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
     /root/.dotfiles/setup.sh
