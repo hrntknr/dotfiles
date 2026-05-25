@@ -1,12 +1,35 @@
 #!/bin/sh
 set -eu
 
-target=${1%.k8s}
-deployment=${target%%.*}
+host=${1%.k8s}
 
-if [ "$target" != "$deployment" ]; then
-  context=${target#*.}
-  exec kubectl --context "$context" exec -it "deploy/$deployment" mnwork -- /usr/bin/nc localhost 22
+case "$host" in
+  *.*.*)
+    deployment=${host%%.*}
+    rest=${host#*.}
+    namespace=${rest%%.*}
+    context=${rest#*.}
+    ;;
+  *.*)
+    deployment=${host%%.*}
+    namespace=${host#*.}
+    context=
+    ;;
+  *)
+    deployment=$host
+    namespace=
+    context=
+    ;;
+esac
+
+set --
+
+if [ -n "$context" ]; then
+  set -- "$@" --context "$context"
 fi
 
-exec kubectl exec -it "deploy/$deployment" mnwork -- /usr/bin/nc localhost 22
+if [ -n "$namespace" ]; then
+  set -- "$@" -n "$namespace"
+fi
+
+exec kubectl "$@" exec -it "deploy/$deployment" mnwork -- /usr/bin/nc localhost 22

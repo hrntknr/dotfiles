@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE}
 RUN apt-get update \
   && apt-get install -y \
     zsh iproute2 iptables nftables openssh-server netcat-traditional socat nmap \
-    build-essential ca-certificates curl wget dnsutils git unzip file \
+    build-essential ca-certificates curl wget dnsutils git unzip file locales \
     gnupg htop iotop iperf iperf3 net-tools strace tree vim less \
   && rm -rf /var/lib/apt/lists/* \
   && chsh -s /usr/bin/zsh root \
@@ -13,7 +13,8 @@ RUN apt-get update \
   && curl -fsSL https://github.com/hrntknr.keys > /root/.ssh/authorized_keys \
   && chmod 700 /root/.ssh \
   && chmod 600 /root/.ssh/authorized_keys \
-  && rm /etc/ssh/ssh_host_*
+  && rm /etc/ssh/ssh_host_* \
+  && locale-gen en_US.UTF-8
 
 COPY . /root/.dotfiles
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
