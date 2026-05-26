@@ -185,7 +185,7 @@ function ignore() {
 }
 
 function ssh-kill() {
-  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs basename | sort | fzf --layout=reverse --cycle --tiebreak=index --exact)
+  mux=$(ps aux | grep 'ssh[:]' | tr -s ' ' | cut -d ' ' -f 12 | xargs -n1 basename | sort | fzf --layout=reverse --cycle --tiebreak=index --exact)
   if [ -z "$mux" ]; then
     return
   fi
