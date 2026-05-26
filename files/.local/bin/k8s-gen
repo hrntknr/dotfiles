@@ -2,11 +2,13 @@
 set -eu
 
 usage() {
-  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
+  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--gpu] [--mncore2] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
   exit 1
 }
 
 image_tag=mini
+gpu=0
+mncore2=0
 persist_host_keys=0
 
 while [ "$#" -gt 0 ]; do
@@ -24,6 +26,12 @@ while [ "$#" -gt 0 ]; do
       ;;
     --tag=*)
       usage
+      ;;
+    --gpu)
+      gpu=1
+      ;;
+    --mncore2)
+      mncore2=1
       ;;
     --persist-host-keys)
       persist_host_keys=1
@@ -112,6 +120,14 @@ add_preset() {
 
 if [ "$persist_host_keys" -eq 1 ]; then
   add_preset persist-host-keys
+fi
+
+if [ "$gpu" -eq 1 ]; then
+  add_preset gpu
+fi
+
+if [ "$mncore2" -eq 1 ]; then
+  add_preset mncore2
 fi
 
 kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $IMAGE_TAG'
