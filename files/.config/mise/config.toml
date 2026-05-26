@@ -12,7 +12,7 @@ uv = "latest"
 deno = "latest"
 bun = "latest"
 go = "latest"
-"github:moby/buildkit" = "latest"
+"aqua:moby/buildkit" = "latest"
 kubectl = "latest"
 kustomize = "latest"
 helm = "latest"
@@ -28,4 +28,7 @@ opencode = "latest"
 claude = "latest"
 codex = "latest"
 "github:hrntknr/sbx" = "latest"
-"github:BurntSushi/ripgrep" = "latest"
+"aqua:BurntSushi/ripgrep" = "latest"
+
+[settings]
+auto_install = false
