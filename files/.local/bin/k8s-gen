@@ -9,9 +9,7 @@ Usage:
   $prog [options] [namespace/]name
 
 Options:
-  --full                         Use the full image tag and persist host keys
-  --mini                         Use the mini image tag and do not persist host keys
-  --tag full|mini                Use a specific image tag
+  --base sh-mini|sh-full|job     Select the base resource and image (default: sh-mini)
   --gpu                          Add the GPU preset
   --mncore2                      Add the MN-Core 2 preset
   --node <node>                  Pin the pod to a node
@@ -23,13 +21,14 @@ Options:
 
 Examples:
   $prog default/test
-  $prog --full --gpu default/test
+  $prog --base sh-full --gpu default/test
+  $prog --base job default/test
   $prog --node gpu-node-1 --priority high --pvc test-data default/test
 EOF
   exit "$status"
 }
 
-image_tag=mini
+base=sh-mini
 gpu=0
 mncore2=0
 node_name=
@@ -42,18 +41,10 @@ while [ "$#" -gt 0 ]; do
     -h | --help)
       usage 0
       ;;
-    --full)
-      image_tag=full
-      persist_host_keys=1
-      ;;
-    --mini)
-      image_tag=mini
-      persist_host_keys=0
-      ;;
-    --tag)
+    --base)
       shift
       [ "$#" -gt 0 ] || usage
-      image_tag=$1
+      base=$1
       ;;
     --gpu)
       gpu=1
@@ -98,9 +89,25 @@ done
 
 [ "$#" -eq 1 ] || usage
 
-case "$image_tag" in
-  full | mini) ;;
-  *) usage ;;
+case "$base" in
+  sh-mini)
+    base_dir_name=sh-mini
+    base_api_version=apps/v1
+    base_kind=Deployment
+    ;;
+  sh-full)
+    base_dir_name=sh-full
+    base_api_version=apps/v1
+    base_kind=Deployment
+    ;;
+  job)
+    base_dir_name=job
+    base_api_version=batch/v1
+    base_kind=Job
+    ;;
+  *)
+    usage
+    ;;
 esac
 
 target=$1
@@ -148,17 +155,20 @@ fi
 
 NAMESPACE=$namespace
 NAME=$name
-IMAGE_TAG=$image_tag
 NODE_NAME=$node_name
 PRIORITY_CLASS_NAME=$priority_class_name
 PVC_NAME=$pvc_name
-export NAMESPACE NAME IMAGE_TAG NODE_NAME PRIORITY_CLASS_NAME PVC_NAME
+BASE_API_VERSION=$base_api_version
+BASE_KIND=$base_kind
+export NAMESPACE NAME NODE_NAME PRIORITY_CLASS_NAME PVC_NAME BASE_API_VERSION BASE_KIND
 
 script_dir=$(dirname "$0")/k8s
+base_dir=$script_dir/bases/$base_dir_name
 tmp_dir=$(mktemp -d)
 trap 'rm -rf "$tmp_dir"' EXIT INT TERM
 
-cp "$script_dir/deployment.yaml" "$script_dir/kustomization.yaml" "$tmp_dir/"
+[ -d "$base_dir" ] || usage
+cp -R "$base_dir"/. "$tmp_dir/"
 
 if [ -n "$namespace" ]; then
   cat >>"$tmp_dir/kustomization.yaml" <<'EOF'
@@ -168,19 +178,19 @@ fi
 
 components_added=0
 
-add_preset() {
-  preset=$1
-  preset_dir=$script_dir/presets/$preset
-  component_dir=$tmp_dir/presets/$preset
+add_opt() {
+  opt=$1
+  opt_dir=$script_dir/opts/$opt
+  component_dir=$tmp_dir/opts/$opt
 
-  [ -d "$preset_dir" ] || usage
+  [ -d "$opt_dir" ] || usage
 
   mkdir -p "$component_dir"
-  cp -R "$preset_dir"/. "$component_dir/"
+  cp -R "$opt_dir"/. "$component_dir/"
 
   if [ -f "$component_dir/setup.sh" ]; then
     K8S_GEN_TMP_DIR=$tmp_dir \
-    K8S_GEN_PRESET_DIR=$preset_dir \
+    K8S_GEN_OPT_DIR=$opt_dir \
     K8S_GEN_COMPONENT_DIR=$component_dir \
       sh "$component_dir/setup.sh"
   fi
@@ -190,31 +200,37 @@ add_preset() {
     components_added=1
   fi
 
-  echo "  - presets/$preset" >>"$tmp_dir/kustomization.yaml"
+  echo "  - opts/$opt" >>"$tmp_dir/kustomization.yaml"
 }
 
 if [ "$persist_host_keys" -eq 1 ]; then
-  add_preset persist-host-keys
+  add_opt persist-host-keys
 fi
 
 if [ "$gpu" -eq 1 ]; then
-  add_preset gpu
+  add_opt gpu
 fi
 
 if [ "$mncore2" -eq 1 ]; then
-  add_preset mncore2
+  add_opt mncore2
 fi
 
 if [ -n "$node_name" ]; then
-  add_preset node
+  add_opt node
 fi
 
 if [ -n "$priority_class_name" ]; then
-  add_preset priority
+  add_opt priority
 fi
 
 if [ -n "$pvc_name" ]; then
-  add_preset pvc
+  add_opt pvc
 fi
 
-kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $IMAGE_TAG $PVC_NAME'
+find "$tmp_dir" -type f \( -name '*.yaml' -o -name '*.yml' \) | while IFS= read -r file; do
+  tmp_file=$file.base-env
+  envsubst '$BASE_API_VERSION $BASE_KIND' <"$file" >"$tmp_file"
+  mv "$tmp_file" "$file"
+done
+
+kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $PVC_NAME'

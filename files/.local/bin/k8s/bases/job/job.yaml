@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${NAME}
+spec:
+  ttlSecondsAfterFinished: 3600
+  completions: 1
+  parallelism: 1
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: ${NAME}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ${NAME}
+          image: busybox:stable
+          imagePullPolicy: Always
+          command:
+            - sleep
+            - "10"

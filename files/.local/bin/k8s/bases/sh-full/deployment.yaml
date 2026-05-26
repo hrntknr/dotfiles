@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ${NAME}
-          image: ghcr.io/hrntknr/sh:${IMAGE_TAG}
+          image: ghcr.io/hrntknr/sh:full
           imagePullPolicy: Always
           ports:
             - containerPort: 22
