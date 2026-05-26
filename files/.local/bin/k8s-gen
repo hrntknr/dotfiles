@@ -2,7 +2,7 @@
 set -eu
 
 usage() {
-  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--gpu] [--mncore2] [--node=node] [--priority=class] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
+  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--gpu] [--mncore2] [--node=node] [--priority=class] [--pvc=pvc] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
   exit 1
 }
 
@@ -11,6 +11,7 @@ gpu=0
 mncore2=0
 node_name=
 priority_class_name=
+pvc_name=
 persist_host_keys=0
 
 while [ "$#" -gt 0 ]; do
@@ -52,6 +53,15 @@ while [ "$#" -gt 0 ]; do
     --priority=*)
       priority_class_name=${1#--priority=}
       [ -n "$priority_class_name" ] || usage
+      ;;
+    --pvc)
+      shift
+      [ "$#" -gt 0 ] || usage
+      pvc_name=$1
+      ;;
+    --pvc=*)
+      pvc_name=${1#--pvc=}
+      [ -n "$pvc_name" ] || usage
       ;;
     --persist-host-keys)
       persist_host_keys=1
@@ -110,12 +120,21 @@ if [ -n "$node_name" ]; then
   esac
 fi
 
+if [ -n "$pvc_name" ]; then
+  case "$pvc_name" in
+    *[!a-z0-9.-]* | [!a-z0-9]* | *[!a-z0-9])
+      usage
+      ;;
+  esac
+fi
+
 NAMESPACE=$namespace
 NAME=$name
 IMAGE_TAG=$image_tag
 NODE_NAME=$node_name
 PRIORITY_CLASS_NAME=$priority_class_name
-export NAMESPACE NAME IMAGE_TAG NODE_NAME PRIORITY_CLASS_NAME
+PVC_NAME=$pvc_name
+export NAMESPACE NAME IMAGE_TAG NODE_NAME PRIORITY_CLASS_NAME PVC_NAME
 
 script_dir=$(dirname "$0")/k8s
 tmp_dir=$(mktemp -d)
@@ -176,4 +195,8 @@ if [ -n "$priority_class_name" ]; then
   add_preset priority
 fi
 
-kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $IMAGE_TAG'
+if [ -n "$pvc_name" ]; then
+  add_preset pvc
+fi
+
+kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $IMAGE_TAG $PVC_NAME'

@@ -134,7 +134,9 @@ function git_clone_https {
 }
 
 function setup_mise_tools {
+  local github_token
   local home
+  local mise_bin
   home="$(realpath "$basedir")"
 
   (
@@ -148,6 +150,10 @@ function setup_mise_tools {
     if [ ! -x "$mise_bin" ]; then
       mkdir -p "$(dirname "$mise_bin")"
       curl -fsSL https://mise.run | MISE_INSTALL_PATH="$mise_bin" sh
+    fi
+
+    if [ -z "${GITHUB_TOKEN:-}" ] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1 && github_token="$(gh auth token 2>/dev/null)"; then
+      export GITHUB_TOKEN="$github_token"
     fi
 
     "$mise_bin" install -y -C "$HOME"

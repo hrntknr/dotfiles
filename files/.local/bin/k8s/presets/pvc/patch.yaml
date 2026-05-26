@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${NAME}
+spec:
+  template:
+    spec:
+      containers:
+        - name: ${NAME}
+          volumeMounts:
+            - mountPath: /root/work
+              name: work
+      volumes:
+        - name: work
+          persistentVolumeClaim:
+            claimName: ${PVC_NAME}
