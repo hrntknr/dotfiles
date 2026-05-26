@@ -2,8 +2,34 @@
 set -eu
 
 usage() {
-  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--gpu] [--mncore2] [--node=node] [--priority=class] [--pvc=pvc] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
-  exit 1
+  status=${1:-1}
+  prog=${0##*/}
+  cat >&2 <<EOF
+Usage:
+  $prog [options] [namespace/]name
+
+Options:
+  --full                         Use the full image tag and persist host keys
+  --mini                         Use the mini image tag and do not persist host keys
+  --tag=full|mini                Use a specific image tag
+  --gpu                          Add the GPU preset
+  --mncore2                      Add the MN-Core 2 preset
+  --node <node>                  Pin the pod to a node
+  --node=<node>                  Pin the pod to a node
+  --priority <class>             Set priorityClassName
+  --priority=<class>             Set priorityClassName
+  --pvc <pvc>                    Mount an existing PVC
+  --pvc=<pvc>                    Mount an existing PVC
+  --persist-host-keys            Persist SSH host keys
+  --no-persist-host-keys         Do not persist SSH host keys
+  -h, --help                     Show this help
+
+Examples:
+  $prog default/test
+  $prog --full --gpu default/test
+  $prog --node=gpu-node-1 --priority=high --pvc=test-data default/test
+EOF
+  exit "$status"
 }
 
 image_tag=mini
@@ -16,6 +42,9 @@ persist_host_keys=0
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
+    -h | --help)
+      usage 0
+      ;;
     --full)
       image_tag=full
       persist_host_keys=1

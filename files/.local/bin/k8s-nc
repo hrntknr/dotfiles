@@ -32,4 +32,4 @@ if [ -n "$namespace" ]; then
   set -- "$@" -n "$namespace"
 fi
 
-exec kubectl "$@" exec -it "deploy/$deployment" mnwork -- /usr/bin/nc localhost 22
+exec kubectl "$@" exec -it "deploy/$deployment" -- /usr/bin/nc localhost 22
