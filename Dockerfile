@@ -6,7 +6,7 @@ RUN apt-get update \
   && apt-get install -y \
     zsh iproute2 iptables nftables openssh-server netcat-traditional socat nmap \
     build-essential ca-certificates curl wget dnsutils git unzip file locales \
-    gnupg htop iotop iperf iperf3 net-tools strace tree vim less \
+    gnupg htop iotop iperf iperf3 net-tools strace tree vim less jq fzf \
   && rm -rf /var/lib/apt/lists/* \
   && chsh -s /usr/bin/zsh root \
   && mkdir -p /root/.ssh \
@@ -24,8 +24,8 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 COPY . /root/.dotfiles
 RUN --mount=type=secret,id=github_token \
     case "$DOTFILES_PROFILE" in \
-      full) setup_args="--full" ;; \
-      mini) setup_args="--mini" ;; \
+      full) setup_args="" ;; \
+      mini) setup_args="--skip-mise" ;; \
       *) echo "invalid DOTFILES_PROFILE: $DOTFILES_PROFILE" >&2; exit 1 ;; \
     esac \
     && GITHUB_TOKEN="$(cat /run/secrets/github_token)" \

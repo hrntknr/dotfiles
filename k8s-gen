@@ -2,37 +2,73 @@
 set -eu
 
 usage() {
-  echo "Usage: $0 [--full|--mini] namespace/name" >&2
+  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
   exit 1
 }
 
-IMAGE_TAG=latest
+image_tag=mini
+persist_host_keys=0
 
-case "${1:-}" in
-  --full)
-    IMAGE_TAG=full
-    shift
-    ;;
-  --mini)
-    IMAGE_TAG=mini
-    shift
-    ;;
-esac
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --full)
+      image_tag=full
+      persist_host_keys=1
+      ;;
+    --mini)
+      image_tag=mini
+      persist_host_keys=0
+      ;;
+    --tag=full | --tag=mini)
+      image_tag=${1#--tag=}
+      ;;
+    --tag=*)
+      usage
+      ;;
+    --persist-host-keys)
+      persist_host_keys=1
+      ;;
+    --no-persist-host-keys)
+      persist_host_keys=0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      usage
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
+done
 
 [ "$#" -eq 1 ] || usage
 
-case "$1" in
+target=$1
+
+case "$target" in
   */*)
-    NAMESPACE=${1%%/*}
-    NAME=${1#*/}
+    namespace=${target%%/*}
+    name=${target#*/}
+    [ -n "$namespace" ] || usage
     ;;
   *)
-    usage
+    namespace=
+    name=$target
     ;;
 esac
 
-[ -n "$NAMESPACE" ] && [ -n "$NAME" ] || usage
+[ -n "$name" ] || usage
+case "$name" in
+  */*) usage ;;
+esac
 
+NAMESPACE=$namespace
+NAME=$name
+IMAGE_TAG=$image_tag
 export NAMESPACE NAME IMAGE_TAG
 
 script_dir=$(dirname "$0")/k8s
@@ -40,6 +76,42 @@ tmp_dir=$(mktemp -d)
 trap 'rm -rf "$tmp_dir"' EXIT INT TERM
 
 cp "$script_dir/deployment.yaml" "$script_dir/kustomization.yaml" "$tmp_dir/"
-ssh-keygen -t ed25519 -N "" -C "" -f "$tmp_dir/ssh_host_ed25519_key" >/dev/null
+
+if [ -n "$namespace" ]; then
+  cat >>"$tmp_dir/kustomization.yaml" <<'EOF'
+namespace: ${NAMESPACE}
+EOF
+fi
+
+components_added=0
+
+add_preset() {
+  preset=$1
+  preset_dir=$script_dir/presets/$preset
+  component_dir=$tmp_dir/presets/$preset
+
+  [ -d "$preset_dir" ] || usage
+
+  mkdir -p "$component_dir"
+  cp -R "$preset_dir"/. "$component_dir/"
+
+  if [ -f "$component_dir/setup.sh" ]; then
+    K8S_GEN_TMP_DIR=$tmp_dir \
+    K8S_GEN_PRESET_DIR=$preset_dir \
+    K8S_GEN_COMPONENT_DIR=$component_dir \
+      sh "$component_dir/setup.sh"
+  fi
+
+  if [ "$components_added" -eq 0 ]; then
+    echo "components:" >>"$tmp_dir/kustomization.yaml"
+    components_added=1
+  fi
+
+  echo "  - presets/$preset" >>"$tmp_dir/kustomization.yaml"
+}
+
+if [ "$persist_host_keys" -eq 1 ]; then
+  add_preset persist-host-keys
+fi
 
 kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $IMAGE_TAG'

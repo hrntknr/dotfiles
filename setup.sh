@@ -1,35 +1,36 @@
 #!/bin/bash
 set -euo pipefail
 
-profile=full
+skip_mise=0
 basedir=$HOME
-basedir_set=0
+basedir_args=()
+
+function usage {
+  echo "Usage: $0 [--skip-mise] [basedir]"
+  exit 1
+}
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-  --full)
-    profile=full
-    ;;
-  --mini)
-    profile=mini
+  --skip-mise)
+    skip_mise=1
     ;;
   -*)
-    echo "Usage: $0 [--full|--mini] [basedir]"
-    exit 1
+    usage
     ;;
   *)
-    if [ "$basedir_set" -eq 1 ]; then
-      echo "Usage: $0 [--full|--mini] [basedir]"
-      exit 1
-    fi
-    basedir=${1%/}
-    basedir_set=1
+    basedir_args+=("${1%/}")
     ;;
   esac
   shift
 done
 
-if [ "$basedir_set" -eq 1 ]; then
+if [ "${#basedir_args[@]}" -gt 1 ]; then
+  usage
+fi
+
+if [ "${#basedir_args[@]}" -eq 1 ]; then
+  basedir="${basedir_args[0]}"
   if [ ! -d "$basedir" ]; then
     mkdir -p "$basedir"
   fi
@@ -79,7 +80,6 @@ function setup_files {
 }
 
 setup_files files
-cp -v "$basedir/.config/mise/config.$profile.toml" "$basedir/.config/mise/config.toml"
 if type git-crypt >/dev/null 2>&1; then
   set +e
   (
@@ -123,7 +123,9 @@ function setup_mise_tools {
   )
 }
 
-setup_mise_tools
+if [ "$skip_mise" -eq 0 ]; then
+  setup_mise_tools
+fi
 
 if [ ! -e "$basedir/.zsh/zsh-autosuggestions" ]; then
   git_clone_https https://github.com/zsh-users/zsh-autosuggestions "$basedir/.zsh/zsh-autosuggestions"

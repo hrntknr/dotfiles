@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${NAME}
+spec:
+  template:
+    spec:
+      containers:
+        - name: ${NAME}
+          volumeMounts:
+            - mountPath: /etc/ssh/ssh_host_ed25519_key
+              name: host-keys
+              readOnly: true
+              subPath: ssh_host_ed25519_key
+      volumes:
+        - name: host-keys
+          secret:
+            defaultMode: 0600
+            secretName: ${NAME}-host-keys

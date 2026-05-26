@@ -1,8 +1,0 @@
-[tools]
-fzf = "latest"
-neovim = "latest"
-tmux = "latest"
-yq = "latest"
-jq = "latest"
-gh = "latest"
-ghq = "latest"
