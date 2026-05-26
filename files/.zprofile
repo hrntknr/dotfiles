@@ -6,11 +6,6 @@ fi
 
 # agents
 ## ssh
-if [ -z "$SSH_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
-  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
-    SSH_AGENT_ENABLED=${SSH_AGENT_ENABLED:-1}
-  fi
-fi
 if [ "$SSH_AGENT_ENABLED" = "1" ] && (( $+commands[ssh-agent] )); then
   env_agent=$HOME/.local/ssh-agent.env
   SSH_AGENT_ARGS=""
@@ -26,11 +21,6 @@ if [ "$SSH_AGENT_ENABLED" = "1" ] && (( $+commands[ssh-agent] )); then
 fi
 
 # gpg
-if [ -z "$GPG_AGENT_ENABLED" -a -e "/proc/$PPID/cmdline" ]; then
-  if [[ ! $(cat /proc/$PPID/cmdline) =~ "sshd.+" ]]; then
-    GPG_AGENT_ENABLED=${GPG_AGENT_ENABLED:-1}
-  fi
-fi
 if [ "$GPG_AGENT_ENABLED" = "1" ] && (( $+commands[gpg-agent] )); then
   GPG_AGENT_ARGS=""
   if [ -n "$GPG_AGENT_TIMEOUT" ]; then

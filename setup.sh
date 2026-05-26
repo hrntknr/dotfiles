@@ -52,48 +52,79 @@ fi
 
 cur=$(dirname $0)
 
-function setup_files {
-  find -L "$cur/$1" -type f -print0 | while IFS= read -r -d '' file; do
-    file="${file#$cur/$1/}"
-    target="$basedir/$file"
-    dir=$(dirname "$target")
-    name=$(basename "$file")
-    case "$name" in
-    *.darwin)
-      if [ "$(uname)" != "Darwin" ]; then
-        continue
-      fi
-      name=${name%.darwin}
-      ;;
-    *.linux)
-      if [ "$(uname)" != "Linux" ]; then
-        continue
-      fi
-      name=${name%.linux}
-      ;;
-    esac
-    if [ ! -d "$dir" ]; then
-      mkdir -p "$dir"
+function should_install_file {
+  local name
+  name=$(basename "$1")
+  name=${name%.sops}
+  case "$name" in
+  *.darwin)
+    [ "$(uname)" = "Darwin" ]
+    ;;
+  *.linux)
+    [ "$(uname)" = "Linux" ]
+    ;;
+  *)
+    true
+    ;;
+  esac
+}
+
+function install_file {
+  local file="$1"
+  local src="$2"
+  local target="$basedir/$file"
+  local dir
+  local name
+  dir=$(dirname "$target")
+  name=$(basename "$file")
+  name=${name%.sops}
+  case "$name" in
+  *.darwin)
+    if [ "$(uname)" != "Darwin" ]; then
+      return
     fi
-    cp -v "$cur/$1/$file" "$dir/$name"
+    name=${name%.darwin}
+    ;;
+  *.linux)
+    if [ "$(uname)" != "Linux" ]; then
+      return
+    fi
+    name=${name%.linux}
+    ;;
+  esac
+  if [ ! -d "$dir" ]; then
+    mkdir -p "$dir"
+  fi
+  cp -v "$src" "$dir/$name"
+}
+
+function setup_files {
+  find -L "$cur/$1" -type f -print0 | while IFS= read -r -d '' path; do
+    local file
+    local tmp
+    file="${path#$cur/$1/}"
+    if ! should_install_file "$file"; then
+      continue
+    fi
+    if [[ "$file" == *.sops ]]; then
+      if ! type sops >/dev/null 2>&1; then
+        echo "Skip $file"
+        continue
+      fi
+      tmp=$(mktemp)
+      if sops decrypt --input-type binary --output-type binary --output "$tmp" "$path" >/dev/null 2>&1; then
+        install_file "$file" "$tmp"
+      else
+        echo "Skip $file"
+      fi
+      rm -f "$tmp"
+    else
+      install_file "$file" "$path"
+    fi
   done
 }
 
 setup_files files
-if type git-crypt >/dev/null 2>&1; then
-  set +e
-  (
-    set -e
-    cd $cur
-    git crypt unlock
-  )
-  if [ $? -eq 0 ]; then
-    set -e
-    setup_files files-crypt
-  else
-    echo "Skip files-crypt"
-  fi
-fi
 
 function git_clone_https {
   local url="$1"

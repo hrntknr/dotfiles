@@ -4,6 +4,7 @@ set -euo pipefail
 region="ap-northeast-1"
 targets=(
   "hrntknr_ed25519_sec.pem,$HOME/.ssh/hrntknr_ed25519_sec.pem,600"
+  "sops_age_keys.txt,$HOME/.config/sops/age/keys.txt,600"
 )
 
 command -v aws >/dev/null || { echo "aws cli not found" >&2; exit 1; }

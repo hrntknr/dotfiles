@@ -6,10 +6,6 @@ if [[ "$(uname -s)" != "Linux" ]]; then
   exit 1
 fi
 
-if [[ $EUID -ne 0 ]]; then
-  exec sudo "$0" "$@"
-fi
-
 for cmd in ip jq; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "nn: required command not found: $cmd" >&2
@@ -40,9 +36,9 @@ collect_iflinks() {
     printf "{%s}\n" "$parts"
   '
   if [[ "$1" == "$DEFAULT_NS" ]]; then
-    sh -c "$script"
+    sh -c "$script" 2>/dev/null || echo "{}"
   else
-    ip netns exec "$1" sh -c "$script"
+    ip netns exec "$1" sh -c "$script" 2>/dev/null || echo "{}"
   fi
 }
 
@@ -50,12 +46,12 @@ collect_one() {
   local ns="$1"
   local addr link ids iflinks
   if [[ "$ns" == "$DEFAULT_NS" ]]; then
-    addr=$(ip -j addr show)
-    link=$(ip -d -j link show)
+    addr=$(ip -j addr show 2>/dev/null) || return 0
+    link=$(ip -d -j link show 2>/dev/null) || return 0
     ids=$(ip -j netns list-id 2>/dev/null || echo "[]")
   else
-    addr=$(ip -n "$ns" -j addr show)
-    link=$(ip -n "$ns" -d -j link show)
+    addr=$(ip -n "$ns" -j addr show 2>/dev/null) || return 0
+    link=$(ip -n "$ns" -d -j link show 2>/dev/null) || return 0
     ids=$(ip -n "$ns" -j netns list-id 2>/dev/null || echo "[]")
   fi
   iflinks=$(collect_iflinks "$ns")
