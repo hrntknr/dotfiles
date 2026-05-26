@@ -2,13 +2,14 @@
 set -eu
 
 usage() {
-  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--gpu] [--mncore2] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
+  echo "Usage: $0 [--full|--mini] [--tag=full|--tag=mini] [--gpu] [--mncore2] [--priority=class] [--persist-host-keys|--no-persist-host-keys] [namespace/]name" >&2
   exit 1
 }
 
 image_tag=mini
 gpu=0
 mncore2=0
+priority_class_name=
 persist_host_keys=0
 
 while [ "$#" -gt 0 ]; do
@@ -32,6 +33,15 @@ while [ "$#" -gt 0 ]; do
       ;;
     --mncore2)
       mncore2=1
+      ;;
+    --priority)
+      shift
+      [ "$#" -gt 0 ] || usage
+      priority_class_name=$1
+      ;;
+    --priority=*)
+      priority_class_name=${1#--priority=}
+      [ -n "$priority_class_name" ] || usage
       ;;
     --persist-host-keys)
       persist_host_keys=1
@@ -74,10 +84,19 @@ case "$name" in
   */*) usage ;;
 esac
 
+if [ -n "$priority_class_name" ]; then
+  case "$priority_class_name" in
+    *[!A-Za-z0-9.-]* | [!A-Za-z0-9]* | *[!A-Za-z0-9])
+      usage
+      ;;
+  esac
+fi
+
 NAMESPACE=$namespace
 NAME=$name
 IMAGE_TAG=$image_tag
-export NAMESPACE NAME IMAGE_TAG
+PRIORITY_CLASS_NAME=$priority_class_name
+export NAMESPACE NAME IMAGE_TAG PRIORITY_CLASS_NAME
 
 script_dir=$(dirname "$0")/k8s
 tmp_dir=$(mktemp -d)
@@ -128,6 +147,10 @@ fi
 
 if [ "$mncore2" -eq 1 ]; then
   add_preset mncore2
+fi
+
+if [ -n "$priority_class_name" ]; then
+  add_preset priority
 fi
 
 kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $IMAGE_TAG'
