@@ -1,0 +1,8 @@
+apiVersion: ${API_VERSION}
+kind: ${KIND}
+metadata:
+  name: ${NAME}
+spec:
+  template:
+    spec:
+      priorityClassName: "${PRIORITY_CLASS_NAME}"

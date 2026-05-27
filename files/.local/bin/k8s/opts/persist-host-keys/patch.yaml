@@ -1,12 +1,12 @@
-apiVersion: ${BASE_API_VERSION}
-kind: ${BASE_KIND}
+apiVersion: ${API_VERSION}
+kind: ${KIND}
 metadata:
   name: ${NAME}
 spec:
   template:
     spec:
       containers:
-        - name: ${NAME}
+        - name: ${PRIMARY_CONTAINER}
           volumeMounts:
             - mountPath: /etc/ssh/ssh_host_ed25519_key
               name: host-keys
@@ -16,4 +16,4 @@ spec:
         - name: host-keys
           secret:
             defaultMode: 0600
-            secretName: ${NAME}-host-keys
+            secretName: ${HOST_KEYS_SECRET_NAME}

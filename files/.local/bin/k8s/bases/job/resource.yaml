@@ -1,5 +1,5 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: ${API_VERSION}
+kind: ${KIND}
 metadata:
   name: ${NAME}
 spec:
@@ -14,7 +14,7 @@ spec:
     spec:
       restartPolicy: Never
       containers:
-        - name: ${NAME}
+        - name: ${PRIMARY_CONTAINER}
           image: busybox:stable
           imagePullPolicy: Always
           command:

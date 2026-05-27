@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: ${API_VERSION}
+kind: ${KIND}
 metadata:
   name: ${NAME}
 spec:
@@ -14,8 +14,8 @@ spec:
         app: ${NAME}
     spec:
       containers:
-        - name: ${NAME}
-          image: ghcr.io/hrntknr/sh:mini
+        - name: ${PRIMARY_CONTAINER}
+          image: ghcr.io/hrntknr/sh:full
           imagePullPolicy: Always
           ports:
             - containerPort: 22

@@ -1,0 +1,9 @@
+apiVersion: ${API_VERSION}
+kind: ${KIND}
+metadata:
+  name: ${NAME}
+spec:
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: "${NODE_NAME}"

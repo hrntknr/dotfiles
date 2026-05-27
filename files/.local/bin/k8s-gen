@@ -1,40 +1,136 @@
 #!/usr/bin/env sh
 set -eu
 
+script_dir=$(dirname "$0")/k8s
+DEFAULT_BASE=sh-mini
+work_dir=$(mktemp -d)
+resources_dir=$work_dir/resources
+patches_dir=$work_dir/patches
+trap 'rm -rf "$work_dir"' EXIT INT TERM
+
+registered_bases=
+registered_opts=
+
+name_to_var() {
+  printf '%s' "$1" | tr -c 'A-Za-z0-9_' '_'
+}
+
+append_name() {
+  list=$1
+  name=$2
+  case "
+$list
+" in
+    *"
+$name
+"*) printf '%s' "$list" ;;
+    *) printf '%s%s%s' "$list" "${list:+
+}" "$name" ;;
+  esac
+}
+
+register_base() {
+  name=$1
+  generate_func=$2
+  var=$(name_to_var "$name")
+  registered_bases=$(append_name "$registered_bases" "$name")
+  eval "base_generate_$var=\$generate_func"
+}
+
+register_opt() {
+  name=$1
+  value=$2
+  description=$3
+  parse_func=$4
+  generate_func=$5
+  var=$(name_to_var "$name")
+  registered_opts=$(append_name "$registered_opts" "$name")
+  eval "opt_value_$var=\$value"
+  eval "opt_description_$var=\$description"
+  eval "opt_parse_$var=\$parse_func"
+  eval "opt_generate_$var=\$generate_func"
+}
+
+load_inits() {
+  for init_file in "$script_dir"/bases/*/init.sh "$script_dir"/opts/*/init.sh; do
+    [ -f "$init_file" ] || continue
+    . "$init_file"
+  done
+}
+
+registry_value() {
+  eval "printf '%s' \"\${$1:-}\""
+}
+
+current_namespace() {
+  namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null || true)
+  printf '%s\n' "${namespace:-default}"
+}
+
 usage() {
   status=${1:-1}
   prog=${0##*/}
+  bases=$(printf '%s\n' "$registered_bases" | paste -sd '|')
+  opts_help=$(
+    printf '%s\n' "$registered_opts" | while IFS= read -r opt; do
+      [ -n "$opt" ] || continue
+      var=$(name_to_var "$opt")
+      value=$(registry_value "opt_value_$var")
+      description=$(registry_value "opt_description_$var")
+      option="--$opt"
+      [ -z "$value" ] || option="$option <$value>"
+      printf '  %-28s%s\n' "$option" "$description"
+    done
+  )
   cat >&2 <<EOF
 Usage:
   $prog [options] [namespace/]name
 
 Options:
-  --base sh-mini|sh-full|job     Select the base resource and image (default: sh-mini)
-  --gpu                          Add the GPU preset
-  --mncore2                      Add the MN-Core 2 preset
-  --node <node>                  Pin the pod to a node
-  --priority <class>             Set priorityClassName
-  --pvc <pvc>                    Mount an existing PVC
-  --persist-host-keys            Persist SSH host keys
-  --no-persist-host-keys         Do not persist SSH host keys
-  -h, --help                     Show this help
-
-Examples:
-  $prog default/test
-  $prog --base sh-full --gpu default/test
-  $prog --base job default/test
-  $prog --node gpu-node-1 --priority high --pvc test-data default/test
+  $(printf '%-28s%s' "--base ${bases:-<base>}" "Select the base (default: $DEFAULT_BASE)")
+  $(printf '%-28s%s' "--seal <namespace>[/name]" "Seal generated Secrets")
+$opts_help
+  $(printf '%-28s%s' "-h, --help" "Show this help")
 EOF
   exit "$status"
 }
 
-base=sh-mini
-gpu=0
-mncore2=0
-node_name=
-priority_class_name=
-pvc_name=
-persist_host_keys=0
+select_opt() {
+  opt=$1
+  value=${2-}
+  selected_opts=$(append_name "$selected_opts" "$opt")
+
+  [ "$#" -gt 1 ] || return 0
+  var_name=$(selected_opt_value_var "$opt")
+  eval "current_value=\${$var_name:-}"
+  if [ -n "$current_value" ]; then
+    value=$(printf '%s\n%s' "$current_value" "$value")
+  fi
+  eval "$var_name=\$value"
+}
+
+selected_opt_value_var() {
+  printf 'selected_opt_value_%s\n' "$(name_to_var "$1")"
+}
+
+parse_registered_opt() {
+  opt=$1
+  shift
+  var=$(name_to_var "$opt")
+  parse_func=$(registry_value "opt_parse_$var")
+  [ -n "$parse_func" ] || usage
+  K8S_GEN_PARSE_CONSUMED=
+  "$parse_func" "$@" || usage
+  [ -n "$K8S_GEN_PARSE_CONSUMED" ] || usage
+}
+
+load_inits
+
+base=$DEFAULT_BASE
+seal_controller=
+seal_controller_namespace=
+seal_controller_name=
+selected_opts=
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -46,39 +142,24 @@ while [ "$#" -gt 0 ]; do
       [ "$#" -gt 0 ] || usage
       base=$1
       ;;
-    --gpu)
-      gpu=1
-      ;;
-    --mncore2)
-      mncore2=1
-      ;;
-    --node)
+    --seal)
       shift
       [ "$#" -gt 0 ] || usage
-      node_name=$1
-      ;;
-    --priority)
-      shift
-      [ "$#" -gt 0 ] || usage
-      priority_class_name=$1
-      ;;
-    --pvc)
-      shift
-      [ "$#" -gt 0 ] || usage
-      pvc_name=$1
-      ;;
-    --persist-host-keys)
-      persist_host_keys=1
-      ;;
-    --no-persist-host-keys)
-      persist_host_keys=0
+      seal_controller=$1
       ;;
     --)
       shift
       break
       ;;
     -*)
-      usage
+      opt=${1#--}
+      [ "$opt" != "$1" ] || usage
+      parse_registered_opt "$opt" "$@"
+      while [ "$K8S_GEN_PARSE_CONSUMED" -gt 0 ]; do
+        shift
+        K8S_GEN_PARSE_CONSUMED=$((K8S_GEN_PARSE_CONSUMED - 1))
+      done
+      continue
       ;;
     *)
       break
@@ -89,29 +170,11 @@ done
 
 [ "$#" -eq 1 ] || usage
 
-case "$base" in
-  sh-mini)
-    base_dir_name=sh-mini
-    base_api_version=apps/v1
-    base_kind=Deployment
-    ;;
-  sh-full)
-    base_dir_name=sh-full
-    base_api_version=apps/v1
-    base_kind=Deployment
-    ;;
-  job)
-    base_dir_name=job
-    base_api_version=batch/v1
-    base_kind=Job
-    ;;
-  *)
-    usage
-    ;;
-esac
+base_var=$(name_to_var "$base")
+base_generate=$(registry_value "base_generate_$base_var")
+[ -n "$base_generate" ] || usage
 
 target=$1
-
 case "$target" in
   */*)
     namespace=${target%%/*}
@@ -119,7 +182,7 @@ case "$target" in
     [ -n "$namespace" ] || usage
     ;;
   *)
-    namespace=
+    namespace=$(current_namespace)
     name=$target
     ;;
 esac
@@ -129,108 +192,84 @@ case "$name" in
   */*) usage ;;
 esac
 
-if [ -n "$priority_class_name" ]; then
-  case "$priority_class_name" in
-    *[!A-Za-z0-9.-]* | [!A-Za-z0-9]* | *[!A-Za-z0-9])
-      usage
+if [ -n "$seal_controller" ]; then
+  case "$seal_controller" in
+    */*)
+      seal_controller_namespace=${seal_controller%%/*}
+      seal_controller_name=${seal_controller#*/}
+      ;;
+    *)
+      seal_controller_namespace=$seal_controller
+      seal_controller_name=sealed-secrets-controller
       ;;
   esac
 fi
 
-if [ -n "$node_name" ]; then
-  case "$node_name" in
-    *[!A-Za-z0-9._-]* | [!A-Za-z0-9]* | *[!A-Za-z0-9])
-      usage
-      ;;
-  esac
-fi
+mkdir -p "$resources_dir" "$patches_dir"
 
-if [ -n "$pvc_name" ]; then
-  case "$pvc_name" in
-    *[!a-z0-9.-]* | [!a-z0-9]* | *[!a-z0-9])
-      usage
-      ;;
-  esac
-fi
-
+K8S_GEN_DIR=$script_dir
+K8S_GEN_RESOURCES_DIR=$resources_dir
+K8S_GEN_PATCHES_DIR=$patches_dir
 NAMESPACE=$namespace
 NAME=$name
-NODE_NAME=$node_name
-PRIORITY_CLASS_NAME=$priority_class_name
-PVC_NAME=$pvc_name
-BASE_API_VERSION=$base_api_version
-BASE_KIND=$base_kind
-export NAMESPACE NAME NODE_NAME PRIORITY_CLASS_NAME PVC_NAME BASE_API_VERSION BASE_KIND
+export K8S_GEN_DIR K8S_GEN_RESOURCES_DIR K8S_GEN_PATCHES_DIR NAMESPACE NAME
 
-script_dir=$(dirname "$0")/k8s
-base_dir=$script_dir/bases/$base_dir_name
-tmp_dir=$(mktemp -d)
-trap 'rm -rf "$tmp_dir"' EXIT INT TERM
-
-[ -d "$base_dir" ] || usage
-cp -R "$base_dir"/. "$tmp_dir/"
-
-if [ -n "$namespace" ]; then
-  cat >>"$tmp_dir/kustomization.yaml" <<'EOF'
-namespace: ${NAMESPACE}
-EOF
-fi
-
-components_added=0
-
-add_opt() {
-  opt=$1
-  opt_dir=$script_dir/opts/$opt
-  component_dir=$tmp_dir/opts/$opt
-
-  [ -d "$opt_dir" ] || usage
-
-  mkdir -p "$component_dir"
-  cp -R "$opt_dir"/. "$component_dir/"
-
-  if [ -f "$component_dir/setup.sh" ]; then
-    K8S_GEN_TMP_DIR=$tmp_dir \
-    K8S_GEN_OPT_DIR=$opt_dir \
-    K8S_GEN_COMPONENT_DIR=$component_dir \
-      sh "$component_dir/setup.sh"
+seal() {
+  if [ -z "$seal_controller" ]; then
+    cat
+    return
   fi
 
-  if [ "$components_added" -eq 0 ]; then
-    echo "components:" >>"$tmp_dir/kustomization.yaml"
-    components_added=1
-  fi
+  command -v kubeseal >/dev/null || {
+    echo "kubeseal is required for --seal" >&2
+    exit 1
+  }
 
-  echo "  - opts/$opt" >>"$tmp_dir/kustomization.yaml"
+  secret_file=$(mktemp "$work_dir/seal.XXXXXX")
+  cat >"$secret_file"
+  kubeseal \
+    --format yaml \
+    --controller-namespace "$seal_controller_namespace" \
+    --controller-name "$seal_controller_name" \
+    --namespace "$namespace" \
+    --secret-file "$secret_file"
+  rm -f "$secret_file"
 }
 
-if [ "$persist_host_keys" -eq 1 ]; then
-  add_opt persist-host-keys
-fi
+"$base_generate"
 
-if [ "$gpu" -eq 1 ]; then
-  add_opt gpu
-fi
+export API_VERSION KIND PRIMARY_CONTAINER
 
-if [ "$mncore2" -eq 1 ]; then
-  add_opt mncore2
-fi
-
-if [ -n "$node_name" ]; then
-  add_opt node
-fi
-
-if [ -n "$priority_class_name" ]; then
-  add_opt priority
-fi
-
-if [ -n "$pvc_name" ]; then
-  add_opt pvc
-fi
-
-find "$tmp_dir" -type f \( -name '*.yaml' -o -name '*.yml' \) | while IFS= read -r file; do
-  tmp_file=$file.base-env
-  envsubst '$BASE_API_VERSION $BASE_KIND' <"$file" >"$tmp_file"
-  mv "$tmp_file" "$file"
+printf '%s\n' "$selected_opts" | while IFS= read -r opt; do
+  [ -n "$opt" ] || continue
+  opt_var=$(name_to_var "$opt")
+  generate_func=$(registry_value "opt_generate_$opt_var")
+  value_var=$(selected_opt_value_var "$opt")
+  eval "K8S_GEN_OPT_VALUE=\${$value_var:-}"
+  export K8S_GEN_OPT_VALUE
+  "$generate_func"
 done
 
-kustomize build "$tmp_dir" | envsubst '$NAMESPACE $NAME $PVC_NAME'
+{
+  if [ -n "$namespace" ]; then
+    printf 'namespace: %s\n' "$namespace"
+  fi
+
+  resources=$(find "$resources_dir" -mindepth 1 -maxdepth 1 -type f \( -name '*.yaml' -o -name '*.yml' \) | sort)
+  if [ -n "$resources" ]; then
+    printf 'resources:\n'
+    printf '%s\n' "$resources" | while IFS= read -r resource; do
+      printf '  - resources/%s\n' "${resource##*/}"
+    done
+  fi
+
+  patches=$(find "$patches_dir" -mindepth 1 -maxdepth 1 -type f \( -name '*.yaml' -o -name '*.yml' \) | sort)
+  if [ -n "$patches" ]; then
+    printf 'patches:\n'
+    printf '%s\n' "$patches" | while IFS= read -r patch; do
+      printf '  - path: patches/%s\n' "${patch##*/}"
+    done
+  fi
+} >"$work_dir/kustomization.yaml"
+
+kustomize build "$work_dir"

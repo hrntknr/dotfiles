@@ -1,3 +1,2 @@
 creation_rules:
-  - path_regex: ^files/.*\.sops$
-    age: age1xk3s2pzjd0x4eqhyn0uzt9vup827fhu76cd3syc9l8magksmf3as07gf2c
+  - age: age1xk3s2pzjd0x4eqhyn0uzt9vup827fhu76cd3syc9l8magksmf3as07gf2c
