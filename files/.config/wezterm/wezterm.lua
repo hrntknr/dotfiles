@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local downloads = {}
 
 wezterm.on("gui-startup", function(cmd)
   local _, _, window = wezterm.mux.spawn_window(cmd or {})
@@ -20,6 +21,147 @@ wezterm.on("format-tab-title", function(tab)
 end)
 
 wezterm.on("user-var-changed", function(window, pane, name, uri)
+  local function downloads_dir()
+    return (os.getenv("HOME") or ".") .. "/Downloads"
+  end
+
+  local function mkdir_p(path)
+    wezterm.run_child_process({ "/bin/mkdir", "-p", path })
+  end
+
+  local function open_folder(path)
+    if (wezterm.target_triple or ""):find("darwin", 1, true) then
+      wezterm.run_child_process({ "/usr/bin/open", path })
+    end
+  end
+
+  local function safe_basename(path)
+    local basename = path:gsub("\\", "/"):match("([^/]+)$") or "download"
+    basename = basename:gsub("[%z/\\:]", "_")
+    if basename == "" or basename == "." or basename == ".." then
+      return "download"
+    end
+    return basename
+  end
+
+  local function available_path(dir, name)
+    local path = dir .. "/" .. name
+    local file = io.open(path, "rb")
+    if not file then
+      return path
+    end
+    file:close()
+
+    local stem, ext = name:match("^(.*)(%.[^.]*)$")
+    if not stem or stem == "" then
+      stem = name
+      ext = ""
+    end
+
+    local i = 1
+    while true do
+      path = string.format("%s/%s %d%s", dir, stem, i, ext)
+      file = io.open(path, "rb")
+      if not file then
+        return path
+      end
+      file:close()
+      i = i + 1
+    end
+  end
+
+  local function base64_decode(data)
+    local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    data = data:gsub("[^" .. alphabet .. "=]", "")
+    return (
+      data
+        :gsub(".", function(char)
+          if char == "=" then
+            return ""
+          end
+          local bits = ""
+          local value = alphabet:find(char, 1, true) - 1
+          for i = 6, 1, -1 do
+            bits = bits .. (value % 2 ^ i - value % 2 ^ (i - 1) > 0 and "1" or "0")
+          end
+          return bits
+        end)
+        :gsub("%d%d%d?%d?%d?%d?%d?%d?", function(bits)
+          if #bits ~= 8 then
+            return ""
+          end
+          local value = 0
+          for i = 1, 8 do
+            value = value + (bits:sub(i, i) == "1" and 2 ^ (8 - i) or 0)
+          end
+          return string.char(value)
+        end)
+    )
+  end
+
+  local function write_download(id)
+    local entry = downloads[id]
+    if not entry then
+      return
+    end
+
+    local dir = downloads_dir()
+    mkdir_p(dir)
+    local path = available_path(dir, entry.name)
+
+    local file = io.open(path, "wb")
+    if not file then
+      window:toast_notification("download", "failed to write " .. path, nil, 5000)
+      downloads[id] = nil
+      return
+    end
+
+    for i = 0, entry.total - 1 do
+      file:write(entry.chunks[i] or "")
+    end
+    file:close()
+
+    open_folder(dir)
+
+    window:toast_notification("download", path, nil, 3000)
+    downloads[id] = nil
+  end
+
+  if name == "download-start" then
+    local id, filename, total = uri:match("^([^\t]+)\t([^\t]+)\t(%d+)$")
+    if not id then
+      return
+    end
+
+    downloads[id] = {
+      name = safe_basename(filename),
+      total = tonumber(total) or 0,
+      chunks = {},
+      received = 0,
+    }
+
+    if downloads[id].total == 0 then
+      write_download(id)
+    end
+    return
+  end
+
+  local id, seq = name:match("^download%-chunk%-(%d+)%-(%d+)$")
+  if id then
+    local entry = id and downloads[id] or nil
+    seq = tonumber(seq)
+    if not entry or not seq or seq < 0 or seq >= entry.total or entry.chunks[seq] then
+      return
+    end
+
+    entry.chunks[seq] = base64_decode(uri)
+    entry.received = entry.received + 1
+    if entry.received == entry.total then
+      write_download(id)
+    end
+    return
+  end
+
   if name ~= "open-uri" then
     return
   end

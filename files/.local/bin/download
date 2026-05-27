@@ -1,0 +1,109 @@
+#!/bin/bash
+set -euo pipefail
+
+chunk_size=8192
+
+usage() {
+  echo "Usage: download FILE..." >&2
+  exit 1
+}
+
+is_ssh_session() {
+  [ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ]
+}
+
+file_size() {
+  if stat -c %s "$1" >/dev/null 2>&1; then
+    stat -c %s "$1"
+  else
+    stat -f %z "$1"
+  fi
+}
+
+base64_one_line() {
+  if base64 --help 2>&1 | grep -q -- '-w'; then
+    base64 -w 0
+  else
+    base64 | tr -d '\n'
+  fi
+}
+
+emit_user_var() {
+  local name="$1"
+  local value="$2"
+  local encoded
+  encoded=$(printf '%s' "$value" | base64_one_line)
+
+  if [ -n "${TMUX:-}" ]; then
+    printf '\033Ptmux;\033\033]1337;SetUserVar=%s=%s\a\033\\' "$name" "$encoded"
+  else
+    printf '\033]1337;SetUserVar=%s=%s\a' "$name" "$encoded"
+  fi
+}
+
+copy_local() {
+  local src="$1"
+  local dst="$HOME/Downloads/$(basename "$src")"
+  mkdir -p "$HOME/Downloads"
+  cp "$src" "$dst"
+  printf '%s\n' "$dst"
+
+  if [ "$(uname -s)" = "Darwin" ]; then
+    /usr/bin/open "$HOME/Downloads"
+  fi
+}
+
+download_remote() {
+  local src="$1"
+  local name
+  local size
+  local chunks
+  local id
+  local i
+  local data
+
+  name=$(basename "$src")
+  name=${name//$'\t'/_}
+  size=$(file_size "$src")
+  chunks=$(((size + chunk_size - 1) / chunk_size))
+  id="$$$RANDOM$RANDOM$RANDOM"
+
+  emit_user_var "download-start" "$id	$name	$chunks"
+
+  i=0
+  while [ "$i" -lt "$chunks" ]; do
+    data=$(dd if="$src" bs="$chunk_size" skip="$i" count=1 2>/dev/null | base64_one_line)
+    emit_user_var "download-chunk-$id-$i" "$data"
+    i=$((i + 1))
+  done
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --)
+      shift
+      break
+      ;;
+    -*)
+      usage
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+[ "$#" -gt 0 ] || usage
+
+for src in "$@"; do
+  if [ ! -f "$src" ]; then
+    echo "download: not a file: $src" >&2
+    exit 1
+  fi
+
+  if is_ssh_session; then
+    download_remote "$src"
+  else
+    copy_local "$src"
+  fi
+done
