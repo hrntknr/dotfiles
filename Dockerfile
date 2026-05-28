@@ -26,6 +26,7 @@ RUN chmod +x /usr/local/bin/start-sshd
 
 USER $USER
 WORKDIR /home/$USER
+ENV TERM=xterm-256color
 COPY --chown=$USER:$USER . /home/$USER/.dotfiles
 RUN --mount=type=secret,id=github_token,mode=0444 \
     case "$DOTFILES_PROFILE" in \
@@ -36,4 +37,4 @@ RUN --mount=type=secret,id=github_token,mode=0444 \
     && GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
     /home/$USER/.dotfiles/setup.sh $setup_args
 
-CMD ["zsh"]
+CMD ["/usr/bin/zsh", "-l"]

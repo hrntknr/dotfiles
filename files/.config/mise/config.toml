@@ -28,6 +28,8 @@ claude = "latest"
 codex = "latest"
 "github:hrntknr/sbx" = "latest"
 "aqua:BurntSushi/ripgrep" = "latest"
+"aqua:tofuutils/tenv" = "latest"
+ansible = "latest"
 
 [settings]
 auto_install = false
