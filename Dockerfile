@@ -27,7 +27,7 @@ RUN chmod +x /usr/local/bin/start-sshd
 USER $USER
 WORKDIR /home/$USER
 COPY --chown=$USER:$USER . /home/$USER/.dotfiles
-RUN --mount=type=secret,id=github_token \
+RUN --mount=type=secret,id=github_token,mode=0444 \
     case "$DOTFILES_PROFILE" in \
       full) setup_args="" ;; \
       mini) setup_args="--skip-mise" ;; \
