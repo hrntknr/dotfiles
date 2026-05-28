@@ -1,0 +1,39 @@
+#!/bin/sh
+set -eu
+
+usage() {
+  echo "Usage: capture [tmux capture-pane options]" >&2
+  exit "${1:-1}"
+}
+
+case "${1:-}" in
+  -h | --help)
+    usage 0
+    ;;
+esac
+
+if [ -z "${TMUX:-}" ]; then
+  echo "capture: not inside tmux" >&2
+  exit 1
+fi
+
+if ! command -v tmux >/dev/null 2>&1; then
+  echo "capture: tmux command not found" >&2
+  exit 1
+fi
+
+if ! command -v download >/dev/null 2>&1; then
+  echo "capture: download command not found" >&2
+  exit 1
+fi
+
+if [ "$#" -eq 0 ]; then
+  set -- -S -
+fi
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT INT TERM
+
+file="$tmpdir/capture-$(date +%Y%m%d%H%M%S).txt"
+tmux capture-pane -p "$@" > "$file"
+download "$file"

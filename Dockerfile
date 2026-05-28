@@ -33,4 +33,4 @@ RUN --mount=type=secret,id=github_token \
 
 WORKDIR /root
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
