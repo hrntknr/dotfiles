@@ -33,3 +33,4 @@ ansible = "latest"
 
 [settings]
 auto_install = false
+pipx.uvx = true
