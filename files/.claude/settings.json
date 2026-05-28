@@ -42,6 +42,7 @@
     "defaultMode": "auto"
   },
   "model": "opus[1m]",
+  "effortLevel": "medium",
   "sandbox": {
     "enabled": true,
     "allowUnsandboxedCommands": false,
