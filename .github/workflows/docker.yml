@@ -11,7 +11,60 @@ permissions:
   packages: write
 
 jobs:
-  push:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        profile:
+          - full
+          - mini
+        platform:
+          - { name: linux/amd64, runner: ubuntu-24.04,     suffix: amd64 }
+          - { name: linux/arm64, runner: ubuntu-24.04-arm, suffix: arm64 }
+    runs-on: ${{ matrix.platform.runner }}
+    outputs:
+      image: ghcr.io/hrntknr/sh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform.name }}
+          build-args: |
+            DOTFILES_PROFILE=${{ matrix.profile }}
+          outputs: type=image,name=ghcr.io/hrntknr/sh,push-by-digest=true,name-canonical=true,push=true
+          secrets: |
+            github_token=${{ github.token }}
+
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          echo "${{ steps.build.outputs.digest }}" > "/tmp/digests/${{ matrix.profile }}-${{ matrix.platform.suffix }}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ matrix.profile }}-${{ matrix.platform.suffix }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -20,8 +73,12 @@ jobs:
           - full
           - mini
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digest-${{ matrix.profile }}-*
+          merge-multiple: true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -50,13 +107,17 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          build-args: |
-            DOTFILES_PROFILE=${{ matrix.profile }}
-          tags: ${{ steps.tags.outputs.tags }}
-          secrets: |
-            github_token=${{ github.token }}
+      - name: Create manifest list and push
+        working-directory: /tmp/digests
+        run: |
+          tag_args=""
+          while IFS= read -r tag; do
+            [ -n "$tag" ] && tag_args="$tag_args -t $tag"
+          done <<< "${{ steps.tags.outputs.tags }}"
+
+          source_args=""
+          for f in *; do
+            source_args="$source_args ghcr.io/hrntknr/sh@$(cat "$f")"
+          done
+
+          docker buildx imagetools create $tag_args $source_args
