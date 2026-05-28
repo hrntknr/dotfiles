@@ -9,7 +9,8 @@ RUN apt-get update \
     build-essential ca-certificates curl wget dnsutils git unzip file locales \
     gnupg htop iotop iperf iperf3 net-tools strace tree vim less jq fzf sudo \
   && rm -rf /var/lib/apt/lists/* \
-  && useradd -m -s /usr/bin/zsh $USER \
+  && userdel -r ubuntu 2>/dev/null || true \
+  && useradd -m -s /usr/bin/zsh -u 1000 -U $USER \
   && echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
   && mkdir -p /home/$USER/.ssh \
   && curl -fsSL https://github.com/hrntknr.keys > /home/$USER/.ssh/authorized_keys \
