@@ -9,6 +9,7 @@ ghq = "latest"
 sops = "latest"
 age = "latest"
 uv = "latest"
+pipx = "latest"
 deno = "latest"
 bun = "latest"
 go = "latest"
@@ -33,4 +34,3 @@ ansible = "latest"
 
 [settings]
 auto_install = false
-pipx.uvx = true
