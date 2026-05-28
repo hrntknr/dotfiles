@@ -37,4 +37,10 @@ RUN --mount=type=secret,id=github_token,mode=0444 \
     && GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
     /home/$USER/.dotfiles/setup.sh $setup_args
 
+# Workaround for microsandbox/microsandbox#727: re-apply dotfiles + zsh
+# plugins in a fresh top layer (msb corrupts files placed alongside the
+# multi-GB mise installs in the same EROFS layer).
+RUN rm -rf /home/$USER/.zsh \
+ && /home/$USER/.dotfiles/setup.sh --skip-mise
+
 CMD ["/usr/bin/zsh", "-l"]
