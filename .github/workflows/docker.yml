@@ -19,7 +19,7 @@ jobs:
           - full
           - mini
         platform:
-          - { name: linux/amd64, runner: ubuntu-24.04,     suffix: amd64 }
+          - { name: linux/amd64, runner: ubuntu-24.04, suffix: amd64 }
           - { name: linux/arm64, runner: ubuntu-24.04-arm, suffix: arm64 }
     runs-on: ${{ matrix.platform.runner }}
     outputs:
