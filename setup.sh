@@ -173,6 +173,7 @@ function setup_mise_tools {
     fi
 
     "$mise_bin" install -y -C "$HOME"
+    "$mise_bin" cache clear -y -C "$HOME"
   )
 }
 

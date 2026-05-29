@@ -32,7 +32,7 @@ COPY --chown=$USER:$USER . /home/$USER/.dotfiles
 RUN /home/$USER/.dotfiles/setup.sh --skip-mise
 RUN --mount=type=secret,id=github_token,mode=0444 \
     case "$DOTFILES_PROFILE" in \
-      full) GITHUB_TOKEN="$(cat /run/secrets/github_token)" "$HOME/.local/bin/mise" install -y ;; \
+      full) GITHUB_TOKEN="$(cat /run/secrets/github_token)" "$HOME/.local/bin/mise" install -y && "$HOME/.local/bin/mise" cache clear -y ;; \
       mini) true ;; \
       *) echo "invalid DOTFILES_PROFILE: $DOTFILES_PROFILE" >&2; exit 1 ;; \
     esac
