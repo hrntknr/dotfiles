@@ -2,6 +2,7 @@
 FROM ubuntu:24.04
 ARG DOTFILES_PROFILE=full
 ARG USER=root
+ARG WORKDIR=/root
 
 RUN apt-get update \
   && apt-get install -y \
@@ -23,7 +24,7 @@ COPY docker/start-sshd /usr/local/bin/start-sshd
 RUN chmod +x /usr/local/bin/start-sshd
 
 USER $USER
-WORKDIR /
+WORKDIR $WORKDIR
 COPY --chown=$USER:$USER . /tmp/dotfiles
 RUN --mount=type=secret,id=github_token,mode=0444 github_token="$(cat /run/secrets/github_token)" \
   && install -d -m 700 "$HOME/.ssh" \
