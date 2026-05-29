@@ -29,13 +29,12 @@ USER $USER
 WORKDIR /home/$USER
 ENV TERM=xterm-256color
 COPY --chown=$USER:$USER . /home/$USER/.dotfiles
+RUN /home/$USER/.dotfiles/setup.sh --skip-mise
 RUN --mount=type=secret,id=github_token,mode=0444 \
     case "$DOTFILES_PROFILE" in \
-      full) setup_args="" ;; \
-      mini) setup_args="--skip-mise" ;; \
+      full) GITHUB_TOKEN="$(cat /run/secrets/github_token)" "$HOME/.local/bin/mise" install -y ;; \
+      mini) true ;; \
       *) echo "invalid DOTFILES_PROFILE: $DOTFILES_PROFILE" >&2; exit 1 ;; \
-    esac \
-    && GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
-    /home/$USER/.dotfiles/setup.sh $setup_args
+    esac
 
 CMD ["/usr/bin/zsh", "-l"]

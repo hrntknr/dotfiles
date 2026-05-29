@@ -133,8 +133,7 @@ function git_clone_https {
   GIT_CONFIG_GLOBAL=/dev/null git clone "$url" "$dst"
 }
 
-function setup_mise_tools {
-  local github_token
+function setup_mise {
   local home
   local mise_bin
   home="$(realpath "$basedir")"
@@ -151,6 +150,23 @@ function setup_mise_tools {
       mkdir -p "$(dirname "$mise_bin")"
       curl -fsSL https://mise.run | MISE_INSTALL_PATH="$mise_bin" sh
     fi
+  )
+}
+
+function setup_mise_tools {
+  local github_token
+  local home
+  local mise_bin
+  home="$(realpath "$basedir")"
+
+  (
+    export HOME="$home"
+    export XDG_CONFIG_HOME="$HOME/.config"
+    export XDG_DATA_HOME="$HOME/.local/share"
+    export XDG_CACHE_HOME="$HOME/.cache"
+    export XDG_STATE_HOME="$HOME/.local/state"
+
+    mise_bin="$HOME/.local/bin/mise"
 
     if [ -z "${GITHUB_TOKEN:-}" ] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1 && github_token="$(gh auth token 2>/dev/null)"; then
       export GITHUB_TOKEN="$github_token"
@@ -159,6 +175,8 @@ function setup_mise_tools {
     "$mise_bin" install -y -C "$HOME"
   )
 }
+
+setup_mise
 
 if [ "$skip_mise" -eq 0 ]; then
   setup_mise_tools
