@@ -13,6 +13,15 @@ tmp=
 bridge_pid=
 docker_args=()
 
+shell_join() {
+	local arg sep=
+	for arg in "$@"; do
+		printf '%s' "$sep"
+		printf '%q' "$arg"
+		sep=' '
+	done
+}
+
 cleanup() {
 	trap - EXIT
 	trap '' INT TERM HUP
@@ -114,8 +123,12 @@ else
   )
 fi
 
+if [ "${1:-}" = "--" ]; then
+	shift
+fi
+
 if [ "$#" -eq 0 ]; then
 	docker "${docker_args[@]}" "$container_image" "$container_login_shell" -l
 else
-	docker "${docker_args[@]}" "$container_image" "$container_login_shell" -l -c "$*"
+	docker "${docker_args[@]}" "$container_image" "$container_login_shell" -l -c "$(shell_join "$@")"
 fi
