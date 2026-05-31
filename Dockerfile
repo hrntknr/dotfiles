@@ -6,7 +6,7 @@ ARG WORKDIR=/root
 
 RUN apt-get update \
   && apt-get install -y \
-    zsh iproute2 iptables nftables openssh-server netcat-traditional socat nmap \
+    zsh iproute2 iputils-ping iptables nftables openssh-server netcat-traditional socat nmap \
     build-essential ca-certificates curl wget dnsutils git unzip file locales \
     gnupg htop iotop iperf iperf3 net-tools strace tree vim less jq fzf sudo \
   && rm -rf /var/lib/apt/lists/* \
