@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+set -eu
+
+[ -n "${HOME:-}" ] || {
+	printf '%s\n' 'HOME is empty' >&2
+	exit 1
+}
+
+container_image=ghcr.io/hrntknr/sh:full
+container_home=/root
+container_login_shell=/usr/bin/zsh
+tmp=
+bridge_pid=
+docker_args=()
+
+cleanup() {
+	trap - EXIT
+	trap '' INT TERM HUP
+
+	if [ -n "$bridge_pid" ]; then
+		kill -TERM "-$bridge_pid" 2>/dev/null || true
+		timeout "${SB_TERM_TIMEOUT:-5}" bash -c \
+			'while kill -0 "-$1" 2>/dev/null; do sleep 0.1; done' \
+			bash "$bridge_pid" || kill -KILL "-$bridge_pid" 2>/dev/null || true
+	fi
+
+	[ -z "$tmp" ] || rm -rf "$tmp"
+}
+
+trap cleanup EXIT INT TERM HUP
+
+if ! command -v secretbridge >/dev/null 2>&1; then
+	printf '%s\n' 'secretbridge not found' >&2
+	exit 1
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+	printf '%s\n' 'docker not found' >&2
+	exit 1
+fi
+
+host_cwd=$(pwd -P)
+secretbridge_config=$HOME/.secretbridge.yaml
+
+if ! command -v timeout >/dev/null 2>&1; then
+	printf '%s\n' 'timeout not found' >&2
+	exit 1
+fi
+
+if [ ! -f "$secretbridge_config" ]; then
+	printf '%s\n' "secretbridge config not found: $secretbridge_config" >&2
+	exit 1
+fi
+
+if [[ "$host_cwd/" != "$HOME"/* ]]; then
+	printf '%s\n' "current directory must be under HOME: $host_cwd" >&2
+	exit 1
+fi
+container_cwd=$container_home${host_cwd#"$HOME"}
+
+tmp=$(mktemp -d)
+mkdir -p "$tmp/.ssh" "$tmp/.kube"
+
+setsid secretbridge "$tmp" --config "$secretbridge_config" &
+bridge_pid=$!
+
+docker_args=(
+	run -it --rm --net host
+	-v "$host_cwd:$container_cwd"
+	-w "$container_cwd"
+)
+
+docker_args+=(
+	-v "$tmp/.ssh:$container_home/.ssh"
+	-v "$tmp/.kube:$container_home/.kube"
+)
+
+if [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
+	claude_config_dir=$(realpath "$CLAUDE_CONFIG_DIR")
+  if [[ "$claude_config_dir/" != "$HOME"/* ]]; then
+    printf '%s\n' "CLAUDE_CONFIG_DIR must be under HOME: $claude_config_dir" >&2
+    exit 1
+  fi
+  container_claude_config_dir=$container_home/${claude_config_dir#"$HOME"/}
+  docker_args+=(
+	  -e "CLAUDE_CONFIG_DIR=$container_claude_config_dir"
+    -v "$claude_config_dir:$container_claude_config_dir"
+  )
+else
+  docker_args+=(
+    -v "$HOME/.claude:$container_home/.claude"
+  )
+  if [ -f "$HOME/.claude.json" ]; then
+    docker_args+=(
+      -v "$HOME/.claude.json:$container_home/.claude.json"
+    )
+  fi
+fi
+
+if [ -n "${CODEX_HOME:-}" ]; then
+	codex_home=$(realpath "$CODEX_HOME")
+  if [[ "$codex_home/" != "$HOME"/* ]]; then
+    printf '%s\n' "CODEX_HOME must be under HOME: $codex_home" >&2
+    exit 1
+  fi
+  container_codex_home=$container_home/${codex_home#"$HOME"/}
+  docker_args+=(
+	  -e "CODEX_HOME=$container_codex_home"
+    -v "$codex_home:$container_codex_home"
+  )
+else
+  docker_args+=(
+    -v "$HOME/.codex:$container_home/.codex"
+  )
+fi
+
+if [ "$#" -eq 0 ]; then
+	docker "${docker_args[@]}" "$container_image" "$container_login_shell" -l
+else
+	docker "${docker_args[@]}" "$container_image" "$container_login_shell" -l -c "$*"
+fi
