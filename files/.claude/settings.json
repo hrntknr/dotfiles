@@ -1,4 +1,12 @@
 {
+  "env": {
+    "CLAUDE_CODE_NO_FLICKER": "1"
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
   "hooks": {
     "PostToolUse": [
       {
@@ -34,28 +42,34 @@
       }
     ]
   },
-  "language": "日本語",
-  "skipDangerousModePermissionPrompt": true,
-  "skipAutoPermissionPrompt": true,
-  "includeCoAuthoredBy": false,
-  "permissions": {
-    "defaultMode": "auto"
+  "enabledPlugins": {
+    "codex@openai-codex": true,
+    "frontend-design@claude-plugins-official": true
   },
-  "model": "opus[1m]",
-  "effortLevel": "medium",
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "language": "日本語",
   "sandbox": {
     "enabled": true,
     "allowUnsandboxedCommands": false,
-    "enableWeakerNetworkIsolation": true,
+    "network": {
+      "allowedDomains": ["*"],
+      "deniedDomains": [],
+      "allowLocalBinding": true
+    },
     "filesystem": {
-      "allowRead": [
-        "~/.claude/**",
-        "~/.claude-pfn/**",
-        "~/.codex/**",
-        "~/Library/Caches/go-build",
-        "~/work/go/pkg",
-        "~/.gitconfig"
-      ],
       "allowWrite": [
         "~/.claude/**",
         "~/.claude-pfn/**",
@@ -63,14 +77,18 @@
         "~/Library/Caches/go-build",
         "~/work/go/pkg"
       ],
+      "denyWrite": ["~/.*"],
       "denyRead": ["~/.*"],
-      "denyWrite": ["~/.*"]
+      "allowRead": [
+        "~/.claude/**",
+        "~/.claude-pfn/**",
+        "~/.codex/**",
+        "~/Library/Caches/go-build",
+        "~/work/go/pkg",
+        "~/.gitconfig"
+      ]
     },
-    "network": {
-      "allowedDomains": ["*"],
-      "deniedDomains": [],
-      "allowLocalBinding": true
-    },
+    "enableWeakerNetworkIsolation": true,
     "excludedCommands": [
       "git *",
       "gh *",
@@ -101,25 +119,7 @@
       "xcodebuild *"
     ]
   },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    },
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "codex@openai-codex": true,
-    "frontend-design@claude-plugins-official": true
-  },
-  "env": {
-    "CLAUDE_CODE_NO_FLICKER": "1"
-  }
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true
 }
