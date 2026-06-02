@@ -49,15 +49,9 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 
 host_cwd=$(pwd -P)
-secretbridge_config=$HOME/.secretbridge.yaml
 
 if ! command -v timeout >/dev/null 2>&1; then
 	printf '%s\n' 'timeout not found' >&2
-	exit 1
-fi
-
-if [ ! -f "$secretbridge_config" ]; then
-	printf '%s\n' "secretbridge config not found: $secretbridge_config" >&2
 	exit 1
 fi
 
@@ -70,7 +64,7 @@ container_cwd=$container_home${host_cwd#"$HOME"}
 tmp=$(mktemp -d)
 mkdir -p "$tmp/.ssh" "$tmp/.kube"
 
-setsid secretbridge "$tmp" --config "$secretbridge_config" &
+setsid secretbridge "$tmp" &
 bridge_pid=$!
 
 docker_args=(
