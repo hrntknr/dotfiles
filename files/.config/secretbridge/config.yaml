@@ -1,7 +1,10 @@
 ssh:
-  - allow(github.com)
-  - allow(*.hrntknr.net)
+  - host: github.com
+  - host: "*.hrntknr.net"
 k8s:
-  - allow(rw, pear)
-  - allow(rw, test)
-  - allow(r, *)
+  - cluster: pear
+    mode: rw
+  - cluster: test
+    mode: rw
+  - cluster: "*"
+    mode: r
