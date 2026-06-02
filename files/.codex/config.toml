@@ -10,6 +10,3 @@ multi_agent = true
 
 [sandbox_workspace_write]
 network_access = true
-
-[notice]
-fast_default_opt_out = true

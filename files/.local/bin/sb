@@ -83,6 +83,13 @@ docker_args=(
 docker_args+=(
 	-v "$tmp/.ssh:$container_home/.ssh"
 	-v "$tmp/.kube:$container_home/.kube"
+	-v "$HOME/.opencode:$container_home/.opencode"
+	-v "$HOME/.cache/opencode:$container_home/.cache/opencode"
+	-v "$HOME/.local/share/opencode:$container_home/.local/share/opencode"
+	-v "$HOME/.local/state/opencode:$container_home/.local/state/opencode"
+	-v "$HOME/.cache/claude:$container_home/.cache/claude"
+	-v "$HOME/.local/share/claude:$container_home/.local/share/claude"
+	-v "$HOME/.local/state/claude:$container_home/.local/state/claude"
 )
 
 if [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
@@ -121,6 +128,23 @@ if [ -n "${CODEX_HOME:-}" ]; then
 else
   docker_args+=(
     -v "$HOME/.codex:$container_home/.codex"
+  )
+fi
+
+if [ -n "${OPENCODE_CONFIG_DIR:-}" ]; then
+	opencode_config_dir=$(realpath "$OPENCODE_CONFIG_DIR")
+  if [[ "$opencode_config_dir/" != "$HOME"/* ]]; then
+    printf '%s\n' "OPENCODE_CONFIG_DIR must be under HOME: $opencode_config_dir" >&2
+    exit 1
+  fi
+  container_opencode_config_dir=$container_home/${opencode_config_dir#"$HOME"/}
+  docker_args+=(
+	  -e "OPENCODE_CONFIG_DIR=$container_opencode_config_dir"
+    -v "$opencode_config_dir:$container_opencode_config_dir"
+  )
+else
+  docker_args+=(
+    -v "$HOME/.config/opencode:$container_home/.config/opencode"
   )
 fi
 

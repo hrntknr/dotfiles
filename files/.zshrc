@@ -89,7 +89,7 @@ alias c='sb -- claude --settings '\''{"sandbox":{"enabled":false}}'\'''
 alias cs='claude --settings '\''{"sandbox":{"enabled":false}}'\'''
 alias cx='sb -- codex --sandbox danger-full-access'
 alias cxs='codex --sandbox danger-full-access'
-alias oc='OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 OPENCODE_ENABLE_EXA=1 sbx opencode'
+alias oc='sb -- OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 OPENCODE_ENABLE_EXA=1 opencode'
 alias ocs='OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 OPENCODE_ENABLE_EXA=1 opencode'
 alias rgg="rg --hidden --glob '!.git/*' -n"
 
