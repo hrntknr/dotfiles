@@ -76,6 +76,7 @@ bridge_pid=$!
 docker_args=(
 	run -it --rm --net host
 	-v "$host_cwd:$container_cwd"
+  -v "$HOME/.config/gh:$container_home/.config/gh"
 	-w "$container_cwd"
 )
 

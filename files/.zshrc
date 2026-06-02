@@ -180,6 +180,16 @@ if (( $+commands[openstack] )); then
   alias os=openstack
 fi
 
+function ipmi() {
+  local target="$1"
+  shift
+  local cred="${target%%@*}"
+  local host="${target##*@}"
+  local user="${cred%%:*}"
+  local pass="${cred#*:}"
+  ipmitool -I lanplus -H "$host" -U "$user" -P "$pass" -e ']' "$@"
+}
+
 function ignore() {
   curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1 | awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >>.gitignore
 }
