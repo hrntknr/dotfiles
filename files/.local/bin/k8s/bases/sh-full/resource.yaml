@@ -17,6 +17,8 @@ spec:
         - name: ${PRIMARY_CONTAINER}
           image: ghcr.io/hrntknr/sh:full
           imagePullPolicy: Always
+          command:
+            - /usr/local/bin/start-sshd
           ports:
             - containerPort: 22
               name: ssh

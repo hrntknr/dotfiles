@@ -15,6 +15,8 @@ RUN apt-get update \
   && if [ "$USER" != "root" ]; then \
     useradd -m -s /usr/bin/zsh -u 1000 -U "$USER"; \
     echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER"; \
+  else \
+    usermod -s /usr/bin/zsh root; \
   fi \
   && locale-gen en_US.UTF-8
 

@@ -1,5 +1,9 @@
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
+if [ -e "$ZDOTDIR/.zshrc.local" ]; then
+  . "$ZDOTDIR/.zshrc.local"
+fi
+
 # auto tmux
 if [ -n "$AUTO_TMUX" ] && [ -z "$TMUX" ]; then
   tmux attach || tmux new
@@ -571,8 +575,3 @@ precmd() {
 }
 
 PROMPT='%(?..%F{red})❯%f '
-
-# override
-if [ -e "$ZDOTDIR/.zshrc.local" ]; then
-  . "$ZDOTDIR/.zshrc.local"
-fi

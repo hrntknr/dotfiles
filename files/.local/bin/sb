@@ -142,6 +142,10 @@ else
   )
 fi
 
+for var in "${!ANTHROPIC_@}"; do
+	docker_args+=(-e "$var")
+done
+
 if [ "${1:-}" = "--" ]; then
 	shift
 fi

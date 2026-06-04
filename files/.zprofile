@@ -1,5 +1,9 @@
 ZDOTDIR=${ZDOTDIR:-$HOME}
 
+if [ -e "$ZDOTDIR/.zprofile.local" ]; then
+  . "$ZDOTDIR/.zprofile.local"
+fi
+
 if locale -a | grep en_US.UTF-8 >/dev/null; then
   export LANG=en_US.UTF-8
 fi
@@ -122,9 +126,4 @@ fi
 
 if (( $+commands[mise] )); then
   eval "$(mise activate zsh)"
-fi
-
-# override
-if [ -e "$ZDOTDIR/.zprofile.local" ]; then
-  . "$ZDOTDIR/.zprofile.local"
 fi
