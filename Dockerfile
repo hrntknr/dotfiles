@@ -6,15 +6,27 @@ ARG WORKDIR=/root
 
 RUN apt-get update \
   && apt-get install -y \
-    zsh iproute2 iputils-ping iptables nftables openssh-server netcat-traditional socat nmap \
-    build-essential ca-certificates curl wget dnsutils git unzip file locales \
-    gnupg htop iotop iperf iperf3 net-tools strace tree vim less jq fzf sudo \
+    zsh openssh-server ca-certificates curl wget git locales sudo \
+    gnupg vim jq fzf netcat-traditional iproute2 iputils-ping \
+  && if [ "$DOTFILES_PROFILE" = "full" ]; then \
+    apt-get install -y \
+      iptables nftables socat nmap build-essential dnsutils unzip file \
+      htop iotop iperf iperf3 strace tree \
+    && install -m 0755 -d /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc \
+    && chmod a+r /etc/apt/keyrings/docker.asc \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list \
+    && apt-get update \
+    && apt-get install -y \
+      docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; \
+  fi \
   && rm -rf /var/lib/apt/lists/* \
   && rm /etc/ssh/ssh_host_* \
   && (userdel -r ubuntu 2>/dev/null || true) \
   && if [ "$USER" != "root" ]; then \
-    useradd -m -s /usr/bin/zsh -u 1000 -U "$USER"; \
-    echo "$USER ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$USER"; \
+    groups=sudo; \
+    getent group docker >/dev/null && groups="$groups,docker"; \
+    useradd -m -s /usr/bin/zsh -u 1000 -U "$USER" -G "$groups"; \
   else \
     usermod -s /usr/bin/zsh root; \
   fi \
@@ -34,7 +46,7 @@ RUN --mount=type=secret,id=github_token,mode=0444 github_token="$(cat /run/secre
   && chmod 600 "$HOME/.ssh/authorized_keys" \
   && case "$DOTFILES_PROFILE" in \
     full) GITHUB_TOKEN="$github_token" /tmp/dotfiles/setup.sh ;; \
-    mini) GITHUB_TOKEN="$github_token" /tmp/dotfiles/setup.sh --skip-mise ;; \
+    slim) GITHUB_TOKEN="$github_token" /tmp/dotfiles/setup.sh --skip-mise ;; \
     *) echo "invalid DOTFILES_PROFILE: $DOTFILES_PROFILE" >&2; exit 1 ;; \
     esac
 

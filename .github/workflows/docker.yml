@@ -17,7 +17,7 @@ jobs:
       matrix:
         profile:
           - full
-          - mini
+          - slim
         platform:
           - { name: linux/amd64, runner: ubuntu-24.04, suffix: amd64 }
           - { name: linux/arm64, runner: ubuntu-24.04-arm, suffix: arm64 }
@@ -71,7 +71,7 @@ jobs:
       matrix:
         profile:
           - full
-          - mini
+          - slim
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -95,9 +95,9 @@ jobs:
         run: |
           {
             echo "tags<<EOF"
-            if [ "${{ matrix.profile }}" = "mini" ]; then
-              echo "ghcr.io/hrntknr/sh:mini"
-              echo "ghcr.io/hrntknr/sh:mini-${{ github.sha }}"
+            if [ "${{ matrix.profile }}" = "slim" ]; then
+              echo "ghcr.io/hrntknr/sh:slim"
+              echo "ghcr.io/hrntknr/sh:slim-${{ github.sha }}"
             else
               echo "ghcr.io/hrntknr/sh:full"
               echo "ghcr.io/hrntknr/sh:full-${{ github.sha }}"

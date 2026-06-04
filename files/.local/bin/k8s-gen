@@ -2,7 +2,7 @@
 set -eu
 
 script_dir=$(dirname "$0")/k8s
-DEFAULT_BASE=sh-mini
+DEFAULT_BASE=sh-slim
 work_dir=$(mktemp -d)
 resources_dir=$work_dir/resources
 patches_dir=$work_dir/patches

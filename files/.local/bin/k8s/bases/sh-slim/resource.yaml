@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ${PRIMARY_CONTAINER}
-          image: ghcr.io/hrntknr/sh:mini
+          image: ghcr.io/hrntknr/sh:slim
           imagePullPolicy: Always
           command:
             - /usr/local/bin/start-sshd
