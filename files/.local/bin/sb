@@ -12,6 +12,7 @@ container_login_shell=/usr/bin/zsh
 tmp=
 bridge_pid=
 docker_args=()
+interactive=(-it)
 
 shell_join() {
 	local arg sep=
@@ -48,6 +49,18 @@ if ! command -v docker >/dev/null 2>&1; then
 	exit 1
 fi
 
+while [ "$#" -gt 0 ]; do
+	case "$1" in
+	-T | --no-tty)
+		interactive=()
+		shift
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
 host_cwd=$(pwd -P)
 
 if ! command -v timeout >/dev/null 2>&1; then
@@ -68,7 +81,7 @@ setsid secretbridge "$tmp" &
 bridge_pid=$!
 
 docker_args=(
-	run -it --rm --net host
+	run "${interactive[@]}" --rm --net host
 	-v "$host_cwd:$container_cwd"
   -v "$HOME/.config/gh:$container_home/.config/gh"
 	-w "$container_cwd"
