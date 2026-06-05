@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.24
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 ARG DOTFILES_PROFILE=full
 ARG USER=root
 ARG WORKDIR=/root
