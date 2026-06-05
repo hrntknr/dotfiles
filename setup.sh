@@ -172,7 +172,7 @@ function setup_mise_tools {
       export GITHUB_TOKEN="$github_token"
     fi
 
-    "$mise_bin" install -y -C "$HOME"
+    MISE_OFFLINE=0 "$mise_bin" install -y -C "$HOME"
     "$mise_bin" cache clear -y -C "$HOME"
   )
 }
