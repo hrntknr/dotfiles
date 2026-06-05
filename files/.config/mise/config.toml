@@ -1,3 +1,6 @@
+[settings]
+auto_install = false
+
 [tools]
 fzf = "latest"
 neovim = "latest"
