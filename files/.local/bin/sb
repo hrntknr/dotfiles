@@ -142,7 +142,7 @@ else
   )
 fi
 
-for var in "${!ANTHROPIC_@}"; do
+for var in "${!ANTHROPIC_@}" "${!BARK_@}"; do
 	docker_args+=(-e "$var")
 done
 

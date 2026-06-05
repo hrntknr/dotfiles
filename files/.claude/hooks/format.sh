@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 file_path="$(jq -r '.tool_input.file_path // empty')"
 [ -n "$file_path" ] || exit 0
@@ -21,3 +21,5 @@ case "$file_path" in
     command -v prettier >/dev/null && prettier --write "$file_path"
     ;;
 esac
+
+exit 0

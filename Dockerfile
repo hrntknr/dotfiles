@@ -6,7 +6,7 @@ ARG WORKDIR=/root
 
 RUN apt-get update \
   && apt-get install -y \
-    zsh openssh-server ca-certificates curl wget git locales sudo \
+    zsh openssh-server ca-certificates curl wget git locales sudo tini \
     gnupg vim jq fzf netcat-traditional iproute2 iputils-ping \
   && if [ "$DOTFILES_PROFILE" = "full" ]; then \
     apt-get install -y \
@@ -54,4 +54,5 @@ ENV TERM=xterm-256color
 ENV LANG=en_US.UTF-8
 ENV LC_CTYPE=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
+ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/usr/bin/zsh", "-l"]
