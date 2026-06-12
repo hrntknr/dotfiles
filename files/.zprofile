@@ -47,16 +47,6 @@ if (( $+commands[direnv] )); then
   eval "$(direnv hook zsh)"
 fi
 
-## nvm
-if [ -e "$HOME/.nvm" ]; then
-  . "$HOME/.nvm/nvm.sh"
-fi
-
-## npm npm-global
-if [ -e "$HOME/.npm-global" ]; then
-  export PATH="$HOME/.npm-global/bin/:$PATH"
-fi
-
 ## bun
 if [ -e "$HOME/.bun" ]; then
   export PATH="$HOME/.bun/bin/:$PATH"
