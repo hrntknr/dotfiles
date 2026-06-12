@@ -6,7 +6,5 @@ k8s:
     mode: rw
   - cluster: test
     mode: rw
-  - cluster: gh200
-    mode: rw
   - cluster: "*"
     mode: r
