@@ -13,6 +13,8 @@ tmp=
 bridge_pid=
 docker_args=()
 interactive=(-it)
+preserve_cwd=false
+docker_context=
 
 shell_join() {
 	local arg sep=
@@ -55,6 +57,18 @@ while [ "$#" -gt 0 ]; do
 		interactive=()
 		shift
 		;;
+	--preserve-cwd)
+		preserve_cwd=true
+		shift
+		;;
+	--docker)
+		if [ "$#" -lt 2 ]; then
+			printf '%s\n' '--docker requires a context name' >&2
+			exit 1
+		fi
+		docker_context=$2
+		shift 2
+		;;
 	*)
 		break
 		;;
@@ -68,11 +82,15 @@ if ! command -v timeout >/dev/null 2>&1; then
 	exit 1
 fi
 
-if [[ "$host_cwd/" != "$HOME"/* ]]; then
-	printf '%s\n' "current directory must be under HOME: $host_cwd" >&2
-	exit 1
+if [ "$preserve_cwd" = true ]; then
+	container_cwd=$host_cwd
+else
+	if [[ "$host_cwd/" != "$HOME"/* ]]; then
+		printf '%s\n' "current directory must be under HOME: $host_cwd" >&2
+		exit 1
+	fi
+	container_cwd=$container_home${host_cwd#"$HOME"}
 fi
-container_cwd=$container_home${host_cwd#"$HOME"}
 
 tmp=$(mktemp -d)
 mkdir -p "$tmp/.ssh" "$tmp/.kube"
@@ -97,6 +115,7 @@ docker_args+=(
 	-v "$HOME/.cache/claude:$container_home/.cache/claude"
 	-v "$HOME/.local/share/claude:$container_home/.local/share/claude"
 	-v "$HOME/.local/state/claude:$container_home/.local/state/claude"
+	-v "$HOME/.mcp-auth:$container_home/.mcp-auth"
 )
 
 if [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
@@ -153,6 +172,26 @@ else
   docker_args+=(
     -v "$HOME/.config/opencode:$container_home/.config/opencode"
   )
+fi
+
+if [ -n "$docker_context" ]; then
+	docker_endpoint=$(docker context inspect "$docker_context" --format '{{.Endpoints.docker.Host}}')
+	case "$docker_endpoint" in
+	unix://*) ;;
+	*)
+		printf '%s\n' "docker context endpoint is not a unix socket: $docker_endpoint" >&2
+		exit 1
+		;;
+	esac
+	docker_socket=${docker_endpoint#unix://}
+	if [ ! -S "$docker_socket" ]; then
+		printf '%s\n' "docker socket not found: $docker_socket" >&2
+		exit 1
+	fi
+	docker_args+=(
+		-v "$docker_socket:/var/run/docker.sock"
+		-e 'DOCKER_HOST=unix:///var/run/docker.sock'
+	)
 fi
 
 for var in "${!ANTHROPIC_@}" "${!BARK_@}"; do
