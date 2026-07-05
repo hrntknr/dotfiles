@@ -2,7 +2,7 @@
 FROM ubuntu:26.04
 ARG DOTFILES_PROFILE=full
 ARG USER=root
-ARG WORKDIR=/home/hrntknr
+ARG WORKDIR=/root
 
 RUN apt-get update \
   && apt-get install -y \
