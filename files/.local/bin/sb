@@ -15,6 +15,7 @@ docker_args=()
 interactive=(-it)
 preserve_cwd=false
 docker_context=
+container_name=
 
 shell_join() {
 	local arg sep=
@@ -69,6 +70,14 @@ while [ "$#" -gt 0 ]; do
 		docker_context=$2
 		shift 2
 		;;
+	--name | --container-name)
+		if [ "$#" -lt 2 ]; then
+			printf '%s\n' "$1 requires a container name" >&2
+			exit 1
+		fi
+		container_name=$2
+		shift 2
+		;;
 	*)
 		break
 		;;
@@ -104,6 +113,10 @@ docker_args=(
   -v "$HOME/.config/gh:$container_home/.config/gh"
 	-w "$container_cwd"
 )
+
+if [ -n "$container_name" ]; then
+	docker_args+=(--name "$container_name")
+fi
 
 docker_args+=(
 	-v "$tmp/.ssh:$container_home/.ssh"
