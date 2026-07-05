@@ -177,9 +177,28 @@ function setup_mise_tools {
   )
 }
 
+function setup_uv {
+  local home
+  home="$(realpath "$basedir")"
+
+  (
+    export HOME="$home"
+    export XDG_CONFIG_HOME="$HOME/.config"
+    export XDG_DATA_HOME="$HOME/.local/share"
+    export XDG_CACHE_HOME="$HOME/.cache"
+    export XDG_STATE_HOME="$HOME/.local/state"
+
+    if [ ! -x "$HOME/.local/bin/uv" ]; then
+      mkdir -p "$HOME/.local/bin"
+      curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR="$HOME/.local/bin" sh
+    fi
+  )
+}
+
 setup_mise
 
 if [ "$skip_mise" -eq 0 ]; then
+  setup_uv
   setup_mise_tools
 fi
 

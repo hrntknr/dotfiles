@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.25
 FROM ubuntu:26.04
 ARG DOTFILES_PROFILE=full
-ARG USER=root
-ARG WORKDIR=/root
+ARG USER=hrntknr
+ARG WORKDIR=/home/hrntknr
 
 RUN apt-get update \
   && apt-get install -y \
@@ -11,7 +11,7 @@ RUN apt-get update \
   && if [ "$DOTFILES_PROFILE" = "full" ]; then \
     apt-get install -y \
       iptables nftables socat nmap build-essential dnsutils unzip file \
-      htop iotop iperf iperf3 strace tree \
+      htop iotop iperf iperf3 strace tree python3-venv \
     && install -m 0755 -d /etc/apt/keyrings \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc \
     && chmod a+r /etc/apt/keyrings/docker.asc \
