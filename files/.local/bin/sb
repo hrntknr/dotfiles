@@ -7,13 +7,13 @@ set -eu
 }
 
 container_image=ghcr.io/hrntknr/sh:full
-container_home=/home/hrntknr
+container_home=/root
 container_login_shell=/usr/bin/zsh
 tmp=
 bridge_pid=
 docker_args=()
 interactive=(-it)
-preserve_cwd=false
+preserve_cwd=true
 docker_context=
 container_name=
 
@@ -128,13 +128,13 @@ mkdir -p "$HOME/.local/state/claude"
 docker_args+=(
 	-v "$tmp/.ssh:$container_home/.ssh"
 	-v "$tmp/.kube:$container_home/.kube"
-  -v "$HOME/.opencode:$container_home/.opencode:U"
-  -v "$HOME/.cache/opencode:$container_home/.cache/opencode:U"
-  -v "$HOME/.local/share/opencode:$container_home/.local/share/opencode:U"
-  -v "$HOME/.local/state/opencode:$container_home/.local/state/opencode:U"
-  -v "$HOME/.cache/claude:$container_home/.cache/claude:U"
-  -v "$HOME/.local/share/claude:$container_home/.local/share/claude:U"
-  -v "$HOME/.local/state/claude:$container_home/.local/state/claude:U"
+  -v "$HOME/.opencode:$container_home/.opencode"
+  -v "$HOME/.cache/opencode:$container_home/.cache/opencode"
+  -v "$HOME/.local/share/opencode:$container_home/.local/share/opencode"
+  -v "$HOME/.local/state/opencode:$container_home/.local/state/opencode"
+  -v "$HOME/.cache/claude:$container_home/.cache/claude"
+  -v "$HOME/.local/share/claude:$container_home/.local/share/claude"
+  -v "$HOME/.local/state/claude:$container_home/.local/state/claude"
 )
 
 if [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
@@ -146,15 +146,15 @@ if [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
   container_claude_config_dir=$container_home/${claude_config_dir#"$HOME"/}
   docker_args+=(
 	  -e "CLAUDE_CONFIG_DIR=$container_claude_config_dir"
-    -v "$claude_config_dir:$container_claude_config_dir:U"
+    -v "$claude_config_dir:$container_claude_config_dir"
   )
 else
   docker_args+=(
-    -v "$HOME/.claude:$container_home/.claude:U"
+    -v "$HOME/.claude:$container_home/.claude"
   )
   if [ -f "$HOME/.claude.json" ]; then
     docker_args+=(
-      -v "$HOME/.claude.json:$container_home/.claude.json:U"
+      -v "$HOME/.claude.json:$container_home/.claude.json"
     )
   fi
 fi
@@ -168,11 +168,11 @@ if [ -n "${CODEX_HOME:-}" ]; then
   container_codex_home=$container_home/${codex_home#"$HOME"/}
   docker_args+=(
 	  -e "CODEX_HOME=$container_codex_home"
-    -v "$codex_home:$container_codex_home:U"
+    -v "$codex_home:$container_codex_home"
   )
 else
   docker_args+=(
-    -v "$HOME/.codex:$container_home/.codex:U"
+    -v "$HOME/.codex:$container_home/.codex"
   )
 fi
 
@@ -185,11 +185,11 @@ if [ -n "${OPENCODE_CONFIG_DIR:-}" ]; then
   container_opencode_config_dir=$container_home/${opencode_config_dir#"$HOME"/}
   docker_args+=(
 	  -e "OPENCODE_CONFIG_DIR=$container_opencode_config_dir"
-    -v "$opencode_config_dir:$container_opencode_config_dir:U"
+    -v "$opencode_config_dir:$container_opencode_config_dir"
   )
 else
   docker_args+=(
-    -v "$HOME/.config/opencode:$container_home/.config/opencode:U"
+    -v "$HOME/.config/opencode:$container_home/.config/opencode"
   )
 fi
 
