@@ -22,6 +22,8 @@ RUN apt-get update \
   fi \
   && rm -rf /var/lib/apt/lists/* \
   && rm /etc/ssh/ssh_host_* \
+  && echo '%sudo ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/nopasswd \
+  && chmod 0440 /etc/sudoers.d/nopasswd \
   && (userdel -r ubuntu 2>/dev/null || true) \
   && if [ "$USER" != "root" ]; then \
     groups=sudo; \
