@@ -193,6 +193,25 @@ else
   )
 fi
 
+if [ -n "${HERDR_SOCKET_PATH:-}" ]; then
+	herdr_socket_path=$(realpath "$HERDR_SOCKET_PATH")
+  if [[ "$herdr_socket_path" != "$HOME"/* ]]; then
+    printf '%s\n' "HERDR_SOCKET_PATH must be under HOME: $herdr_socket_path" >&2
+    exit 1
+  fi
+  if [ ! -S "$herdr_socket_path" ]; then
+    printf '%s\n' "HERDR socket not found: $herdr_socket_path" >&2
+    exit 1
+  fi
+  herdr_socket_dir=${herdr_socket_path%/*}
+  container_herdr_socket_path=$container_home/${herdr_socket_path#"$HOME"/}
+  container_herdr_socket_dir=${container_herdr_socket_path%/*}
+  docker_args+=(
+	  -e "HERDR_SOCKET_PATH=$container_herdr_socket_path"
+    -v "$herdr_socket_dir:$container_herdr_socket_dir"
+  )
+fi
+
 if [ -n "$docker_context" ]; then
 	docker_endpoint=$(docker context inspect "$docker_context" --format '{{.Endpoints.docker.Host}}')
 	case "$docker_endpoint" in
@@ -213,7 +232,8 @@ if [ -n "$docker_context" ]; then
 	)
 fi
 
-for var in "${!ANTHROPIC_@}" "${!BARK_@}"; do
+for var in "${!ANTHROPIC_@}" "${!BARK_@}" "${!HERDR_@}"; do
+	[ "$var" != HERDR_SOCKET_PATH ] || continue
 	docker_args+=(-e "$var")
 done
 
