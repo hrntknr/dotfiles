@@ -97,33 +97,6 @@ alias oc='sb -- OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 OPENCODE_ENABLE_EXA=1 open
 alias ocs='OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 OPENCODE_ENABLE_EXA=1 opencode'
 alias rgg="rg --hidden --glob '!.git/*' -n"
 
-function _is_ssh_session() {
-  [[ -n "$SSH_CONNECTION$SSH_CLIENT$SSH_TTY" ]]
-}
-
-function _vscode_remote_uri() {
-  local host path
-  host=${VSCODE_SSH_HOST:-${HOST%%.*}}
-  path=$1
-  [[ $path == /* ]] || path=$PWD/$path
-  print -r -- "vscode://vscode-remote/ssh-remote+${host}${path}"
-}
-
-if _is_ssh_session; then
-  function code() {
-    local target
-    if [[ $# -eq 0 ]]; then
-      command open "$(_vscode_remote_uri "$PWD")"
-      return
-    fi
-
-    for target in "$@"; do
-      [[ $target == -* ]] && continue
-      command open "$(_vscode_remote_uri "$target")"
-    done
-  }
-fi
-
 if (( $+commands[nvim] )); then
   alias vim='nvim'
   alias vi='nvim'
@@ -229,7 +202,7 @@ function rand_lower() {
 }
 
 function copy() {
-  printf "\033]52;;$(cat | base64)\033\\"
+  printf "\033]52;c;$(cat | base64)\033\\"
 }
 
 function mssh() {

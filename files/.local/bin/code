@@ -1,0 +1,45 @@
+#!/usr/bin/env zsh
+set -eu
+
+is_ssh_session() {
+  [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ]]
+}
+
+vscode_remote_uri() {
+  local host path
+  host=${VSCODE_SSH_HOST:-${HOST%%.*}}
+  path=${1:a}
+  print -r -- "vscode://vscode-remote/ssh-remote+${host}${path}"
+}
+
+open_remote() {
+  local target
+  if [[ $# -eq 0 ]]; then
+    command open "$(vscode_remote_uri "$PWD")"
+    return
+  fi
+
+  for target in "$@"; do
+    [[ $target == -* ]] && continue
+    command open "$(vscode_remote_uri "$target")"
+  done
+}
+
+exec_local_code() {
+  local self candidate
+  self=${0:A}
+
+  for candidate in ${(f)$(whence -ap code)}; do
+    [[ ${candidate:A} == "$self" ]] && continue
+    exec "$candidate" "$@"
+  done
+
+  print -u2 -- 'code: no local code command found'
+  return 1
+}
+
+if is_ssh_session; then
+  open_remote "$@"
+else
+  exec_local_code "$@"
+fi
