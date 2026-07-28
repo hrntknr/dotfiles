@@ -7,7 +7,7 @@ ARG WORKDIR=/root
 RUN apt-get update \
   && apt-get install -y \
     zsh openssh-server ca-certificates curl wget git locales sudo tini \
-    gnupg vim jq fzf netcat-traditional iproute2 iputils-ping \
+    gnupg vim jq fzf netcat-traditional iproute2 iputils-ping iputils-tracepath \
   && if [ "$DOTFILES_PROFILE" = "full" ]; then \
     apt-get install -y \
       iptables nftables socat nmap build-essential dnsutils unzip file \

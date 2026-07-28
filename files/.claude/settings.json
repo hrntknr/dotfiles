@@ -6,7 +6,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "hooks": {
     "PostToolUse": [
       {
@@ -77,8 +77,6 @@
         "~/Library/Caches/go-build",
         "~/work/go/pkg"
       ],
-      "denyWrite": ["~/.*"],
-      "denyRead": ["~/.*"],
       "allowRead": [
         "~/.claude/**",
         "~/.claude-pfn/**",
