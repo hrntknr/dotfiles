@@ -1,7 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "openai/gpt-5.5",
-  "small_model": "openai/gpt-5.4-mini",
+  "model": "localhost/moonshotai/kimi-k3",
+  "small_model": "localhost/moonshotai/kimi-k3",
   "permission": {
     "external_directory": "allow",
     "read": {
@@ -20,10 +20,10 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "localhost",
       "options": {
-        "baseURL": "http://localhost:8000/v1",
+        "baseURL": "http://localhost:8080/v1",
       },
       "models": {
-        "z-ai/glm-5.2": {},
+        "moonshotai/kimi-k3": {},
       },
     },
   },
