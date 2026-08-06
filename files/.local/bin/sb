@@ -232,8 +232,9 @@ if [ -n "$docker_context" ]; then
 	)
 fi
 
-for var in "${!ANTHROPIC_@}" "${!BARK_@}" "${!HERDR_@}"; do
+for var in "${!ANTHROPIC_@}" "${!BARK_@}" "${!HERDR_@}" "${!OPENCODE_@}"; do
 	[ "$var" != HERDR_SOCKET_PATH ] || continue
+	[ "$var" != OPENCODE_CONFIG_DIR ] || continue
 	docker_args+=(-e "$var")
 done
 
