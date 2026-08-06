@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 set -eu
 
+script=${0:A}
+
 is_ssh_session() {
   [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ]]
 }
@@ -27,9 +29,9 @@ open_remote() {
 
 exec_local_code() {
   local self candidate
-  self=${0:A}
+  self=$script
 
-  for candidate in ${(f)$(whence -ap code)}; do
+  for candidate in ${(f)"$(whence -ap code)"}; do
     [[ ${candidate:A} == "$self" ]] && continue
     exec "$candidate" "$@"
   done
