@@ -34,3 +34,19 @@ jobs:
           secrets: |
             github_token=${{ github.token }}
           push: false
+
+  hermes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build Hermes image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile.hermes
+          push: false

@@ -1,0 +1,10 @@
+# syntax=docker/dockerfile:1.26
+ARG SH_IMAGE=ghcr.io/hrntknr/sh:full
+FROM ${SH_IMAGE}
+
+USER root
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ripgrep ffmpeg \
+  && rm -rf /var/lib/apt/lists/* \
+  && curl -fsSL https://hermes-agent.nousresearch.com/install.sh | \
+    bash -s -- --non-interactive --skip-setup --skip-browser --skip-computer-use
