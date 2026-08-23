@@ -41,4 +41,5 @@
       "prompt": "Inspect the code and suggest concise design and implementation approaches.",
     },
   },
+  "plugin": ["opencode-mem"],
 }
