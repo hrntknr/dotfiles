@@ -1,6 +1,6 @@
 [tools]
 fzf = "0.74.3"
-neovim = "0.12.4"
+neovim = "0.12.5"
 tmux = "3.6b"
 yq = "4.53.6"
 jq = "1.8.2"
