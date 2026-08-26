@@ -236,6 +236,7 @@ return {
   },
 
   default_cursor_style = "SteadyBlock",
+  hyperlink_rules = {},
 
   leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 },
 
