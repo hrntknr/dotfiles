@@ -6,13 +6,9 @@
     "external_directory": "allow",
     "read": {
       "*": "allow",
-      "*.env": "deny",
-      "*.vault_password": "deny",
     },
     "edit": {
       "*": "allow",
-      "*.env": "deny",
-      "*.vault_password": "deny",
     },
   },
   "provider": {
