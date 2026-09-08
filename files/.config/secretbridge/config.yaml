@@ -1,3 +1,20 @@
+container:
+  image: ghcr.io/hrntknr/sh:full
+  runtime: podman
+  mounts:
+    - ~/.config/gh:/root/.config/gh
+    - ~/.claude:/root/.claude
+    - ~/.claude.json:/root/.claude.json
+    - ~/.cache/claude:/root/.cache/claude
+    - ~/.local/share/claude:/root/.local/share/claude
+    - ~/.local/state/claude:/root/.local/state/claude
+    - ~/.codex:/root/.codex
+    - ~/.config/opencode:/root/.config/opencode
+    - ~/.opencode:/root/.opencode
+    - ~/.cache/opencode:/root/.cache/opencode
+    - ~/.local/share/opencode:/root/.local/share/opencode
+    - ~/.local/state/opencode:/root/.local/state/opencode
+    - ~/work:/home/hrntknr/work
 ssh:
   - host: github.com
   - host: "*.local"

@@ -11,20 +11,6 @@
       "*": "allow",
     },
   },
-  "provider": {
-    "localhost": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "localhost",
-      "options": {
-        "baseURL": "http://localhost:8080/v1",
-      },
-      "models": {
-        "z-ai/glm-5.2": {},
-        "moonshotai/kimi-k3": {},
-        "deepseek/deepseek-v4-flash-0731": {},
-      },
-    },
-  },
   "agent": {
     "advisor": {
       "mode": "subagent",
