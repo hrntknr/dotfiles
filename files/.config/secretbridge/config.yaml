@@ -1,10 +1,11 @@
 ssh:
   - host: github.com
+  - host: "*.local"
   - host: "*.hrntknr.net"
 k8s:
-  - cluster: pear
+  - context: pear
     mode: rw
-  - cluster: test
+  - context: test
     mode: rw
-  - cluster: "*"
+  - context: "*"
     mode: r

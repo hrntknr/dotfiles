@@ -171,6 +171,16 @@ function ipmi() {
   ipmitool -I lanplus -H "$host" -U "$user" -P "$pass" -e ']' "$@"
 }
 
+function loop() {
+  while true; do
+    "$@"
+  done
+}
+
+function timer() {
+  SECONDS=0; while true; do printf '\r%02d:%02d:%02d' $((SECONDS/3600)) $((SECONDS/60%60)) $((SECONDS%60)); sleep 1; done
+}
+
 function ignore() {
   curl -f https://raw.githubusercontent.com/github/gitignore/master/$(echo $1 | awk '{print toupper(substr($1,1,1))substr($1,2)}').gitignore >>.gitignore
 }
