@@ -93,13 +93,17 @@ alias tmp='cd $(mktemp -d)'
 alias man='env LANGUAGE=ja_JP.utf8 man'
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
-alias c='sb -- claude --settings '\''{"sandbox":{"enabled":false}}'\'''
-alias cs='claude --settings '\''{"sandbox":{"enabled":false}}'\'''
-alias cx='sb -- codex --sandbox danger-full-access'
-alias cxs='codex --sandbox danger-full-access'
-alias oc='sb -- OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 OPENCODE_ENABLE_EXA=1 opencode'
-alias ocs='OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 OPENCODE_ENABLE_EXA=1 opencode'
 alias rgg="rg --hidden --glob '!.git/*' -n"
+
+function c() {
+  sb exec -w "$PWD" zsh -lc 'exec claude --settings "$0" "$@"' '{"sandbox":{"enabled":false}}' "$@"
+}
+function cx() {
+  sb exec -w "$PWD" zsh -lc 'exec codex --sandbox danger-full-access "$@"' _ "$@"
+}
+function oc() {
+  sb exec -w "$PWD" zsh -lc 'exec opencode "$@"' _ "$@"
+}
 
 if (( $+commands[nvim] )); then
   alias vim='nvim'

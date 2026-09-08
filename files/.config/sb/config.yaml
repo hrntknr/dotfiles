@@ -15,6 +15,11 @@ container:
     - ~/.local/share/opencode:/root/.local/share/opencode
     - ~/.local/state/opencode:/root/.local/state/opencode
     - ~/work:/home/hrntknr/work
+  environments:
+    - OPENCODE_ENABLE_EXA=1
+    - OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1
+proxy:
+  sshAgentEnv: ~/.local/ssh-agent.env
 ssh:
   - host: github.com
   - host: "*.local"
