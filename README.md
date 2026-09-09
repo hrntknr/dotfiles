@@ -7,4 +7,3 @@ git clone https://github.com/hrntknr/dotfiles.git ~/.dotfiles && ~/.dotfiles/set
 Container images:
 
 - `ghcr.io/hrntknr/sh:latest`
-- `ghcr.io/hrntknr/hermes:latest` (includes Hermes Agent)
