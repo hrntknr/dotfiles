@@ -16,6 +16,7 @@ jobs:
           - slim
         platform:
           - { name: linux/amd64, runner: ubuntu-24.04, suffix: amd64 }
+          - { name: linux/arm64, runner: ubuntu-24.04-arm, suffix: arm64 }
     runs-on: ${{ matrix.platform.runner }}
     steps:
       - name: Checkout
@@ -36,7 +37,13 @@ jobs:
           push: false
 
   hermes:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - { name: linux/amd64, runner: ubuntu-24.04, suffix: amd64 }
+          - { name: linux/arm64, runner: ubuntu-24.04-arm, suffix: arm64 }
+    runs-on: ${{ matrix.platform.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -49,4 +56,5 @@ jobs:
         with:
           context: .
           file: Dockerfile.hermes
+          platforms: ${{ matrix.platform.name }}
           push: false
