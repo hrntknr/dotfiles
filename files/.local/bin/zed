@@ -1,0 +1,46 @@
+#!/usr/bin/env zsh
+set -eu
+
+script=${0:A}
+
+is_ssh_session() {
+  [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ]]
+}
+
+zed_remote_uri() {
+  local host path
+  host=${ZED_SSH_HOST:-${HOST%%.*}}
+  path=${1:a}
+  print -r -- "zed://ssh/${host}${path}"
+}
+
+open_remote() {
+  local target
+  if [[ $# -eq 0 ]]; then
+    command open "$(zed_remote_uri "$PWD")"
+    return
+  fi
+
+  for target in "$@"; do
+    [[ $target == -* ]] && continue
+    command open "$(zed_remote_uri "$target")"
+  done
+}
+
+exec_local_zed() {
+  local candidate
+
+  for candidate in ${(f)"$(whence -ap zed)"}; do
+    [[ ${candidate:A} == "$script" ]] && continue
+    exec "$candidate" "$@"
+  done
+
+  print -u2 -- 'zed: no local zed command found'
+  return 1
+}
+
+if is_ssh_session; then
+  open_remote "$@"
+else
+  exec_local_zed "$@"
+fi

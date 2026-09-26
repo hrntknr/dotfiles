@@ -171,7 +171,7 @@ wezterm.on("user-var-changed", function(window, pane, name, uri)
     return
   end
 
-  if scheme == "http" or scheme == "https" or scheme == "vscode" or scheme == "vscode-insiders" then
+  if scheme == "http" or scheme == "https" or scheme == "vscode" or scheme == "vscode-insiders" or scheme == "zed" then
     wezterm.open_with(uri)
     return
   end
