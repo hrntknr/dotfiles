@@ -14,7 +14,6 @@ emit_open_uri() {
     else
       printf '\033]1337;SetUserVar=open-uri=%s\a' "$encoded"
     fi
-    printf  "$uri"
   done
 }
 
