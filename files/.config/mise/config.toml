@@ -20,7 +20,7 @@ k9s = "0.51.0"
 kubeseal = "0.40.0"
 "aqua:int128/kubelogin" = "1.36.4"
 krew = "0.5.0"
-"npm:@opencode/cli" = { version = "2.0.23", allow_builds = ["@opencode/cli"] }
+"npm:@opencode/cli" = { version = "2.0.24", allow_builds = ["@opencode/cli"] }
 claude = "2.1.291"
 codex = "0.146.0"
 node = "24.21.0"
