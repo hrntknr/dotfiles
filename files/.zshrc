@@ -104,6 +104,9 @@ function cx() {
 function oc() {
   sb exec -w "$PWD" zsh -lc 'exec opencode "$@"' _ "$@"
 }
+function p() {
+  sb exec -w "$PWD" zsh -lc 'exec pi "$@"' _ "$@"
+}
 
 if (( $+commands[nvim] )); then
   alias vim='nvim'
