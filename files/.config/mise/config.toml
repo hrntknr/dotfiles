@@ -22,7 +22,7 @@ kubeseal = "0.40.0"
 krew = "0.5.0"
 "npm:@opencode/cli" = { version = "2.0.27", allow_builds = ["@opencode/cli"] }
 "npm:json5" = "2.2.3"
-"aqua:earendil-works/pi" = "1.1.0"
+"aqua:earendil-works/pi" = "1.2.0"
 claude = "2.1.296"
 codex = "0.146.0"
 node = "24.21.0"
