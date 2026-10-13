@@ -3,6 +3,7 @@ container:
   runtime: podman
   mounts:
     - ~/.config/gh:/root/.config/gh
+    - ~/.agents:/root/.agents
     - ~/.claude:/root/.claude
     - ~/.claude.json:/root/.claude.json
     - ~/.cache/claude:/root/.cache/claude
@@ -14,6 +15,7 @@ container:
     - ~/.cache/opencode:/root/.cache/opencode
     - ~/.local/share/opencode:/root/.local/share/opencode
     - ~/.local/state/opencode:/root/.local/state/opencode
+    - ~/.pi:/root/.pi
     - ~/work:/home/hrntknr/work
   environments:
     - OPENCODE_ENABLE_EXA=1
@@ -30,4 +32,7 @@ k8s:
   - context: test
     mode: rw
   - context: "*"
+    mode: r
+aws:
+  - profile: "*"
     mode: r

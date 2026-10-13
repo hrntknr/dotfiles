@@ -1,1 +1,5 @@
 .decrypted/
+**/*.json.d/*
+!**/*.json.d/.gitkeep
+**/*.jsonc.d/*
+!**/*.jsonc.d/.gitkeep

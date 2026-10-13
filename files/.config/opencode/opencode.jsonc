@@ -12,7 +12,7 @@
   "agent": {
     "advisor": {
       "mode": "subagent",
-      "model": "openai/gpt-6-astra",
+      "model": "openai/gpt-6.1-sol",
       "description": "Read-only advisor for design discussions",
       "permission": {
         "edit": "deny",
@@ -20,5 +20,8 @@
       },
       "prompt": "Inspect the code and suggest concise design and implementation approaches.",
     },
+  },
+  "worktree": {
+    "directory": "../wt",
   },
 }
