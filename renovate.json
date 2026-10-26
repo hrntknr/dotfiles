@@ -7,6 +7,34 @@
     {
       "matchManagers": ["mise"],
       "automerge": true
+    },
+    {
+      "matchManagers": ["mise"],
+      "matchDepNames": ["codex"],
+      "extractVersion": "^rust-v(?<version>\\S+)$",
+      "allowedVersions": "/^\\d+\\.\\d+\\.\\d+$/"
+    },
+    {
+      "matchManagers": ["mise"],
+      "matchDepNames": ["tmux"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?(?<prerelease>[a-z])?$",
+      "ignoreUnstable": false
+    },
+    {
+      "matchManagers": ["regex"],
+      "matchDepNames": ["gcloud"],
+      "allowedVersions": "/^\\d+\\.\\d+\\.\\d+$/",
+      "automerge": true
+    }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^files/\\.config/mise/config\\.toml$"],
+      "matchStrings": ["(?m)^gcloud = \"(?<currentValue>[^\"]+)\"$"],
+      "depNameTemplate": "gcloud",
+      "datasourceTemplate": "docker",
+      "packageNameTemplate": "gcr.io/google.com/cloudsdktool/cloud-sdk",
+      "autoReplaceStringTemplate": "gcloud = \"{{{newVersion}}}\""
     }
   ]
 }
