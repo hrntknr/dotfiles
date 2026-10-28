@@ -24,7 +24,7 @@ krew = "0.5.0"
 "npm:@opencode/cli" = { version = "2.1.4", allow_builds = ["@opencode/cli"] }
 "npm:json5" = "2.2.3"
 "aqua:earendil-works/pi" = "1.4.0"
-claude = "2.1.311"
+claude = "2.1.312"
 codex = "0.164.0"
 node = "24.22.1"
 "aqua:BurntSushi/ripgrep" = "15.2.0"
