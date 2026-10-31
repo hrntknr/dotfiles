@@ -22,6 +22,11 @@
 - For bugs, inspect actual logs, current files, generated artifacts, and command output before proposing a fix.
 - Verify the real end state, not just that code was changed.
 
+## Delegation
+- Delegate self-contained research or multi-step tasks to the `general` subagent instead of executing them inline in the main session.
+- When several such tasks are independent, launch multiple `general` subagents in parallel (background) and keep working while they run.
+- Reserve the main session for work that needs the full conversation context, such as reviewing subagent results and making the final edits.
+
 ## Specifications & reviews
 - When important product behavior is ambiguous, ask the smallest necessary clarifying questions before finalizing a specification.
 - For reviews, write findings in Japanese, deduplicate overlapping issues, order by severity, and include concrete file/line references and behavioral risk.
