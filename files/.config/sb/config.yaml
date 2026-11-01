@@ -15,6 +15,7 @@ container:
     - ~/.cache/opencode:/root/.cache/opencode
     - ~/.local/share/opencode:/root/.local/share/opencode
     - ~/.local/state/opencode:/root/.local/state/opencode
+    - ~/.config/openchamber:/root/.config/openchamber
     - ~/.pi:/root/.pi
     - ~/work:/home/hrntknr/work
   environments:

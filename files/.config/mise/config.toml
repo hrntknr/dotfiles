@@ -22,6 +22,7 @@ kubeseal = "0.41.2"
 "aqua:int128/kubelogin" = "1.36.4"
 krew = "0.5.0"
 "npm:@opencode/cli" = { version = "2.2.5", allow_builds = ["@opencode/cli"] }
+"npm:@openchamber/web" = "2.5.3"
 "npm:json5" = "2.2.3"
 "aqua:earendil-works/pi" = "1.4.0"
 claude = "2.1.316"
