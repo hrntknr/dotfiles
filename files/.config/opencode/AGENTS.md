@@ -33,6 +33,7 @@
 
 ## Language
 - User-facing responses must use the same language as the instructions used.
+- When responding in Japanese, always use the `humanizer` skill to format your output into natural, readable prose.
 
 ## Git operations
 - Do not run `git commit`, `git push`, create pull requests, merge pull requests, enable auto-merge, create tags/releases, or otherwise change remote repository state unless the user has explicitly instructed you to in the current context.
