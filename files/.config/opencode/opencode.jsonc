@@ -24,6 +24,9 @@
   "worktree": {
     "directory": "../wt",
   },
+  "skills": [
+    "https://raw.githubusercontent.com/hrntknr/browser-box/main/.opencode/skills/",
+  ],
   "mcp": {
     "servers": {
       "exa": {
@@ -33,6 +36,20 @@
     },
   },
   "policies": [
-    { "action": "provider.use", "resource": "opencode", "effect": "deny" },
+    {
+      "action": "provider.use",
+      "resource": "opencode",
+      "effect": "deny",
+    },
+    {
+      "action": "integration.use",
+      "resource": "skill:report",
+      "effect": "deny",
+    },
+    {
+      "action": "integration.use",
+      "resource": "skill:browser",
+      "effect": "deny",
+    },
   ],
 }
