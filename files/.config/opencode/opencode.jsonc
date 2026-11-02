@@ -1,5 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "experimental": {
+    "schedules": true,
+  },
   "permissions": [
     { "action": "external_directory", "resource": "*", "effect": "allow" },
     { "action": "read", "resource": "*", "effect": "allow" },
