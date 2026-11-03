@@ -3,3 +3,4 @@
 !**/*.json.d/.gitkeep
 **/*.jsonc.d/*
 !**/*.jsonc.d/.gitkeep
+.opencode/skills/dind-kvm/state/
