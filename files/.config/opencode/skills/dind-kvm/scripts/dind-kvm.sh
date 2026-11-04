@@ -6,15 +6,12 @@ set -euo pipefail
 
 SELF_DIR=$(cd "$(dirname "$0")" && pwd)
 STATE=${DIND_STATE:-"$SELF_DIR/../state"}
-PORT=${DIND_PORT:-2222}
 DPORT=${DIND_DPORT:-2375}
 VCPU=4 MEM=4G DATASZ=50G
 
 URL=https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/cloud/alpine-3.23.6-x86_64-bios-tiny-r0.qcow2
 IMG=${URL##*/}
-SSH=(ssh -F /dev/null -i "$STATE/id_ed25519" -p "$PORT"
-     -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-     -o ConnectTimeout=5 -o LogLevel=ERROR root@127.0.0.1)
+MON="$STATE/monitor.sock"
 export DOCKER_HOST=tcp://127.0.0.1:$DPORT
 
 ensure_kvm() {
@@ -24,9 +21,10 @@ ensure_kvm() {
 }
 
 ensure_deps() {
-  command -v qemu-system-x86_64 >/dev/null && command -v genisoimage >/dev/null && return
+  command -v qemu-system-x86_64 >/dev/null && command -v genisoimage >/dev/null \
+    && command -v socat >/dev/null && return
   apt-get update -qq && apt-get install -y -qq --no-install-recommends \
-    qemu-system-x86 qemu-utils genisoimage >/dev/null
+    qemu-system-x86 qemu-utils genisoimage socat >/dev/null
 }
 
 ensure_image() {
@@ -35,20 +33,12 @@ ensure_image() {
   echo "$H  $IMG" | (cd "$STATE" && sha512sum -c --quiet)
 }
 
-ensure_key() { [[ -f $STATE/id_ed25519 ]] || ssh-keygen -q -t ed25519 -N '' -f "$STATE/id_ed25519"; }
-
 ensure_seed() {
   cat > "$STATE/user-data" <<EOF
 #!/bin/sh
 exec >/dev/console 2>&1
 set -x
-mkdir -p /etc/ssh/authorized_keys	# guest /root gets overlaid by the host share; keep keys in /etc
-echo "$(cat "$STATE/id_ed25519.pub")" > /etc/ssh/authorized_keys/root
-chmod 755 /etc/ssh/authorized_keys; chmod 600 /etc/ssh/authorized_keys/root
-printf 'AuthorizedKeysFile /etc/ssh/authorized_keys/%%u\n' > /etc/ssh/sshd_config.d/10-dind.conf
-sed -i '/^root:/ s/^root:[^:]*:/root:*:/' /etc/shadow   # image ships root locked; blocks pubkey login
-rc-service sshd restart
-apk add --no-cache docker e2fsprogs
+apk add --no-cache docker e2fsprogs acpid   # acpid turns monitor system_powerdown into a guest poweroff
 mkfs.ext4 -F /dev/vdb
 mkdir -p /var/lib/docker /root /home
 printf '%s\n' '/dev/vdb /var/lib/docker ext4 nofail 0 0' \
@@ -92,8 +82,9 @@ boot() {
     -drive "file=$STATE/docker-data.qcow2,if=virtio,format=qcow2,cache=writeback" \
     -drive "file=$STATE/seed.iso,if=virtio,format=raw,readonly=on" \
     "${fs[@]}" \
-    -netdev "user,id=net0,hostfwd=tcp:127.0.0.1:$PORT-:22,hostfwd=tcp:127.0.0.1:$DPORT-:$DPORT" \
+    -netdev "user,id=net0,hostfwd=tcp:127.0.0.1:$DPORT-:$DPORT" \
     -device virtio-net-pci,netdev=net0 \
+    -monitor "unix:$MON,server,nowait" \
     -display none -serial "file:$STATE/console.log" \
     -daemonize -pidfile "$STATE/qemu.pid"
 }
@@ -109,7 +100,7 @@ wait_docker() {
 
 cmd_up() {
   ensure_kvm; mkdir -p "$STATE"
-  ensure_deps; ensure_image; ensure_key; ensure_seed; ensure_disks
+  ensure_deps; ensure_image; ensure_seed; ensure_disks
   vm_running || { boot; echo "VM started (pid $(cat "$STATE/qemu.pid"))"; }
   wait_docker
   echo "DinD ready:"
@@ -122,12 +113,18 @@ cmd_status() {
   docker info --format 'docker {{.ServerVersion}}' 2>/dev/null || true
 }
 
-cmd_down()  { vm_running && "${SSH[@]}" poweroff || echo "already stopped"; }
+cmd_down() {
+  vm_running || { echo "already stopped"; return; }
+  echo system_powerdown | socat - "UNIX-CONNECT:$MON" >/dev/null
+  local i
+  for i in $(seq 60); do vm_running || break; sleep 1; done
+  if vm_running; then kill "$(cat "$STATE/qemu.pid")"; echo "guest ignored ACPI; QEMU killed"; fi
+}
 
 cmd_clean() {
   vm_running && kill "$(cat "$STATE/qemu.pid")"
-  rm -f "$STATE"/{dind-vm.qcow2,docker-data.qcow2,seed.iso,qemu.pid,console.log}
-  echo "VM state reset (image and ssh key kept)"
+  rm -f "$STATE"/{dind-vm.qcow2,docker-data.qcow2,seed.iso,qemu.pid,console.log,monitor.sock}
+  echo "VM state reset (base image kept)"
 }
 
 case "${1:-up}" in

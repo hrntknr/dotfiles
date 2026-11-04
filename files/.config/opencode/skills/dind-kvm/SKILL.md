@@ -29,25 +29,23 @@ Other subcommands: `status`, `down`, `clean` (deletes VM disks).
   bind-mountable without restarting the VM.
 - One VM per machine is shared by all sessions on it (`state/qemu.pid` guards
   double-boot); images and caches are shared too.
-- Instance isolation if needed: `DIND_STATE`/`DIND_PORT`/`DIND_DPORT` env
-  overrides (e.g. per-project state dirs) allow side-by-side VMs.
+- Instance isolation if needed: `DIND_STATE`/`DIND_DPORT` env overrides
+  (e.g. per-project state dirs) allow side-by-side VMs.
 
 ## Notes
 
-- `state/` (base image, ssh key, disks) is gitignored and must survive skill
+- `state/` (base image, disks) is gitignored and must survive skill
   redeploys; exclude it when copying the skill directory.
 - The guest root equals the sandbox user, so the VM (and containers in it)
   can read/write everything under the shared `/root` and `/home` — including
   mounted credentials. Same trust model as a local Docker daemon.
-- Guest ssh keys live in `/etc/ssh/authorized_keys` (guest `/root` is
-  overlaid by the host share). ssh debug access: port 2222 with
-  `state/id_ed25519` and `-F /dev/null` (sandbox ssh config has a
-  ProxyCommand that hijacks localhost).
-- The Alpine cloud image ships with the root account locked; the seed
-  unlocks it (`/etc/shadow`), installs docker, formats the 50GB
-  `/var/lib/docker` disk, and starts dockerd on `tcp://0.0.0.0:2375`
-  (openrc `cgroups` dependency has a flaky-start fallback in
-  `/etc/local.d/dind.start`).
+- No ssh port into the VM by design. Debug via the guest console log
+  (`state/console.log`); `down` sends `system_powerdown` through the QEMU
+  human-monitor socket `state/monitor.sock`, which the guest's acpid turns
+  into a clean poweroff.
+- The seed installs docker and acpid, formats the 50GB `/var/lib/docker`
+  disk, and starts dockerd on `tcp://0.0.0.0:2375` (openrc `cgroups`
+  dependency has a flaky-start fallback in `/etc/local.d/dind.start`).
 
 ## Required host-side setup (outside the sandbox)
 
