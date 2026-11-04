@@ -1,18 +1,13 @@
 #!/usr/bin/env bash
 # dind-kvm: DinD via an Alpine VM on KVM. dockerd is forwarded to 127.0.0.1:2375;
-# $DIND_SHARE (default: project root) is shared into the guest at /workspace.
+# /root and /home are shared into the guest at the same paths.
 # Subcommands: up (default) | status | down | clean
 set -euo pipefail
 
 SELF_DIR=$(cd "$(dirname "$0")" && pwd)
-STATE="$SELF_DIR/../state"
-if [[ -n ${DIND_SHARE:-} ]]; then
-  SHARE=$DIND_SHARE
-else
-  SHARE=$(git -C "$SELF_DIR" rev-parse --show-toplevel 2>/dev/null) || SHARE=$(cd "$SELF_DIR/../../../.." && pwd)
-fi
-PORT=2222
-DPORT=2375
+STATE=${DIND_STATE:-"$SELF_DIR/../state"}
+PORT=${DIND_PORT:-2222}
+DPORT=${DIND_DPORT:-2375}
 VCPU=4 MEM=4G DATASZ=50G
 
 URL=https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/cloud/alpine-3.23.6-x86_64-bios-tiny-r0.qcow2
@@ -47,17 +42,21 @@ ensure_seed() {
 #!/bin/sh
 exec >/dev/console 2>&1
 set -x
-mkdir -p /root/.ssh
-echo "$(cat "$STATE/id_ed25519.pub")" > /root/.ssh/authorized_keys
-chmod 700 /root/.ssh; chmod 600 /root/.ssh/authorized_keys
+mkdir -p /etc/ssh/authorized_keys	# guest /root gets overlaid by the host share; keep keys in /etc
+echo "$(cat "$STATE/id_ed25519.pub")" > /etc/ssh/authorized_keys/root
+chmod 755 /etc/ssh/authorized_keys; chmod 600 /etc/ssh/authorized_keys/root
+printf 'AuthorizedKeysFile /etc/ssh/authorized_keys/%%u\n' > /etc/ssh/sshd_config.d/10-dind.conf
 sed -i '/^root:/ s/^root:[^:]*:/root:*:/' /etc/shadow   # image ships root locked; blocks pubkey login
+rc-service sshd restart
 apk add --no-cache docker e2fsprogs
 mkfs.ext4 -F /dev/vdb
-mkdir -p /var/lib/docker /workspace
+mkdir -p /var/lib/docker /root /home
 printf '%s\n' '/dev/vdb /var/lib/docker ext4 nofail 0 0' \
-  'host0 /workspace 9p trans=virtio,version=9p2000.L,rw,msize=131072,nofail 0 0' >> /etc/fstab
+  'host_root /root 9p trans=virtio,version=9p2000.L,rw,msize=131072,nofail 0 0' \
+  'host_home /home 9p trans=virtio,version=9p2000.L,rw,msize=131072,nofail 0 0' >> /etc/fstab
 mount /var/lib/docker
-mount /workspace
+mount /root
+mount /home 2>/dev/null || true
 mountinfo -q /sys/fs/cgroup || mount -t cgroup2 none /sys/fs/cgroup
 printf '%s\n' \
   '#!/bin/sh' \
@@ -72,7 +71,7 @@ rc-update add docker default
 rc-service cgroups start || true
 rc-service docker start || /etc/local.d/dind.start
 EOF
-  printf 'instance-id: dind-alpine-001\nlocal-hostname: dind\n' > "$STATE/meta-data"
+  printf 'instance-id: dind-kvm-001\nlocal-hostname: dind\n' > "$STATE/meta-data"
   [[ -f $STATE/seed.iso && $STATE/seed.iso -nt $STATE/user-data ]] ||
     genisoimage -quiet -output "$STATE/seed.iso" -volid cidata -joliet -rock \
       "$STATE/user-data" "$STATE/meta-data"
@@ -86,11 +85,13 @@ ensure_disks() {
 vm_running() { [[ -f $STATE/qemu.pid ]] && kill -0 "$(cat "$STATE/qemu.pid")" 2>/dev/null; }
 
 boot() {
+  local fs=(-virtfs local,mount_tag=host_root,path=/root,security_model=none)
+  [[ -d /home ]] && fs+=(-virtfs local,mount_tag=host_home,path=/home,security_model=none)
   qemu-system-x86_64 -enable-kvm -cpu host -smp "$VCPU" -m "$MEM" \
     -drive "file=$STATE/dind-vm.qcow2,if=virtio,format=qcow2,cache=writeback" \
     -drive "file=$STATE/docker-data.qcow2,if=virtio,format=qcow2,cache=writeback" \
     -drive "file=$STATE/seed.iso,if=virtio,format=raw,readonly=on" \
-    -virtfs "local,mount_tag=host0,path=$SHARE,security_model=none" \
+    "${fs[@]}" \
     -netdev "user,id=net0,hostfwd=tcp:127.0.0.1:$PORT-:22,hostfwd=tcp:127.0.0.1:$DPORT-:$DPORT" \
     -device virtio-net-pci,netdev=net0 \
     -display none -serial "file:$STATE/console.log" \
@@ -113,7 +114,7 @@ cmd_up() {
   wait_docker
   echo "DinD ready:"
   echo "  export DOCKER_HOST=$DOCKER_HOST"
-  echo "  docker run --rm hello-world   # bind mounts: -v /workspace/<dir>:..."
+  echo "  docker run --rm hello-world   # bind mounts use host paths: -v /root/…, /home/…"
 }
 
 cmd_status() {
