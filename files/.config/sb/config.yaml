@@ -25,6 +25,7 @@ proxy:
   sshAgentEnv: ~/.local/ssh-agent.env
 ssh:
   - host: github.com
+  - host: localhost
   - host: "*.local"
   - host: "*.hrntknr.net"
 k8s:
