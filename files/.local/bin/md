@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+leaf_bin=${LEAF_BIN:-$(command -v leaf 2>/dev/null)}
+[[ -x $leaf_bin ]] || { echo "md: leaf not found" >&2; exit 1; }
+
+if [[ -t 0 || $# -gt 0 ]]; then
+  exec "$leaf_bin" "$@"
+fi
+
+tmp=$(mktemp "${TMPDIR:-/tmp}/md-XXXXXX.md") || exit 1
+
+exec 9<&0
+cat <&9 >"$tmp" &
+exec 9<&- 0</dev/null
+"$leaf_bin" -w "$tmp"
+status=$?
+kill $! 2>/dev/null
+echo "md: saved to $tmp" >&2
+exit $status
