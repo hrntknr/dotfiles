@@ -1,0 +1,9 @@
+[Unit]
+Description=Update sb container image daily at 05:00 JST
+
+[Timer]
+OnCalendar=*-*-* 05:00:00 Asia/Tokyo
+Persistent=true
+
+[Install]
+WantedBy=timers.target

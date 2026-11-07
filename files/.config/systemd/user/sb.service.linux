@@ -1,0 +1,13 @@
+[Unit]
+Description=sb
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/hrntknr/.local/bin/sb run --network host sleep infinity
+Restart=on-failure
+RestartSec=3
+WorkingDirectory=%h/work
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+image="ghcr.io/hrntknr/sh:full"
+
+before=$(podman image inspect --format '{{.Id}}' "$image" 2>/dev/null || true)
+podman pull "$image"
+after=$(podman image inspect --format '{{.Id}}' "$image")
+
+if [[ "$before" != "$after" ]]; then
+  echo "image updated: $before -> $after"
+  systemctl --user restart sb.service
+else
+  echo "image up to date"
+fi

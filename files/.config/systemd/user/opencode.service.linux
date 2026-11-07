@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenCode Web Server
+Requires=sb.service
+PartOf=sb.service
+After=network.target sb.service
+
+[Service]
+Type=simple
+ExecStart=/home/hrntknr/.local/bin/sb exec --env-file %h/.config/systemd/user/opencode.env zsh -lc "opencode serve"
+Restart=on-failure
+RestartSec=3
+WorkingDirectory=%h/work
+
+[Install]
+WantedBy=default.target

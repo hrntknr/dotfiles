@@ -23,6 +23,7 @@
 - Verify the real end state, not just that code was changed.
 
 ## Delegation
+- Execute all tasks via the `general` subagent instead of handling them inline in the main session.
 - Delegate self-contained research or multi-step tasks to the `general` subagent instead of executing them inline in the main session.
 - When several such tasks are independent, launch multiple `general` subagents in parallel (background) and keep working while they run.
 - Reserve the main session for work that needs the full conversation context, such as reviewing subagent results and making the final edits.

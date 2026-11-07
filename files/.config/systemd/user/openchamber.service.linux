@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenChamber Web Server
+Requires=sb.service
+PartOf=sb.service
+After=network.target sb.service
+
+[Service]
+Type=simple
+ExecStart=/home/hrntknr/.local/bin/sb exec --env-file %h/.config/systemd/user/openchamber.env zsh -lc 'OPENCODE_SKIP_START=true OPENCODE_PORT=4096 openchamber serve --port 4097 --host 127.0.0.1 --ui-password "$OPENCHAMBER_UI_PASSWORD" --foreground'
+Restart=on-failure
+RestartSec=3
+WorkingDirectory=%h
+
+[Install]
+WantedBy=default.target
