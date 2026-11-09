@@ -3,4 +3,4 @@ Description=Update sb container image
 
 [Service]
 Type=oneshot
-ExecStart=%h/.local/bin/sb-update
+ExecStart=zsh -lc %h/.local/bin/sb-update
