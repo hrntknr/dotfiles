@@ -20,10 +20,6 @@
       ],
       "system": "Inspect the code and suggest concise design and implementation approaches.",
     },
-    "general": {
-      "mode": "subagent",
-      "model": "pfcp/z-ai/glm-5.3",
-    },
   },
   "worktree": {
     "directory": "../wt",
