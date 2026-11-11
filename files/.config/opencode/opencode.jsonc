@@ -27,6 +27,9 @@
   "skills": [
     "https://raw.githubusercontent.com/hrntknr/browser-box/main/.opencode/skills/",
   ],
+  "plugins": [
+    "github:hrntknr/opencode-plugin-k8s",
+  ],
   "mcp": {
     "servers": {
       "exa": {
