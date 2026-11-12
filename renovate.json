@@ -19,7 +19,8 @@
       "matchManagers": ["mise"],
       "matchDepNames": ["tmux"],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?(?<prerelease>[a-z])?$",
-      "ignoreUnstable": false
+      "ignoreUnstable": false,
+      "enabled": false
     },
     {
       "matchManagers": ["regex"],
