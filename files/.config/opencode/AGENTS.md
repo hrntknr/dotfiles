@@ -21,13 +21,6 @@
 - For bugs, inspect actual logs, current files, generated artifacts, and command output before proposing a fix.
 - Verify the real end state, not just that code was changed.
 
-## Delegation
-- Execute all tasks via the `general` subagent instead of handling them inline in the main session.
-- Always launch subagents with `background: true`. Never use blocking foreground calls; to sequence dependent scopes, launch the next subagent after the previous result notification arrives.
-- Before delegating, split the work into independent scopes — topics, modules, or steps that do not depend on each other's results and do not touch the same files — and launch one `general` subagent per scope in parallel, keeping working while they run.
-- Delegate sequentially only when a later scope needs the results of an earlier one; never serialize independent work just because it arrived in one request.
-- Reserve the main session for work that needs the full conversation context: reviewing subagent results and making the final edits.
-
 ## Specifications & reviews
 - When important product behavior is ambiguous, ask the smallest necessary clarifying questions before finalizing a specification.
 - Write review findings in Japanese, deduplicated, ordered by severity, with concrete file/line references and behavioral risk.
