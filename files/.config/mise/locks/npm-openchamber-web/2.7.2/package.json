@@ -2,6 +2,6 @@
   "name": "mise-npm-install",
   "private": true,
   "dependencies": {
-    "@openchamber/web": "2.7.2"
+    "@openchamber/web": "2.7.3"
   }
 }
