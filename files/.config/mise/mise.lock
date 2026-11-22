@@ -50,10 +50,9 @@ url_api = "https://api.github.com/repos/FiloSottile/age/releases/assets/53554193
 provenance = "github-attestations"
 
 [[tools.ansible]]
-version = "14.6.0"
+version = "15.0.0"
 backend = "pypi:ansible"
-specifiers = ["14.6.0"]
-uv = { path = "locks/ansible/14.6.0~0672620e", digest = "sha256:64211881108dde55fd29636d0c86f4c0c642dad70d9e1d938f00fbd465f66e75" }
+specifiers = ["15.0.0"]
 
 [tools.ansible.options]
 expose = '["ansible-core"]'
