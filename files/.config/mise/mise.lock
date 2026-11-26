@@ -997,10 +997,10 @@ backend = "npm:@openchamber/web"
 specifiers = ["2.8.0"]
 
 [[tools."npm:@opencode/cli"]]
-version = "2.4.1"
-aube = { path = "locks/npm-opencode-cli/2.4.1~009061c2", digest = "sha256:b9fc4e48974771958bd8f4b11f0f2e33467c5330f543017ccdb89513462b9dca" }
+version = "2.4.2"
+aube = { path = "locks/npm-opencode-cli/2.4.2~009061c2", digest = "sha256:e2c041c208838433713c3f73ff7c42a6447e32b5f2d0cefdc7aee3697b8804ff" }
 backend = "npm:@opencode/cli"
-specifiers = ["2.4.1"]
+specifiers = ["2.4.2"]
 
 [tools."npm:@opencode/cli".options]
 allow_builds = '["@opencode/cli"]'
