@@ -991,10 +991,10 @@ checksum = "sha256:e2edda75bfb089654705cf65a13b58933bfd5f57148e8ebda916f58a2474f
 url = "https://nodejs.org/dist/v26.13.1/node-v26.13.1-win-x64.zip"
 
 [[tools."npm:@openchamber/web"]]
-version = "2.8.0"
-aube = { path = "locks/npm-openchamber-web/2.8.0", digest = "sha256:758d02430ea7340a10d398e0e045da1be8c1e90c3c72a6cb570213261362202e" }
+version = "2.8.1"
+aube = { path = "locks/npm-openchamber-web/2.8.1", digest = "sha256:bdabebc824eb180cdd7f3de9b405d065017fd0856241c9d9bab1f768eaf44f5b" }
 backend = "npm:@openchamber/web"
-specifiers = ["2.8.0"]
+specifiers = ["2.8.1"]
 
 [[tools."npm:@opencode/cli"]]
 version = "2.4.2"
