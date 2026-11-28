@@ -1054,9 +1054,9 @@ url = "https://github.com/pypa/pipx/releases/download/1.19.2/pipx.pyz"
 url_api = "https://api.github.com/repos/pypa/pipx/releases/assets/802813808"
 
 [[tools.rust]]
-version = "1.100.0"
+version = "1.100.1"
 backend = "core:rust"
-specifiers = ["1.100.0"]
+specifiers = ["1.100.1"]
 
 [[tools.sops]]
 version = "3.13.3"
