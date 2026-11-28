@@ -105,51 +105,51 @@ url = "https://github.com/BurntSushi/ripgrep/releases/download/16.0.0/ripgrep-16
 url_api = "https://api.github.com/repos/BurntSushi/ripgrep/releases/assets/780739355"
 
 [[tools."aqua:earendil-works/pi"]]
-version = "1.6.1"
+version = "1.7.0"
 backend = "aqua:earendil-works/pi"
-specifiers = ["1.6.1"]
+specifiers = ["1.7.0"]
 
 [tools."aqua:earendil-works/pi"."platforms.linux-arm64"]
-checksum = "sha256:afde641d6c5904d26960ddb4223bf563b0860cf1a0ebc443b85deff67d048753"
+checksum = "sha256:cd209cfc90fb94fb4b00ccd785a8d64a4a154f924e52f88febeb6cf36d5c9a24"
 checksum_source = "mise-versions"
-url = "https://github.com/earendil-works/pi/releases/download/v1.6.1/pi-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/791633931"
+url = "https://github.com/earendil-works/pi/releases/download/v1.7.0/pi-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/801243842"
 
 [tools."aqua:earendil-works/pi"."platforms.linux-arm64-musl"]
-checksum = "sha256:afde641d6c5904d26960ddb4223bf563b0860cf1a0ebc443b85deff67d048753"
+checksum = "sha256:cd209cfc90fb94fb4b00ccd785a8d64a4a154f924e52f88febeb6cf36d5c9a24"
 checksum_source = "mise-versions"
-url = "https://github.com/earendil-works/pi/releases/download/v1.6.1/pi-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/791633931"
+url = "https://github.com/earendil-works/pi/releases/download/v1.7.0/pi-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/801243842"
 
 [tools."aqua:earendil-works/pi"."platforms.linux-x64"]
-checksum = "sha256:3c7f00715eb512e165c0da8cad314d73c83b54d5bf7748be4adc618fc8357b68"
+checksum = "sha256:42f7ed67e83f727fe51dd2746d50dc45c7d1784159a9518296a282402ac68f4a"
 checksum_source = "mise-versions"
-url = "https://github.com/earendil-works/pi/releases/download/v1.6.1/pi-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/791633919"
+url = "https://github.com/earendil-works/pi/releases/download/v1.7.0/pi-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/801243839"
 
 [tools."aqua:earendil-works/pi"."platforms.linux-x64-musl"]
-checksum = "sha256:3c7f00715eb512e165c0da8cad314d73c83b54d5bf7748be4adc618fc8357b68"
+checksum = "sha256:42f7ed67e83f727fe51dd2746d50dc45c7d1784159a9518296a282402ac68f4a"
 checksum_source = "mise-versions"
-url = "https://github.com/earendil-works/pi/releases/download/v1.6.1/pi-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/791633919"
+url = "https://github.com/earendil-works/pi/releases/download/v1.7.0/pi-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/801243839"
 
 [tools."aqua:earendil-works/pi"."platforms.macos-arm64"]
-checksum = "sha256:d8fd8e24c2a5054ae383d83b26f6eb6f950edf613917e434a52394f44cd4d933"
+checksum = "sha256:ff95a9ae160a55bb0417b35031a86c3fa52b39216999fba540b53568f2efc6eb"
 checksum_source = "mise-versions"
-url = "https://github.com/earendil-works/pi/releases/download/v1.6.1/pi-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/791633927"
+url = "https://github.com/earendil-works/pi/releases/download/v1.7.0/pi-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/801243847"
 
 [tools."aqua:earendil-works/pi"."platforms.macos-x64"]
-checksum = "sha256:5c2df5744c7828cc8b78c5665a3a785cc073130005c711d35017c6a5c419169a"
+checksum = "sha256:427d03ed20d14ddeddbe610f56cc7a493f5880f5800e0ecae174284a0a9c4691"
 checksum_source = "mise-versions"
-url = "https://github.com/earendil-works/pi/releases/download/v1.6.1/pi-darwin-x64.tar.gz"
-url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/791633923"
+url = "https://github.com/earendil-works/pi/releases/download/v1.7.0/pi-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/801243838"
 
 [tools."aqua:earendil-works/pi"."platforms.windows-x64"]
-checksum = "sha256:dbb007c8c50782de1642382fed777c60252aab080f36eef7823324c574c1f3e4"
+checksum = "sha256:e98bb945fb7f6917a4bea1956759ce9faf07cf6bdd8c42bfef521eccf2276a17"
 checksum_source = "mise-versions"
-url = "https://github.com/earendil-works/pi/releases/download/v1.6.1/pi-windows-x64.zip"
-url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/791634073"
+url = "https://github.com/earendil-works/pi/releases/download/v1.7.0/pi-windows-x64.zip"
+url_api = "https://api.github.com/repos/earendil-works/pi/releases/assets/801243908"
 
 [[tools."aqua:int128/kubelogin"]]
 version = "1.36.4"
